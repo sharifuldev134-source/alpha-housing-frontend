@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
   Users, 
   MapPin, 
@@ -24,6 +25,7 @@ import FaqAccordion from "../components/FaqAccordion";
 import { usePlanModal } from "../components/PlanModalContext";
 
 export default function HowItWorksPage() {
+  const router = useRouter();
   const { openPlanModal } = usePlanModal();
 
   const getStepIcon = (num: string) => {
@@ -78,7 +80,7 @@ export default function HowItWorksPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
-              onClick={() => openPlanModal()}
+              onClick={() => router.push("/create-plan")}
               className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-2 transition-all"
             >
               <span>Start Your Housing Plan</span>
@@ -267,7 +269,7 @@ export default function HowItWorksPage() {
               Build your group plan in less than 5 minutes. No upfront fees required.
             </p>
             <button
-              onClick={() => openPlanModal()}
+              onClick={() => router.push("/create-plan")}
               className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-red-600/30 inline-flex items-center gap-2 transition-all"
             >
               <span>Create Your Housing Plan</span>

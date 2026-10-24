@@ -22,6 +22,7 @@ import {
   PhoneCall,
   Search
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { 
   CITIES_DATA, 
   HOW_IT_WORKS_STEPS_HOME, 
@@ -32,6 +33,7 @@ import FaqAccordion from "./components/FaqAccordion";
 import { usePlanModal } from "./components/PlanModalContext";
 
 export default function HomePage() {
+  const router = useRouter();
   const { openPlanModal } = usePlanModal();
 
   // Search state
@@ -44,11 +46,7 @@ export default function HomePage() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    openPlanModal({
-      city: selectedCity,
-      semester: selectedSemester,
-      students: selectedStudents,
-    });
+    router.push("/create-plan");
   };
 
   return (
@@ -363,7 +361,7 @@ export default function HomePage() {
           {/* CTA Buttons */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <button
-              onClick={() => openPlanModal()}
+              onClick={() => router.push("/create-plan")}
               className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm shadow-md shadow-red-600/20 flex items-center gap-2 transition-all"
             >
               <span>Start Group Plan Now</span>
