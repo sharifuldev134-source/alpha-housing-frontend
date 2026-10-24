@@ -36,7 +36,12 @@ import {
   Send,
   RefreshCw,
   Layers,
-  ChevronLeft
+  ChevronLeft,
+  Download,
+  Phone,
+  Paperclip,
+  Search,
+  Plus
 } from "lucide-react";
 
 interface NeighborhoodItem {
@@ -227,6 +232,69 @@ function DashboardContent() {
   const [advisorQuestion, setAdvisorQuestion] = useState<string>("");
   const [advisorSubmitted, setAdvisorSubmitted] = useState<boolean>(false);
 
+  // Messages Tab State
+  const [activeChatId, setActiveChatId] = useState<string>("marco");
+  const [chatCategory, setChatCategory] = useState<string>("all");
+  const [chatSearch, setChatSearch] = useState<string>("");
+  const [chatInput, setChatInput] = useState<string>("");
+  const [messagesList, setMessagesList] = useState<Array<{
+    id: string;
+    sender: "marco" | "user";
+    senderName: string;
+    text: string;
+    time: string;
+    attachment?: { name: string; size: string };
+  }>>([
+    {
+      id: "1",
+      sender: "marco",
+      senderName: "Marco Valenti (Agent)",
+      text: "Buongiorno! Thank you for reserving Via dei Neri Apartment for your student group. The four private bedrooms and 2 bathrooms have been inspected and reserved for your spring semester.",
+      time: "Yesterday 4:15 PM",
+    },
+    {
+      id: "2",
+      sender: "user",
+      senderName: "You (Parent / Student)",
+      text: "Hello Marco, thank you! Could you please verify the building security system and if heating is autonomous or centralized?",
+      time: "Yesterday 5:30 PM",
+    },
+    {
+      id: "3",
+      sender: "marco",
+      senderName: "Marco Valenti (Agent)",
+      text: "Certainly! The building features an electronic keypad gate, high-security European cylinder locks, and CCTV surveillance in the entry hallway. Heating is autonomous gas, certified in September 2023 with safety stamp.",
+      time: "Today 8:10 AM",
+    },
+    {
+      id: "4",
+      sender: "marco",
+      senderName: "Marco Valenti (Agent)",
+      text: "Standard Contratto Transitorio draft attached for parent review. We can schedule a live FaceTime video tour tomorrow at 4:30 PM Italian time (10:30 AM EST) if needed.",
+      time: "Today 10:05 AM",
+      attachment: {
+        name: "Contratto_Transitorio_Via_dei_Neri_Draft.pdf",
+        size: "1.4 MB",
+      },
+    },
+  ]);
+
+  const handleSendMessage = (textToSend?: string) => {
+    const text = textToSend || chatInput;
+    if (!text.trim()) return;
+    setMessagesList((prev) => [
+      ...prev,
+      {
+        id: String(Date.now()),
+        sender: "user",
+        senderName: "You (Parent / Student)",
+        text: text.trim(),
+        time: "Just now",
+      },
+    ]);
+    if (!textToSend) setChatInput("");
+  };
+
   const isHousingDetail = activeTab === "housing" && housingSubView === "detail";
   const currentApartment = APARTMENTS_DATA.find((a) => a.id === selectedApartmentId) || APARTMENTS_DATA[0];
 
@@ -327,32 +395,46 @@ function DashboardContent() {
               </button>
 
               {/* Compare */}
-              <Link
-                href="/housing"
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              <button
+                onClick={() => setActiveTab("compare")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "compare"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
                 <GitCompare className="w-4 h-4" />
                 <span>Compare</span>
-              </Link>
+              </button>
 
               {/* Group Progress */}
               <button
-                onClick={() => setActiveTab("overview")}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                onClick={() => setActiveTab("progress")}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "progress"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
                 <span className="flex items-center gap-3">
                   <TrendingUp className="w-4 h-4" />
                   <span>Group Progress</span>
                 </span>
-                <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
+                  activeTab === "progress" ? "bg-red-100 text-[#DC2626]" : "bg-slate-100 text-slate-600"
+                }`}>
                   14
                 </span>
               </button>
 
               {/* Messages */}
               <button
-                onClick={() => setActiveTab("overview")}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                onClick={() => setActiveTab("messages")}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "messages"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
                 <span className="flex items-center gap-3">
                   <MessageSquare className="w-4 h-4" />
@@ -365,8 +447,12 @@ function DashboardContent() {
 
               {/* Documents */}
               <button
-                onClick={() => setActiveTab("overview")}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                onClick={() => setActiveTab("documents")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "documents"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
                 <FileText className="w-4 h-4" />
                 <span>Documents</span>
@@ -1451,6 +1537,829 @@ function DashboardContent() {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* ========================================================= */}
+            {/* VIEW 4: COMPARE TAB (SCREENSHOT 1) */}
+            {/* ========================================================= */}
+            {activeTab === "compare" && (
+              <div className="space-y-6">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    Compare Saved Apartments
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                    Side-by-side evaluation of price, commute, bedrooms, and deposit terms.
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-2xs">
+                  <table className="w-full text-left border-collapse min-w-[720px]">
+                    <thead>
+                      <tr className="border-b border-slate-200 bg-slate-50/60">
+                        <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[18%]">
+                          FEATURES
+                        </th>
+                        <th className="p-4 w-[27%]">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-bold text-slate-900 text-xs sm:text-sm">Via dei Neri Apartment</span>
+                            <span className="px-2 py-0.5 rounded-full bg-rose-50 text-[#DC2626] text-[9.5px] font-bold border border-rose-200">Alpha Verified</span>
+                          </div>
+                        </th>
+                        <th className="p-4 w-[27%]">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-bold text-slate-900 text-xs sm:text-sm">Santa Croce Apartment</span>
+                            <span className="px-2 py-0.5 rounded-full bg-rose-50 text-[#DC2626] text-[9.5px] font-bold border border-rose-200">Alpha Verified</span>
+                          </div>
+                        </th>
+                        <th className="p-4 w-[28%]">
+                          <span className="font-bold text-slate-900 text-xs sm:text-sm">Santo Spirito Apartment</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-xs">
+                      {/* Preview Row */}
+                      <tr>
+                        <td className="p-4 font-semibold text-slate-500">Preview</td>
+                        <td className="p-4">
+                          <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
+                            <Image src="https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=600&q=80" alt="Via dei Neri" fill className="object-cover" />
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
+                            <Image src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80" alt="Santa Croce" fill className="object-cover" />
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
+                            <Image src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" alt="Santo Spirito" fill className="object-cover" />
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Monthly Rent */}
+                      <tr>
+                        <td className="p-4 font-semibold text-slate-500">Monthly Rent</td>
+                        <td className="p-4">
+                          <div className="font-extrabold text-slate-900 text-sm sm:text-base">€4,800</div>
+                          <div className="text-[11px] text-slate-400">€1200 / student</div>
+                        </td>
+                        <td className="p-4">
+                          <div className="font-extrabold text-slate-900 text-sm sm:text-base">€4,500</div>
+                          <div className="text-[11px] text-slate-400">€1125 / student</div>
+                        </td>
+                        <td className="p-4">
+                          <div className="font-extrabold text-slate-900 text-sm sm:text-base">€3,900</div>
+                          <div className="text-[11px] text-slate-400">€975 / student</div>
+                        </td>
+                      </tr>
+
+                      {/* Commute to Program */}
+                      <tr>
+                        <td className="p-4 font-semibold text-slate-500">Commute to Program</td>
+                        <td className="p-4 font-bold text-[#DC2626]">12 min walk (Santa Croce)</td>
+                        <td className="p-4 font-bold text-[#DC2626]">15 min walk (Santa Croce)</td>
+                        <td className="p-4 font-bold text-[#DC2626]">18 min walk (Santo Spirito)</td>
+                      </tr>
+
+                      {/* Beds / Baths */}
+                      <tr>
+                        <td className="p-4 font-semibold text-slate-500">Beds / Baths</td>
+                        <td className="p-4 text-slate-700">4 bedrooms • 2 bathrooms (120 m²)</td>
+                        <td className="p-4 text-slate-700">4 bedrooms • 2 bathrooms (110 m²)</td>
+                        <td className="p-4 text-slate-700">3 bedrooms • 1 bathrooms (100 m²)</td>
+                      </tr>
+
+                      {/* Total Move-In Estimate */}
+                      <tr>
+                        <td className="p-4 font-semibold text-slate-500">Total Move-In Estimate</td>
+                        <td className="p-4 font-extrabold text-slate-900">€10,250</td>
+                        <td className="p-4 font-extrabold text-slate-900">€9,800</td>
+                        <td className="p-4 font-extrabold text-slate-900">€8,400</td>
+                      </tr>
+
+                      {/* Utilities */}
+                      <tr>
+                        <td className="p-4 font-semibold text-slate-500">Utilities</td>
+                        <td className="p-4 text-slate-600">Not included (est. ~€240/mo)</td>
+                        <td className="p-4 text-slate-600">Included in rent</td>
+                        <td className="p-4 text-slate-600">€180/mo estimated</td>
+                      </tr>
+
+                      {/* Action */}
+                      <tr>
+                        <td className="p-4 font-semibold text-slate-500">Action</td>
+                        <td className="p-4">
+                          <button
+                            onClick={() => {
+                              setSelectedApartmentId("via-dei-neri");
+                              setActiveTab("housing");
+                              setHousingSubView("detail");
+                            }}
+                            className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-2xs transition-all"
+                          >
+                            <span>View Details</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                        <td className="p-4">
+                          <button
+                            onClick={() => {
+                              setSelectedApartmentId("santa-croce-apt");
+                              setActiveTab("housing");
+                              setHousingSubView("detail");
+                            }}
+                            className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-2xs transition-all"
+                          >
+                            <span>View Details</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                        <td className="p-4">
+                          <button
+                            onClick={() => {
+                              setSelectedApartmentId("via-dei-neri");
+                              setActiveTab("housing");
+                              setHousingSubView("detail");
+                            }}
+                            className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-2xs transition-all"
+                          >
+                            <span>View Details</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================= */}
+            {/* VIEW 5: GROUP PROGRESS TAB (SCREENSHOT 2) */}
+            {/* ========================================================= */}
+            {activeTab === "progress" && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#DC2626] mb-1">
+                      GROUP COLLABORATION
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                      Group Progress
+                    </h1>
+                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                      Track where each option stands.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setActiveTab("housing");
+                      setHousingSubView("list");
+                    }}
+                    className="py-2.5 px-4 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-all w-fit"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Find More Options</span>
+                  </button>
+                </div>
+
+                {/* 5 Stat Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                  <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs flex flex-col justify-between">
+                    <div className="flex items-center gap-1.5 text-blue-500">
+                      <span className="w-2 h-2 rounded-full bg-blue-500" />
+                      <span className="text-xl sm:text-2xl font-extrabold text-slate-900">14</span>
+                    </div>
+                    <span className="text-xs font-semibold text-slate-600 mt-2">All Options</span>
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs flex flex-col justify-between">
+                    <div className="flex items-center gap-1.5 text-[#DC2626]">
+                      <span className="w-2 h-2 rounded-full bg-[#DC2626]" />
+                      <span className="text-xl sm:text-2xl font-extrabold text-slate-900">7</span>
+                    </div>
+                    <span className="text-xs font-semibold text-slate-600 mt-2">Contacted</span>
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs flex flex-col justify-between">
+                    <div className="flex items-center gap-1.5 text-amber-500">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span className="text-xl sm:text-2xl font-extrabold text-slate-900">4</span>
+                    </div>
+                    <span className="text-xs font-semibold text-slate-600 mt-2">Waiting for Response</span>
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs flex flex-col justify-between">
+                    <div className="flex items-center gap-1.5 text-emerald-500">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="text-xl sm:text-2xl font-extrabold text-slate-900">2</span>
+                    </div>
+                    <span className="text-xs font-semibold text-slate-600 mt-2">Availability Confirmed</span>
+                  </div>
+
+                  <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs flex flex-col justify-between">
+                    <div className="flex items-center gap-1.5 text-rose-500">
+                      <span className="w-2 h-2 rounded-full bg-rose-500" />
+                      <span className="text-xl sm:text-2xl font-extrabold text-slate-900">1</span>
+                    </div>
+                    <span className="text-xs font-semibold text-slate-600 mt-2">Not Available</span>
+                  </div>
+                </div>
+
+                {/* Two Columns: Recent Activity & Group Approvals */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left (8 cols): Recent Activity */}
+                  <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4">
+                    <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                      <h3 className="text-sm font-bold text-slate-900">Recent Activity</h3>
+                      <span className="text-[11px] text-slate-400">Last updated 5 mins ago</span>
+                    </div>
+
+                    <div className="space-y-4">
+                      {/* Event 1 */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                          <CheckCircle2 className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <h4 className="font-bold text-slate-900">Response received - Via dei Neri Apartment</h4>
+                            <span className="text-[10.5px] text-slate-400 shrink-0">Today 10:14 AM</span>
+                          </div>
+                          <p className="text-slate-600 mt-0.5 leading-relaxed">
+                            Landlord confirmed availability for Spring 2027 semester (Jan 8 – May 15). Video tour offered.
+                          </p>
+                          <button
+                            onClick={() => {
+                              setSelectedApartmentId("via-dei-neri");
+                              setActiveTab("housing");
+                              setHousingSubView("detail");
+                            }}
+                            className="text-[#DC2626] font-bold text-[11px] hover:underline mt-1 inline-flex items-center gap-1"
+                          >
+                            <span>Inspect listing &amp; contact</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Event 2 */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-7 h-7 rounded-full bg-rose-50 text-[#DC2626] flex items-center justify-center shrink-0 mt-0.5">
+                          <Clock className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <h4 className="font-bold text-slate-900">Contacted - Santa Croce Apartment</h4>
+                            <span className="text-[10.5px] text-slate-400 shrink-0">Yesterday 4:12 PM</span>
+                          </div>
+                          <p className="text-slate-600 mt-0.5 leading-relaxed">
+                            Inquiry submitted through HousingAnywhere. Lease duration matches 4.5 months.
+                          </p>
+                          <button
+                            onClick={() => {
+                              setSelectedApartmentId("santa-croce-apt");
+                              setActiveTab("housing");
+                              setHousingSubView("detail");
+                            }}
+                            className="text-[#DC2626] font-bold text-[11px] hover:underline mt-1 inline-flex items-center gap-1"
+                          >
+                            <span>Inspect listing &amp; contact</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Event 3 */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-7 h-7 rounded-full bg-rose-50 text-[#DC2626] flex items-center justify-center shrink-0 mt-0.5">
+                          <Clock className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <h4 className="font-bold text-slate-900">Contacted - Campo di Marte Residence</h4>
+                            <span className="text-[10.5px] text-slate-400 shrink-0">Oct 2, 9:20 AM</span>
+                          </div>
+                          <p className="text-slate-600 mt-0.5 leading-relaxed">
+                            Requested contract details and utility breakdown from Uniplaces agent.
+                          </p>
+                          <button
+                            onClick={() => {
+                              setActiveTab("housing");
+                              setHousingSubView("list");
+                            }}
+                            className="text-[#DC2626] font-bold text-[11px] hover:underline mt-1 inline-flex items-center gap-1"
+                          >
+                            <span>Inspect listing &amp; contact</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Event 4 */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-7 h-7 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
+                          <Sparkles className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <h4 className="font-bold text-slate-900">Alpha Check Completed</h4>
+                            <span className="text-[10.5px] text-slate-400 shrink-0">Sep 29, 2:45 PM</span>
+                          </div>
+                          <p className="text-slate-600 mt-0.5 leading-relaxed">
+                            Automated compliance scan passed: budget verified, short-term lease permitted, scam risk 0%.
+                          </p>
+                          <button
+                            onClick={() => {
+                              setSelectedApartmentId("via-dei-neri");
+                              setActiveTab("housing");
+                              setHousingSubView("audit");
+                            }}
+                            className="text-[#DC2626] font-bold text-[11px] hover:underline mt-1 inline-flex items-center gap-1"
+                          >
+                            <span>Inspect listing &amp; contact</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 text-center">
+                      <button className="text-[#DC2626] text-xs font-bold hover:underline inline-flex items-center gap-1">
+                        <span>View All Activity</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right (4 cols): Group Member Approvals */}
+                  <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4">
+                    <h3 className="text-sm font-bold text-slate-900 pb-1 border-b border-slate-100">
+                      Group Member Approvals
+                    </h3>
+
+                    <div className="space-y-3">
+                      {[
+                        { name: "Emma", price: "$1200/mo", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" },
+                        { name: "Sophie", price: "$1200/mo", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=120&q=80" },
+                        { name: "Olivia", price: "$1400/mo", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" },
+                        { name: "Mia", price: "$1300/mo", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" },
+                      ].map((member, i) => (
+                        <div key={i} className="flex items-center justify-between p-2 rounded-xl border border-slate-100 hover:border-slate-200 transition-colors">
+                          <div className="flex items-center gap-2.5">
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-200 shrink-0">
+                              <Image src={member.avatar} alt={member.name} fill className="object-cover" />
+                            </div>
+                            <div>
+                              <span className="text-xs font-bold text-slate-900 block">{member.name}</span>
+                              <span className="text-[10px] text-slate-400 block">{member.price}</span>
+                            </div>
+                          </div>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 flex items-center gap-1">
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            <span>Ready</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Link
+                      href="/safety"
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs"
+                    >
+                      <Eye className="w-3.5 h-3.5 text-slate-300" />
+                      <span>Open Parent Portal</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================= */}
+            {/* VIEW 6: MESSAGES & INBOX TAB (SCREENSHOT 3) */}
+            {/* ========================================================= */}
+            {activeTab === "messages" && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <div className="flex items-center gap-2 text-xs mb-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#DC2626]">COMMUNICATIONS</span>
+                      <span className="text-slate-300">•</span>
+                      <Link href="/safety" className="text-slate-500 hover:text-slate-900 text-xs font-semibold">
+                        View in Parent Portal →
+                      </Link>
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                      Messages &amp; Inbox
+                    </h1>
+                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                      Direct conversations with Italian rental agencies, landlords, roommates, and your Alpha AI advisor.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2-Column Chat Box */}
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
+                  {/* Left Column (5 cols): Conversations list */}
+                  <div className="lg:col-span-5 border-r border-slate-200 flex flex-col">
+                    {/* List Header */}
+                    <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-slate-900">Messages &amp; Chats</h3>
+                        <span className="px-2 py-0.5 rounded-full bg-[#DC2626] text-white text-[10px] font-bold">
+                          4 new
+                        </span>
+                      </div>
+                      <button className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold">
+                        Mark all read
+                      </button>
+                    </div>
+
+                    {/* Search */}
+                    <div className="p-3 border-b border-slate-100">
+                      <div className="relative">
+                        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          value={chatSearch}
+                          onChange={(e) => setChatSearch(e.target.value)}
+                          placeholder="Search conversations or messages..."
+                          className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#DC2626]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Filter Pills */}
+                    <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-1.5 overflow-x-auto text-[11px]">
+                      {[
+                        { id: "all", label: "All" },
+                        { id: "agency", label: "Agency" },
+                        { id: "advisor", label: "AI Advisor" },
+                        { id: "roommates", label: "Roommates" },
+                        { id: "support", label: "Support" },
+                      ].map((cat) => (
+                        <button
+                          key={cat.id}
+                          onClick={() => setChatCategory(cat.id)}
+                          className={`px-2.5 py-1 rounded-full font-semibold transition-all shrink-0 ${
+                            chatCategory === cat.id
+                              ? "bg-slate-900 text-white"
+                              : "text-slate-600 hover:bg-slate-100"
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Conversation Items */}
+                    <div className="divide-y divide-slate-100 overflow-y-auto flex-1">
+                      {/* Chat 1: Marco Valenti */}
+                      <button
+                        onClick={() => setActiveChatId("marco")}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
+                          activeChatId === "marco" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                        }`}
+                      >
+                        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-200 shrink-0">
+                          <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Marco" fill className="object-cover" />
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-bold text-slate-900 truncate flex items-center gap-1">
+                              <span>Marco Valenti (Agency)</span>
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                            </span>
+                            <span className="text-[10px] text-slate-400 shrink-0">10:05 AM</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                            Standard Contratto Transitorio draft attached for...
+                          </p>
+                        </div>
+                        <span className="w-4 h-4 rounded-full bg-[#DC2626] text-white text-[10px] font-bold flex items-center justify-center shrink-0 self-center">
+                          2
+                        </span>
+                      </button>
+
+                      {/* Chat 2: Alpha Advisor (AI) */}
+                      <button
+                        onClick={() => setActiveChatId("advisor")}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
+                          activeChatId === "advisor" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                        }`}
+                      >
+                        <div className="w-9 h-9 rounded-full bg-rose-50 text-[#DC2626] flex items-center justify-center shrink-0 border border-rose-200">
+                          <Sparkles className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-bold text-slate-900 truncate flex items-center gap-1">
+                              <span>Alpha Advisor (AI)</span>
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                            </span>
+                            <span className="text-[10px] text-slate-400 shrink-0">8:46 AM</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                            100% of deposit safeguarded in EU escrow until ke...
+                          </p>
+                        </div>
+                        <span className="w-4 h-4 rounded-full bg-[#DC2626] text-white text-[10px] font-bold flex items-center justify-center shrink-0 self-center">
+                          1
+                        </span>
+                      </button>
+
+                      {/* Chat 3: Roommates Group */}
+                      <button
+                        onClick={() => setActiveChatId("roommates")}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
+                          activeChatId === "roommates" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                        }`}
+                      >
+                        <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200 font-bold text-xs">
+                          RG
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-bold text-slate-900 truncate">Roommates Group</span>
+                            <span className="text-[10px] text-slate-400 shrink-0">10:15 AM</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                            Let&apos;s ask Marco for video walk-through tomorrow at 4:30
+                          </p>
+                        </div>
+                      </button>
+
+                      {/* Chat 4: Parent Escrow Support */}
+                      <button
+                        onClick={() => setActiveChatId("escrow")}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
+                          activeChatId === "escrow" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                        }`}
+                      >
+                        <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-bold text-slate-900 truncate">Parent Escrow Support</span>
+                            <span className="text-[10px] text-slate-400 shrink-0">9:30 AM</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                            Transaction hold #IT-5928-ESCROW active and re...
+                          </p>
+                        </div>
+                        <span className="w-4 h-4 rounded-full bg-[#DC2626] text-white text-[10px] font-bold flex items-center justify-center shrink-0 self-center">
+                          1
+                        </span>
+                      </button>
+
+                      {/* Chat 5: IES Housing Office */}
+                      <button
+                        onClick={() => setActiveChatId("ies")}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
+                          activeChatId === "ies" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                        }`}
+                      >
+                        <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200 font-bold text-xs">
+                          IES
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-bold text-slate-900 truncate flex items-center gap-1">
+                              <span>IES Housing Office</span>
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                            </span>
+                            <span className="text-[10px] text-slate-400 shrink-0">Oct 7</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                            Orientation desk will assist students with Codice Fis...
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right Column (7 cols): Active Chat Feed */}
+                  <div className="lg:col-span-7 flex flex-col justify-between bg-slate-50/30">
+                    {/* Active Chat Header */}
+                    <div className="p-3.5 sm:p-4 bg-white border-b border-slate-200 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-200 shrink-0">
+                          <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Marco" fill className="object-cover" />
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="text-xs sm:text-sm font-bold text-slate-900">Marco Valenti (Agency)</h3>
+                            <span className="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 flex items-center gap-0.5">
+                              <Check className="w-2.5 h-2.5 text-emerald-600" />
+                              <span>Verified</span>
+                            </span>
+                          </div>
+                          <div className="text-[10.5px] text-emerald-600 font-medium flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            <span>Online now</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                        <Phone className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Call Coordinator</span>
+                      </button>
+                    </div>
+
+                    {/* Messages Scroll Area */}
+                    <div className="p-4 space-y-4 overflow-y-auto max-h-[460px] flex-1">
+                      {messagesList.map((msg) => {
+                        const isUser = msg.sender === "user";
+                        return (
+                          <div
+                            key={msg.id}
+                            className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              {!isUser && (
+                                <div className="relative w-5 h-5 rounded-full overflow-hidden bg-slate-200 shrink-0">
+                                  <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=60&q=80" alt="Marco" fill className="object-cover" />
+                                </div>
+                              )}
+                              <span className="text-[10.5px] font-bold text-slate-700">{msg.senderName}</span>
+                              {!isUser && <span className="text-[9px] text-slate-400">Licensed Broker #FI-4082</span>}
+                              <span className="text-[10px] text-slate-400">{msg.time}</span>
+                            </div>
+
+                            <div
+                              className={`p-3.5 rounded-2xl max-w-[85%] text-xs leading-relaxed shadow-2xs ${
+                                isUser
+                                  ? "bg-[#DC2626] text-white rounded-br-xs"
+                                  : "bg-white border border-slate-200 text-slate-800 rounded-bl-xs"
+                              }`}
+                            >
+                              <p>{msg.text}</p>
+
+                              {msg.attachment && (
+                                <div className="mt-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-slate-800">
+                                  <div className="flex items-center gap-2 truncate">
+                                    <FileText className="w-4 h-4 text-[#DC2626] shrink-0" />
+                                    <div className="truncate">
+                                      <span className="font-bold text-[11px] block truncate">{msg.attachment.name}</span>
+                                      <span className="text-[10px] text-slate-400 block">{msg.attachment.size}</span>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() => alert("Downloading PDF preview...")}
+                                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-[10.5px] font-bold text-slate-700 shrink-0"
+                                  >
+                                    View PDF
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Quick Replies Strip */}
+                    <div className="px-4 py-2 border-t border-slate-200 bg-white/80 backdrop-blur-xs flex items-center gap-1.5 overflow-x-auto text-[10.5px]">
+                      <span className="text-slate-400 font-bold uppercase tracking-wider text-[9.5px] shrink-0">QUICK:</span>
+                      {[
+                        "Confirm move-in date Jan 8",
+                        "Request live video walk-through",
+                        "Ask about utility & heating bills",
+                        "Verify Escrow deposit guarantee",
+                      ].map((reply, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleSendMessage(reply)}
+                          className="px-2.5 py-1 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 shrink-0 transition-colors"
+                        >
+                          {reply}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Chat Input Bar */}
+                    <div className="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+                      <button
+                        className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                        aria-label="Attach file"
+                      >
+                        <Paperclip className="w-4 h-4" />
+                      </button>
+                      <input
+                        type="text"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSendMessage();
+                        }}
+                        placeholder="Message Marco Valenti (Agency)..."
+                        className="flex-1 py-2 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => handleSendMessage()}
+                        className="p-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white transition-colors shadow-2xs"
+                        aria-label="Send message"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================= */}
+            {/* VIEW 7: DOCUMENTS & LEGAL COMPLIANCE TAB (SCREENSHOT 4) */}
+            {/* ========================================================= */}
+            {activeTab === "documents" && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    Documents &amp; Legal Compliance
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                    Verified Italian student rental contracts, roommate agreements, and tax documents.
+                  </p>
+                </div>
+
+                {/* 4 Document Cards */}
+                <div className="space-y-3">
+                  {[
+                    {
+                      title: "Italian Standard Student Lease Agreement (Contratto Transitorio)",
+                      badge: "Ready for Review",
+                      badgeColor: "emerald",
+                      size: "1.4 MB",
+                      updated: "Updated today",
+                    },
+                    {
+                      title: "Codice Fiscale (Italian Tax Code) Application Guide",
+                      badge: "Required for Lease",
+                      badgeColor: "emerald",
+                      size: "420 KB",
+                      updated: "Step-by-step instructions",
+                    },
+                    {
+                      title: "Roommate Expense & Quiet Hours Agreement",
+                      badge: "Signed by 4/4 students",
+                      badgeColor: "emerald",
+                      size: "280 KB",
+                      updated: "Signed Oct 5",
+                    },
+                    {
+                      title: "Move-in Inspection & Damage Checklist (Florence)",
+                      badge: "Template Ready",
+                      badgeColor: "emerald",
+                      size: "890 KB",
+                      updated: "Print for Jan 8 move-in",
+                    },
+                  ].map((doc, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      <div className="flex items-start gap-3.5">
+                        <div className="w-9 h-9 rounded-xl bg-rose-50 text-[#DC2626] border border-rose-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                            {doc.title}
+                          </h3>
+                          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                            <span className="inline-flex items-center gap-1 font-bold text-emerald-700">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              <span>{doc.badge}</span>
+                            </span>
+                            <span>•</span>
+                            <span>{doc.size}</span>
+                            <span>•</span>
+                            <span>{doc.updated}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => alert(`Downloading ${doc.title}...`)}
+                        className="py-2 px-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shrink-0 shadow-2xs"
+                      >
+                        <Download className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Download</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
