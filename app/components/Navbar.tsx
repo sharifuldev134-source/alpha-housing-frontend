@@ -166,14 +166,24 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                 </div>
                 <div className="py-1">
                   <Link
-                    href="/how-it-works"
+                    href="/dashboard"
+                    onClick={() => setProfileDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 bg-red-50/70 hover:bg-red-50 transition-colors"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-red-600" />
+                    <span>Dashboard Overview</span>
+                  </Link>
+                  <Link
+                    href="/dashboard?tab=neighborhoods"
+                    onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
                   >
                     <Users className="w-4 h-4 text-slate-400" />
-                    <span>Manage Roommates (4/4)</span>
+                    <span>Explore Neighborhoods</span>
                   </Link>
                   <Link
                     href="/housing"
+                    onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
                   >
                     <Heart className="w-4 h-4 text-slate-400" />
@@ -181,6 +191,7 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                   </Link>
                   <Link
                     href="/safety"
+                    onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
                   >
                     <ShieldCheck className="w-4 h-4 text-emerald-500" />
@@ -188,6 +199,7 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                   </Link>
                   <Link
                     href="/how-it-works"
+                    onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
                   >
                     <FileCheck2 className="w-4 h-4 text-red-500" />
