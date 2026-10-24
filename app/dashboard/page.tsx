@@ -2169,11 +2169,6 @@ function DashboardContent() {
                           </div>
                         </div>
                       </div>
-
-                      <button className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
-                        <Phone className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Call Coordinator</span>
-                      </button>
                     </div>
 
                     {/* Messages Scroll Area */}
