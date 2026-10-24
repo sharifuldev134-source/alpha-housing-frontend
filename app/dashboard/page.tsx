@@ -27,7 +27,16 @@ import {
   Clock, 
   Calendar, 
   Pencil,
-  AlertCircle
+  AlertCircle,
+  Lock,
+  BedDouble,
+  Bath,
+  Maximize2,
+  Wifi,
+  Send,
+  RefreshCw,
+  Layers,
+  ChevronLeft
 } from "lucide-react";
 
 interface NeighborhoodItem {
@@ -122,6 +131,82 @@ const NEIGHBORHOODS_LIST: NeighborhoodItem[] = [
   },
 ];
 
+interface ApartmentItem {
+  id: string;
+  name: string;
+  neighborhood: string;
+  commute: string;
+  beds: number;
+  baths: number;
+  sqft: string;
+  price: number;
+  pricePerStudent: number;
+  status: "Available" | "Waiting for response";
+  statusColor: "emerald" | "amber";
+  source: string;
+  tags: string[];
+  fullSpecs: string[];
+  images: string[];
+  address: string;
+  about: string;
+  amenities: string[];
+}
+
+const APARTMENTS_DATA: ApartmentItem[] = [
+  {
+    id: "via-dei-neri",
+    name: "Via dei Neri Apartment",
+    neighborhood: "Santa Croce",
+    commute: "12 min to program",
+    beds: 4,
+    baths: 2,
+    sqft: "120 m²",
+    price: 4800,
+    pricePerStudent: 1200,
+    status: "Available",
+    statusColor: "emerald",
+    source: "Spotahome",
+    tags: ["Furnished", "Wi-Fi", "Elevator", "+3 more"],
+    fullSpecs: ["4 beds", "2 bathrooms", "120 m²", "Furnished", "Utilities not included", "High-speed Wi-Fi", "Elevator"],
+    images: [
+      "https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
+    ],
+    address: "Via dei Neri, 42, 50122 Firenze FI, Italy",
+    about: "Spacious and bright apartment in the heart of Santa Croce. Recently renovated, fully furnished, and ideal for a group of 4 students. Close to restaurants, cafés and public transportation. Features high beamed ceilings, dedicated study desks in each room, high-speed fiber internet, and quiet double-glazed windows.",
+    amenities: ["Furnished", "Wi-Fi", "Elevator", "Air conditioning", "Washing machine", "Dishwasher"],
+  },
+  {
+    id: "santa-croce-apt",
+    name: "Santa Croce Apartment",
+    neighborhood: "Santa Croce",
+    commute: "15 min to program",
+    beds: 4,
+    baths: 2,
+    sqft: "110 m²",
+    price: 4500,
+    pricePerStudent: 1125,
+    status: "Waiting for response",
+    statusColor: "amber",
+    source: "HousingAnywhere",
+    tags: ["Furnished", "Utilities included", "Wi-Fi", "+2 more"],
+    fullSpecs: ["4 beds", "2 bathrooms", "110 m²", "Furnished", "Utilities included", "High-speed Wi-Fi"],
+    images: [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=800&q=80",
+    ],
+    address: "Piazza Santa Croce, 14, 50122 Firenze FI, Italy",
+    about: "Modernized historic apartment overlooking a charming side piazza. Generous common areas, sound insulation, and walking distance to study hubs.",
+    amenities: ["Furnished", "Wi-Fi", "Utilities included", "Air conditioning", "Washing machine"],
+  },
+];
+
 function DashboardContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "overview";
@@ -131,6 +216,19 @@ function DashboardContent() {
   const [savedFavorites, setSavedFavorites] = useState<Record<string, boolean>>({
     "santa-croce": true,
   });
+
+  // Housing Options Tab Sub-Views State
+  const [housingSubView, setHousingSubView] = useState<"list" | "detail" | "audit">("list");
+  const [housingFilterTab, setHousingFilterTab] = useState<"all" | "available" | "contacted" | "saved">("all");
+  const [selectedApartmentId, setSelectedApartmentId] = useState<string>("via-dei-neri");
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
+  const [askAdvisorModalOpen, setAskAdvisorModalOpen] = useState<boolean>(false);
+  const [advisorHelpTopic, setAdvisorHelpTopic] = useState<string>("Clarify lease terms");
+  const [advisorQuestion, setAdvisorQuestion] = useState<string>("");
+  const [advisorSubmitted, setAdvisorSubmitted] = useState<boolean>(false);
+
+  const isHousingDetail = activeTab === "housing" && housingSubView === "detail";
+  const currentApartment = APARTMENTS_DATA.find((a) => a.id === selectedApartmentId) || APARTMENTS_DATA[0];
 
   const toggleFavorite = (id: string) => {
     setSavedFavorites((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -145,9 +243,10 @@ function DashboardContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 w-full flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* ------------------------------------------------------------- */}
-          {/* LEFT SIDEBAR (3 cols) */}
+          {/* LEFT SIDEBAR (3 cols) - Hidden in full Apartment Detail View */}
           {/* ------------------------------------------------------------- */}
-          <div className="lg:col-span-3 space-y-4">
+          {!isHousingDetail && (
+            <div className="lg:col-span-3 space-y-4">
             {/* Top Destination / Group Card */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
               <div className="flex items-center justify-between">
@@ -205,18 +304,27 @@ function DashboardContent() {
               </button>
 
               {/* Housing Options */}
-              <Link
-                href="/housing"
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              <button
+                onClick={() => {
+                  setActiveTab("housing");
+                  setHousingSubView("list");
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "housing"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
                 <span className="flex items-center gap-3">
                   <Building2 className="w-4 h-4" />
                   <span>Housing Options</span>
                 </span>
-                <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
+                  activeTab === "housing" ? "bg-red-100 text-[#DC2626]" : "bg-slate-100 text-slate-600"
+                }`}>
                   28
                 </span>
-              </Link>
+              </button>
 
               {/* Compare */}
               <Link
@@ -310,19 +418,24 @@ function DashboardContent() {
               <p className="text-[11px] text-slate-600 leading-relaxed">
                 Need lease contract review or university commute check?
               </p>
-              <Link
-                href="/how-it-works"
+              <button
+                onClick={() => {
+                  setActiveTab("housing");
+                  setHousingSubView("audit");
+                  setSelectedApartmentId("via-dei-neri");
+                }}
                 className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center transition-colors shadow-2xs"
               >
                 Run Alpha Check
-              </Link>
+              </button>
             </div>
           </div>
+          )}
 
           {/* ------------------------------------------------------------- */}
-          {/* MAIN CONTENT AREA (9 cols) */}
+          {/* MAIN CONTENT AREA */}
           {/* ------------------------------------------------------------- */}
-          <div className="lg:col-span-9">
+          <div className={isHousingDetail ? "lg:col-span-12" : "lg:col-span-9"}>
             {/* ========================================================= */}
             {/* VIEW 1: OVERVIEW TAB */}
             {/* ========================================================= */}
@@ -661,6 +774,685 @@ function DashboardContent() {
                 </div>
               </div>
             )}
+
+            {/* ========================================================= */}
+            {/* VIEW 3: HOUSING OPTIONS TAB */}
+            {/* ========================================================= */}
+            {activeTab === "housing" && (
+              <div className="space-y-6">
+                {/* ------------------------------------------------------- */}
+                {/* SUB-VIEW 1: HOUSING LIST VIEW (SCREENSHOT 1) */}
+                {/* ------------------------------------------------------- */}
+                {housingSubView === "list" && (
+                  <div className="space-y-5">
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                          Housing Options
+                        </h1>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                          Options from trusted sources, organized for your group.
+                        </p>
+                      </div>
+
+                      {/* Filtered by: Santa Croce Clear Tag */}
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-[11px] text-slate-700 w-fit">
+                        <span className="text-slate-500">Filtered by:</span>
+                        <span className="font-bold text-slate-900">Santa Croce</span>
+                        <button
+                          onClick={() => {}}
+                          className="text-[#DC2626] font-bold hover:underline flex items-center gap-0.5 ml-1"
+                        >
+                          ✕ Clear
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Filter Pills & Sort Row */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {[
+                          { id: "all", label: "All (28)" },
+                          { id: "available", label: "Available (8)" },
+                          { id: "contacted", label: "Contacted (0)" },
+                          { id: "saved", label: "Saved (1)" },
+                        ].map((tab) => (
+                          <button
+                            key={tab.id}
+                            onClick={() => setHousingFilterTab(tab.id as any)}
+                            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                              housingFilterTab === tab.id
+                                ? "bg-[#DC2626] text-white shadow-xs"
+                                : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                            }`}
+                          >
+                            {tab.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <span>Sort by:</span>
+                        <select className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:border-[#DC2626]">
+                          <option>Best Match</option>
+                          <option>Price: Low to High</option>
+                          <option>Commute Time</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Apartment Cards */}
+                    <div className="space-y-4 pt-1">
+                      {APARTMENTS_DATA.map((apt) => {
+                        const isSaved = savedFavorites[apt.id];
+                        return (
+                          <div
+                            key={apt.id}
+                            className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs hover:shadow-md transition-all p-3.5 sm:p-4 flex flex-col md:flex-row gap-4 sm:gap-6 items-stretch"
+                          >
+                            {/* Left / Top Image */}
+                            <div className="relative w-full md:w-[320px] aspect-[16/10] md:aspect-auto md:h-48 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+                              <Image
+                                src={apt.images[0]}
+                                alt={apt.name}
+                                fill
+                                className="object-cover"
+                              />
+
+                              {/* Top Status Badge */}
+                              <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                                {apt.status === "Available" ? (
+                                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-600/95 text-white font-bold text-[10.5px] flex items-center gap-1 shadow-xs">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-200 animate-pulse" />
+                                    <span>Available</span>
+                                  </span>
+                                ) : (
+                                  <span className="px-2.5 py-0.5 rounded-md bg-amber-500/95 text-white font-bold text-[10.5px] flex items-center gap-1 shadow-xs">
+                                    <Clock className="w-3 h-3 text-amber-200" />
+                                    <span>Waiting for response</span>
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Bottom Source Badge */}
+                              <div className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[10px] font-medium shadow-xs">
+                                Source: {apt.source}
+                              </div>
+                            </div>
+
+                            {/* Right Content */}
+                            <div className="flex-1 flex flex-col justify-between space-y-3">
+                              <div>
+                                <div className="flex items-start justify-between gap-2">
+                                  <div>
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                                      {apt.name}
+                                    </h3>
+                                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                                      <span>{apt.neighborhood}</span>
+                                      <span>•</span>
+                                      <span className="text-[#DC2626] font-semibold flex items-center gap-1">
+                                        <Clock className="w-3 h-3" />
+                                        <span>{apt.commute}</span>
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Heart + Price */}
+                                  <div className="flex flex-col items-end shrink-0">
+                                    <button
+                                      onClick={() => toggleFavorite(apt.id)}
+                                      className={`p-1.5 rounded-full mb-1 transition-colors ${
+                                        isSaved
+                                          ? "bg-rose-50 text-[#DC2626]"
+                                          : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                                      }`}
+                                      aria-label="Save"
+                                    >
+                                      <Heart className={`w-4 h-4 ${isSaved ? "fill-[#DC2626]" : ""}`} />
+                                    </button>
+                                    <div className="text-right">
+                                      <span className="text-lg sm:text-xl font-extrabold text-slate-900">
+                                        €{apt.price.toLocaleString()}
+                                      </span>
+                                      <span className="text-xs text-slate-500"> / month</span>
+                                      <div className="text-[10.5px] text-slate-400">
+                                        (€{apt.pricePerStudent} / student)
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Specs Row */}
+                                <div className="text-xs text-slate-600 font-medium flex items-center gap-2 pt-1.5">
+                                  <span>{apt.beds} beds</span>
+                                  <span>•</span>
+                                  <span>{apt.baths} baths</span>
+                                  <span>•</span>
+                                  <span>{apt.sqft}</span>
+                                </div>
+
+                                {/* Tag Chips */}
+                                <div className="flex flex-wrap items-center gap-1.5 pt-2">
+                                  {apt.tags.map((tag, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10.5px] font-medium"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Footer Action */}
+                              <div className="flex items-center justify-end pt-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedApartmentId(apt.id);
+                                    setSelectedPhotoIndex(0);
+                                    setHousingSubView("detail");
+                                  }}
+                                  className="px-5 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs hover:shadow-sm transition-all"
+                                >
+                                  <span>View Details</span>
+                                  <ArrowRight className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* ------------------------------------------------------- */}
+                {/* SUB-VIEW 2: APARTMENT DETAIL VIEW (SCREENSHOT 2) */}
+                {/* ------------------------------------------------------- */}
+                {housingSubView === "detail" && (
+                  <div className="space-y-6">
+                    {/* Top Action Row */}
+                    <div className="flex items-center justify-between pb-1">
+                      <button
+                        onClick={() => setHousingSubView("list")}
+                        className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-950 transition-colors"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back to Results</span>
+                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setHousingSubView("audit")}
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-red-200 bg-red-50/50 hover:bg-red-50 text-[#DC2626] text-xs font-bold transition-all shadow-2xs"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-[#DC2626]" />
+                          <span>View Alpha Check</span>
+                        </button>
+                        <button
+                          onClick={() => toggleFavorite(currentApartment.id)}
+                          className="p-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-[#DC2626] shadow-2xs transition-colors"
+                          aria-label="Save"
+                        >
+                          <Heart className={`w-4 h-4 ${savedFavorites[currentApartment.id] ? "fill-[#DC2626]" : ""}`} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Title & Price Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                            {currentApartment.name}
+                          </h1>
+                          {currentApartment.status === "Available" ? (
+                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[11px] flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                              <span>Available</span>
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-bold text-[11px] flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-amber-600" />
+                              <span>Waiting for response</span>
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-1 flex-wrap">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                            <span>{currentApartment.neighborhood}, Florence</span>
+                          </span>
+                          <span>•</span>
+                          <span className="text-[#DC2626] font-semibold flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{currentApartment.commute}</span>
+                          </span>
+                          <span>•</span>
+                          <span>Source: {currentApartment.source}</span>
+                        </div>
+                      </div>
+
+                      <div className="text-left sm:text-right shrink-0">
+                        <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                          €{currentApartment.price.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-slate-500"> / month</span>
+                        <div className="text-xs text-slate-500 font-medium">
+                          €{currentApartment.pricePerStudent} / month per student (4 students)
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Photo Gallery Switcher */}
+                    <div className="space-y-3">
+                      {/* Main Hero Photo */}
+                      <div className="relative aspect-[16/9] sm:h-[420px] w-full rounded-2xl overflow-hidden bg-slate-900 shadow-sm">
+                        <Image
+                          src={currentApartment.images[selectedPhotoIndex] || currentApartment.images[0]}
+                          alt={currentApartment.name}
+                          fill
+                          priority
+                          className="object-cover"
+                        />
+                        <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-xs font-semibold shadow-xs">
+                          Photo {selectedPhotoIndex + 1} of {currentApartment.images.length}
+                        </div>
+                      </div>
+
+                      {/* Thumbnails Row */}
+                      <div className="grid grid-cols-6 gap-2 sm:gap-3">
+                        {currentApartment.images.map((img, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setSelectedPhotoIndex(idx)}
+                            className={`relative aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all ${
+                              selectedPhotoIndex === idx
+                                ? "border-[#DC2626] ring-2 ring-red-500/20"
+                                : "border-transparent opacity-75 hover:opacity-100"
+                            }`}
+                          >
+                            <Image src={img} alt={`Thumb ${idx + 1}`} fill className="object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Specs Row */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 flex items-center gap-1.5 shadow-2xs">
+                        <BedDouble className="w-3.5 h-3.5 text-slate-500" />
+                        <span>{currentApartment.beds} beds</span>
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 flex items-center gap-1.5 shadow-2xs">
+                        <Bath className="w-3.5 h-3.5 text-slate-500" />
+                        <span>{currentApartment.baths} bathrooms</span>
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 flex items-center gap-1.5 shadow-2xs">
+                        <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
+                        <span>{currentApartment.sqft}</span>
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50/70 text-xs font-bold text-emerald-800 flex items-center gap-1.5 shadow-2xs">
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Furnished</span>
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-600 shadow-2xs">
+                        Utilities not included
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-600 shadow-2xs">
+                        High-speed Wi-Fi
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-600 shadow-2xs">
+                        Elevator
+                      </span>
+                    </div>
+
+                    {/* Two-Column Detail Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start pt-2">
+                      {/* Left Column (7 cols) */}
+                      <div className="lg:col-span-7 space-y-5">
+                        {/* About This Property */}
+                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900">About This Property</h3>
+                            <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                              {currentApartment.about}
+                            </p>
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-100">
+                            <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
+                              AMENITIES &amp; FURNISHINGS
+                            </h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-slate-700">
+                              {currentApartment.amenities.map((item, i) => (
+                                <div key={i} className="flex items-center gap-1.5">
+                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span>{item}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="p-3.5 rounded-xl border border-rose-200/90 bg-rose-50/30 flex items-start gap-2.5">
+                            <ShieldCheck className="w-4 h-4 text-[#DC2626] shrink-0 mt-0.5" />
+                            <div className="text-xs">
+                              <span className="font-bold text-slate-900 block">Verified Study Abroad Listing</span>
+                              <span className="text-[11px] text-slate-600 leading-snug block mt-0.5">
+                                Landlord is verified with legitimate Italian tax code and rental contract compliant with student visa requirements.
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Review Alpha Check Report Banner Card */}
+                        <div className="bg-gradient-to-br from-[#991B1B] via-[#881337] to-[#7F1D1D] rounded-2xl p-5 text-white shadow-md relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="space-y-1.5 relative z-10 max-w-lg">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold text-[10px] uppercase tracking-wider">
+                              <Sparkles className="w-3 h-3 text-amber-300" />
+                              <span>AI HOUSING AUDIT</span>
+                            </div>
+                            <h3 className="text-lg font-bold text-white">Review Alpha Check Report</h3>
+                            <p className="text-xs text-white/80 leading-relaxed">
+                              Inspect move-in cost breakdown, hidden fees, lease clause warnings, and group fit score.
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => setHousingSubView("audit")}
+                            className="px-4 py-2.5 rounded-xl bg-white text-[#991B1B] hover:bg-slate-100 font-bold text-xs shrink-0 flex items-center gap-1.5 shadow-sm transition-all"
+                          >
+                            <span>View Report</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Right Column (5 cols) */}
+                      <div className="lg:col-span-5 space-y-4">
+                        {/* Map Preview Card */}
+                        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs space-y-0">
+                          <div className="relative h-44 w-full bg-[#E8ECF2] overflow-hidden flex items-center justify-center">
+                            <svg className="w-full h-full" viewBox="0 0 360 176" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect width="360" height="176" fill="#EAEFF5" />
+                              <path d="M-10 120 Q 90 110, 180 130 T 370 125 L 370 176 L -10 176 Z" fill="#D3E2F2" />
+                              <path d="M 40 0 L 70 176" stroke="#FFFFFF" strokeWidth="6" />
+                              <path d="M 120 0 L 140 176" stroke="#FFFFFF" strokeWidth="8" />
+                              <path d="M 240 0 L 220 176" stroke="#FFFFFF" strokeWidth="5" />
+                              <path d="M 0 50 L 360 70" stroke="#FFFFFF" strokeWidth="7" />
+                              <path d="M 0 110 L 360 115" stroke="#FFFFFF" strokeWidth="6" />
+                              <path d="M 80 40 L 280 140" stroke="#DC2626" strokeWidth="2.5" strokeDasharray="4 3" />
+                            </svg>
+
+                            <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-xs shadow-xs text-[10.5px] font-bold text-[#DC2626] flex items-center gap-1 border border-slate-100">
+                              <Clock className="w-3 h-3" />
+                              <span>12 min Walk to IES</span>
+                            </div>
+
+                            {/* Pin 1: Apartment */}
+                            <div className="absolute top-[32%] left-[22%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                              <div className="w-6 h-6 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-md border-2 border-white">
+                                <Building2 className="w-3 h-3" />
+                              </div>
+                              <span className="mt-0.5 px-1.5 py-0.5 rounded bg-slate-900/90 text-white font-bold text-[9px]">
+                                Apartment
+                              </span>
+                            </div>
+
+                            {/* Pin 2: IES Abroad */}
+                            <div className="absolute top-[68%] left-[75%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                              <div className="w-6 h-6 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-md border-2 border-white">
+                                <Sparkles className="w-3 h-3 text-amber-200" />
+                              </div>
+                              <span className="mt-0.5 px-1.5 py-0.5 rounded bg-slate-900/90 text-white font-bold text-[9px]">
+                                IES Abroad - Florence
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-white text-slate-600 text-[11px] flex items-center gap-1.5 border-t border-slate-100">
+                            <span className="font-semibold text-slate-700">Address:</span>
+                            <span className="text-slate-500">{currentApartment.address}</span>
+                          </div>
+                        </div>
+
+                        {/* Contact Options Card */}
+                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-3">
+                          <h3 className="text-sm font-bold text-slate-900">Contact Options</h3>
+                          <div className="space-y-2">
+                            <button
+                              onClick={() => setAskAdvisorModalOpen(true)}
+                              className="w-full py-2.5 px-4 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all"
+                            >
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>Contact / Ask Alpha</span>
+                            </button>
+                            <button
+                              onClick={() => setAskAdvisorModalOpen(true)}
+                              className="w-full py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                            >
+                              <Send className="w-3.5 h-3.5 text-slate-400" />
+                              <span>Request Availability</span>
+                            </button>
+                            <button
+                              onClick={() => toggleFavorite(currentApartment.id)}
+                              className="w-full py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+                              <span>Save to Compare</span>
+                            </button>
+                          </div>
+                          <p className="text-[10.5px] text-slate-400 text-center pt-1 leading-snug">
+                            No booking fee until lease contract is finalized and verified.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ------------------------------------------------------- */}
+                {/* SUB-VIEW 3: ALPHA CHECK REPORT (SCREENSHOT 3) */}
+                {/* ------------------------------------------------------- */}
+                {housingSubView === "audit" && (
+                  <div className="space-y-5">
+                    {/* Top Back Link */}
+                    <div className="flex items-center justify-between pb-1">
+                      <button
+                        onClick={() => setHousingSubView("detail")}
+                        className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-950 transition-colors"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back to {currentApartment.name}</span>
+                      </button>
+                    </div>
+
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 text-[#DC2626] text-xs font-bold mb-1">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>AI Automated Housing Audit</span>
+                        </div>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                          Alpha Check
+                        </h1>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                          See if the option fits your group, with total cost and key details.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-slate-400">Audited for:</span>
+                        <span className="px-3 py-1 rounded-lg border border-slate-200 bg-white font-bold text-slate-800 shadow-2xs">
+                          {currentApartment.name}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 3-Column Layout */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+                      {/* Column 1: Good Fit for Your Group */}
+                      <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-4">
+                        <div className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold inline-flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Good Fit for Your Group</span>
+                        </div>
+
+                        <div>
+                          <h4 className="text-xs font-bold text-slate-800">
+                            We reviewed this option based on your group&apos;s plan.
+                          </h4>
+
+                          <div className="space-y-3 pt-3">
+                            {[
+                              {
+                                title: "Fits 4 students",
+                                desc: "4 independent bedrooms matching group headcount",
+                              },
+                              {
+                                title: "Within group budget",
+                                desc: "€4800 is under total budget (€5,200)",
+                              },
+                              {
+                                title: "12 minutes to program",
+                                desc: "Quick walk to IES Abroad - Florence",
+                              },
+                              {
+                                title: "Furnished",
+                                desc: "Complete desks, mattresses, wardrobes & kitchen gear",
+                              },
+                              {
+                                title: "Dates appear available",
+                                desc: "Jan 8, 2027 – May 15, 2027",
+                              },
+                              {
+                                title: "Housing source identified",
+                                desc: "Verified vendor: Spotahome",
+                              },
+                            ].map((item, idx) => (
+                              <div key={idx} className="flex items-start gap-2 text-xs">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                <div>
+                                  <span className="font-bold text-slate-900 block leading-tight">
+                                    {item.title}
+                                  </span>
+                                  <span className="text-[11px] text-slate-500 block leading-tight mt-0.5">
+                                    {item.desc}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="p-3 rounded-xl border border-rose-200/90 bg-rose-50/30 flex items-center gap-2 text-xs text-slate-800">
+                          <ShieldCheck className="w-4 h-4 text-[#DC2626] shrink-0" />
+                          <span className="font-semibold text-[11px]">
+                            Matches 100% of non-negotiable student filters
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Column 2: Cost Breakdown [estimated] */}
+                      <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-4">
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="text-base font-bold text-slate-900">Cost Breakdown</h3>
+                            <span className="text-xs text-slate-400 font-medium">[estimated]</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Full financial projection before signing lease.
+                          </p>
+                        </div>
+
+                        <div className="space-y-2 text-xs border-t border-b border-slate-100 py-3">
+                          <div className="flex items-center justify-between text-slate-600">
+                            <span>Monthly rent</span>
+                            <span className="font-bold text-slate-900">€4,800</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-600">
+                            <span>Security deposit</span>
+                            <span className="font-bold text-slate-900">€4,800</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-600">
+                            <span>First month&apos;s rent</span>
+                            <span className="font-bold text-slate-900">€4,800</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-600">
+                            <span>Provider fee (Spotahome)</span>
+                            <span className="font-bold text-slate-900">€650</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-600 pt-1">
+                            <span>Utilities</span>
+                            <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 font-bold text-[10px]">
+                              Not included
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Dark highlight card */}
+                        <div className="bg-[#0B132B] rounded-2xl p-4 text-white text-center space-y-1 shadow-sm">
+                          <span className="text-[10px] tracking-wider text-slate-400 font-bold uppercase block">
+                            ESTIMATED AMOUNT BEFORE MOVE-IN
+                          </span>
+                          <div className="text-2xl sm:text-3xl font-extrabold text-white">
+                            €10,250
+                          </div>
+                          <div className="text-xs text-slate-300">
+                            €2,563 per student
+                          </div>
+                        </div>
+
+                        <p className="text-[10px] text-slate-400 leading-tight">
+                          Important: Final terms and availability must be confirmed with the housing provider.
+                        </p>
+                      </div>
+
+                      {/* Column 3: Still Need to Know & Ask Alpha */}
+                      <div className="space-y-4">
+                        {/* Still Need to Know */}
+                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-3">
+                          <h3 className="text-sm font-bold text-slate-900">Still Need to Know</h3>
+                          <div className="space-y-2">
+                            {[
+                              "Cancellation terms",
+                              "Utility estimate (heating/AC)",
+                              "Deposit return procedure",
+                            ].map((item, idx) => (
+                              <div
+                                key={idx}
+                                className="p-3 rounded-xl bg-amber-50/60 border border-amber-200/50 flex items-center gap-2 text-xs font-semibold text-amber-900"
+                              >
+                                <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                                <span>{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Ask Alpha to Help */}
+                        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-2xs space-y-3">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-[#DC2626]">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Ask Alpha to Help</span>
+                          </div>
+                          <p className="text-xs text-slate-600 leading-relaxed">
+                            We can contact the housing source, clarify terms, or help with Italian lease questions.
+                          </p>
+                          <button
+                            onClick={() => setAskAdvisorModalOpen(true)}
+                            className="w-full py-2.5 px-4 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all"
+                          >
+                            <span>Request Assistance</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -845,6 +1637,128 @@ function DashboardContent() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* ASK ALPHA ADVISOR MODAL (SCREENSHOT 4) */}
+      {/* ------------------------------------------------------------- */}
+      {askAdvisorModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl sm:rounded-[20px] max-w-[480px] w-full overflow-hidden shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150 flex flex-col relative">
+            {/* Red Header Banner */}
+            <div className="bg-[#B91C1C] px-5 py-4 text-white relative">
+              <button
+                onClick={() => {
+                  setAskAdvisorModalOpen(false);
+                  setAdvisorSubmitted(false);
+                }}
+                className="absolute top-3.5 right-3.5 w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+              <div className="flex items-center gap-1.5 text-white/90 text-[10px] font-bold uppercase tracking-wider mb-0.5">
+                <Sparkles className="w-3 h-3 text-amber-300" />
+                <span>Alpha Housing Concierge</span>
+              </div>
+              <h3 className="text-lg font-bold text-white">Ask Alpha Advisor</h3>
+              <p className="text-[11px] text-white/80 mt-0.5">
+                Inquiring about {currentApartment.name} ({currentApartment.neighborhood})
+              </p>
+            </div>
+
+            {/* Modal Body */}
+            {advisorSubmitted ? (
+              <div className="p-8 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <h4 className="text-base font-bold text-slate-900">Request Sent Successfully!</h4>
+                <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
+                  Our Florence-based advisors have received your inquiry. We typically reply within 2 hours with verified answers.
+                </p>
+                <button
+                  onClick={() => {
+                    setAskAdvisorModalOpen(false);
+                    setAdvisorSubmitted(false);
+                  }}
+                  className="px-5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors mt-2"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <div className="p-5 space-y-4 text-xs">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                    WHAT DO YOU NEED HELP WITH?
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      "Clarify lease terms",
+                      "Contact housing source",
+                      "Request video tour",
+                      "Parent safety packet",
+                    ].map((topic) => {
+                      const isSelected = advisorHelpTopic === topic;
+                      return (
+                        <button
+                          key={topic}
+                          type="button"
+                          onClick={() => setAdvisorHelpTopic(topic)}
+                          className={`py-2 px-3 rounded-xl text-[11px] font-semibold border transition-all text-center ${
+                            isSelected
+                              ? "border-[#DC2626] bg-[#FFF5F5] text-[#DC2626] shadow-xs"
+                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {topic}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                    SPECIFIC QUESTIONS OR DATES
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={advisorQuestion}
+                    onChange={(e) => setAdvisorQuestion(e.target.value)}
+                    placeholder="e.g. Can we confirm if air conditioning is in all 4 bedrooms? Are utilities capped at a fixed monthly rate?"
+                    className="w-full p-3 rounded-xl border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-[#DC2626] transition-all resize-none"
+                  />
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-100 flex items-center gap-2 text-emerald-800 text-[10.5px]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Zero spam guarantee. Handled directly by certified advisors in Florence.</span>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setAskAdvisorModalOpen(false)}
+                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAdvisorSubmitted(true)}
+                    className="px-5 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all"
+                  >
+                    <Send className="w-3 h-3" />
+                    <span>Submit Request</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
