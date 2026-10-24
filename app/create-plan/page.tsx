@@ -71,8 +71,11 @@ export default function CreatePlanPage() {
     },
   ]);
 
-  const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
-  const [tempBudget, setTempBudget] = useState<number>(1300);
+  // Add / Edit Student Modal State
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [newMemberName, setNewMemberName] = useState("");
+  const [newMemberBudget, setNewMemberBudget] = useState(1150);
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
 
   // STEP 2 STATE: Program & Dates
   const [university, setUniversity] = useState("IES Abroad - Florence");
@@ -103,22 +106,49 @@ export default function CreatePlanPage() {
     setStudents(students.filter((s) => s.id !== id));
   };
 
-  const handleAddStudent = () => {
-    if (students.length >= 5) return;
-    const newStudent: Student = {
-      id: `student-${Date.now()}`,
-      name: `Roommate ${students.length + 1}`,
-      avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80",
-      budget: 1250,
-    };
-    setStudents([...students, newStudent]);
+  const handleOpenAddModal = () => {
+    setEditingStudent(null);
+    setNewMemberName("");
+    setNewMemberBudget(1150);
+    setAddModalOpen(true);
   };
 
-  const handleSaveBudget = (id: string) => {
-    setStudents(
-      students.map((s) => (s.id === id ? { ...s, budget: tempBudget } : s))
-    );
-    setEditingStudentId(null);
+  const handleOpenEditModal = (st: Student) => {
+    setEditingStudent(st);
+    setNewMemberName(st.name);
+    setNewMemberBudget(st.budget);
+    setAddModalOpen(true);
+  };
+
+  const handleSaveMember = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMemberName.trim()) return;
+
+    if (editingStudent) {
+      setStudents(
+        students.map((s) =>
+          s.id === editingStudent.id
+            ? { ...s, name: newMemberName.trim(), budget: newMemberBudget }
+            : s
+        )
+      );
+    } else {
+      if (students.length >= 5) return;
+      const avatarList = [
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80",
+        "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80",
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
+      ];
+      const newStudent: Student = {
+        id: `student-${Date.now()}`,
+        name: newMemberName.trim(),
+        avatar: avatarList[students.length % avatarList.length],
+        budget: newMemberBudget,
+      };
+      setStudents([...students, newStudent]);
+    }
+
+    setAddModalOpen(false);
   };
 
   const toggleMustHave = (key: string) => {
@@ -241,38 +271,17 @@ export default function CreatePlanPage() {
                             </span>
                           )}
                         </div>
-                        {editingStudentId === student.id ? (
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs font-bold text-[#DC2626]">$</span>
-                            <input
-                              type="number"
-                              value={tempBudget}
-                              onChange={(e) => setTempBudget(Number(e.target.value))}
-                              className="w-20 px-2 py-0.5 text-xs font-bold border border-red-300 rounded focus:outline-none"
-                            />
-                            <button
-                              onClick={() => handleSaveBudget(student.id)}
-                              className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        ) : (
-                          <p className="text-xs font-bold text-[#DC2626] mt-0.5">
-                            ${student.budget.toLocaleString()} / month
-                          </p>
-                        )}
+                        <p className="text-xs font-bold text-[#DC2626] mt-0.5">
+                          ${student.budget.toLocaleString()} / month
+                        </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1 text-slate-400">
                       <button
-                        onClick={() => {
-                          setEditingStudentId(student.id);
-                          setTempBudget(student.budget);
-                        }}
+                        onClick={() => handleOpenEditModal(student)}
                         className="p-1.5 hover:text-slate-700 transition-colors"
-                        title="Edit budget"
+                        title="Edit student"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
@@ -293,7 +302,7 @@ export default function CreatePlanPage() {
               {/* Add Student Button */}
               {students.length < 5 && (
                 <button
-                  onClick={handleAddStudent}
+                  onClick={handleOpenAddModal}
                   className="w-full py-3.5 rounded-2xl border-2 border-dashed border-red-200/90 hover:border-red-300 bg-[#FFF8F8] text-[#DC2626] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
                 >
                   <Plus className="w-4 h-4" />
@@ -383,6 +392,69 @@ export default function CreatePlanPage() {
               </div>
             </div>
           </div>
+
+          {/* Add / Edit Group Member Modal matching screenshot */}
+          {addModalOpen && (
+            <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-5 sm:p-6 w-full max-w-sm animate-in fade-in zoom-in-95 duration-150">
+                <h3 className="text-base font-bold text-slate-900">
+                  {editingStudent ? "Edit Group Member" : "Add Group Member"}
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">
+                  Invite your study abroad roommate to set up pooled budget &amp; preferences.
+                </p>
+
+                <form onSubmit={handleSaveMember} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newMemberName}
+                      onChange={(e) => setNewMemberName(e.target.value)}
+                      placeholder="e.g. Mia Jenkins"
+                      className="w-full px-3.5 py-2 rounded-xl border border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-sm font-medium text-slate-800"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Target Monthly Budget ($USD)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min={500}
+                      max={4000}
+                      step={50}
+                      value={newMemberBudget}
+                      onChange={(e) => setNewMemberBudget(Number(e.target.value))}
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-sm font-semibold text-slate-800"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setAddModalOpen(false)}
+                      className="text-xs font-semibold text-slate-500 hover:text-slate-800 px-2 py-1.5 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs shadow-xs transition-colors"
+                    >
+                      {editingStudent ? "Save Changes" : "Add to Group"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
