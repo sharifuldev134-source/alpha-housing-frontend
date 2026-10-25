@@ -119,7 +119,7 @@ export default function ParentPortalView({
       label: "Main Living Room & Dining Area",
     },
     {
-      url: "https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=800&q=80",
+      url: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80",
       label: "Bedroom 1 (Olivia's Dedicated Study Desk)",
     },
     {
@@ -867,7 +867,7 @@ export default function ParentPortalView({
               <div>
                 <div className="relative h-56 w-full">
                   <Image
-                    src="https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
                     alt="Borgo dei Greci Residence"
                     fill
                     className="object-cover"

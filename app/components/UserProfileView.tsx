@@ -27,7 +27,10 @@ import {
   PhoneCall,
   MessageSquare,
   Sparkles,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "./ThemeContext";
 
 interface UserProfileViewProps {
   onBackToOverview?: () => void;
@@ -49,6 +52,9 @@ export default function UserProfileView({
 
   // Sub-tabs: edit, security, notification, support
   const [activeTab, setActiveTab] = useState<"edit" | "security" | "notification" | "support">(initialSubtab);
+
+  // Theme hook
+  const { theme, setTheme } = useTheme();
 
   // Toast feedback
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -746,19 +752,99 @@ export default function UserProfileView({
           )}
 
           {/* ----------------------------------------------------- */}
-          {/* TAB 3: NOTIFICATION */}
+          {/* TAB 3: NOTIFICATION & PREFERENCES */}
           {/* ----------------------------------------------------- */}
           {activeTab === "notification" && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-5">
-              <div>
-                <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-                  <Bell className="w-4 h-4 text-[#DC2626]" />
-                  <span>Notification Preferences</span>
+            <div className="space-y-6">
+              {/* Appearance & Dark/Light Mode Preference Card */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                      {theme === "dark" ? (
+                        <Moon className="w-4 h-4 text-indigo-400" />
+                      ) : (
+                        <Sun className="w-4 h-4 text-amber-500" />
+                      )}
+                      <span>Appearance &amp; Theme Mode</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Choose between White Mode and Dark Mode for the entire website.
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 uppercase tracking-wider">
+                    {theme === "dark" ? "🌙 Dark Active" : "☀️ Light Active"}
+                  </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
-                  Choose what updates you want to receive about your Florence apartment search, roommates, and landlord responses.
-                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  {/* Light Mode Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTheme("light");
+                      showToast("Switched to White / Light Mode!");
+                    }}
+                    className={`p-4 rounded-xl border flex items-center justify-between transition-all cursor-pointer text-left ${
+                      theme === "light"
+                        ? "border-[#DC2626] bg-red-50/30 ring-2 ring-red-500/10 shadow-xs"
+                        : "border-slate-200 hover:border-slate-300 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <Sun className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900">White Mode</p>
+                        <p className="text-[11px] text-slate-500">Crisp, clean high-contrast daylight</p>
+                      </div>
+                    </div>
+                    {theme === "light" && (
+                      <CheckCircle2 className="w-4 h-4 text-[#DC2626]" />
+                    )}
+                  </button>
+
+                  {/* Dark Mode Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTheme("dark");
+                      showToast("Switched to Dark Mode!");
+                    }}
+                    className={`p-4 rounded-xl border flex items-center justify-between transition-all cursor-pointer text-left ${
+                      theme === "dark"
+                        ? "border-[#DC2626] bg-red-50/30 ring-2 ring-red-500/10 shadow-xs"
+                        : "border-slate-200 hover:border-slate-300 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
+                        <Moon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-900">Dark Mode</p>
+                        <p className="text-[11px] text-slate-500">Sleek, low-strain night aesthetic</p>
+                      </div>
+                    </div>
+                    {theme === "dark" && (
+                      <CheckCircle2 className="w-4 h-4 text-[#DC2626]" />
+                    )}
+                  </button>
+                </div>
               </div>
+
+              {/* Notification Preferences */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-2xs space-y-5">
+                <div>
+                  <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                    <Bell className="w-4 h-4 text-[#DC2626]" />
+                    <span>Notification Preferences</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Choose what updates you want to receive about your Florence apartment search, roommates, and landlord responses.
+                  </p>
+                </div>
 
               <div className="divide-y divide-slate-100 space-y-3 pt-1">
                 {/* 1. New Matching Flats */}
@@ -887,6 +973,7 @@ export default function UserProfileView({
                 </button>
               </div>
             </div>
+          </div>
           )}
 
           {/* ----------------------------------------------------- */}

@@ -7,28 +7,28 @@ import { useSearchParams } from "next/navigation";
 import ParentPortalView from "../components/ParentPortalView";
 import DashboardPageLoading from "../components/DashboardPageLoading";
 import UserProfileView from "../components/UserProfileView";
-import { 
-  LayoutDashboard, 
-  MapPin, 
-  Building2, 
-  GitCompare, 
-  TrendingUp, 
-  MessageSquare, 
-  FileText, 
-  ShieldCheck, 
-  Coffee, 
-  Eye, 
-  User, 
-  ArrowRight, 
-  Heart, 
-  Check, 
-  CheckCircle2, 
-  X, 
-  Compass, 
-  ShoppingBag, 
-  Sparkles, 
-  Clock, 
-  Calendar, 
+import {
+  LayoutDashboard,
+  MapPin,
+  Building2,
+  GitCompare,
+  TrendingUp,
+  MessageSquare,
+  FileText,
+  ShieldCheck,
+  Coffee,
+  Eye,
+  User,
+  ArrowRight,
+  Heart,
+  Check,
+  CheckCircle2,
+  X,
+  Compass,
+  ShoppingBag,
+  Sparkles,
+  Clock,
+  Calendar,
   Pencil,
   AlertCircle,
   Lock,
@@ -177,7 +177,7 @@ const APARTMENTS_DATA: ApartmentItem[] = [
     tags: ["Furnished", "Wi-Fi", "Elevator", "+3 more"],
     fullSpecs: ["4 beds", "2 bathrooms", "120 m²", "Furnished", "Utilities not included", "High-speed Wi-Fi", "Elevator"],
     images: [
-      "https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=800&q=80",
@@ -205,7 +205,7 @@ const APARTMENTS_DATA: ApartmentItem[] = [
     fullSpecs: ["4 beds", "2 bathrooms", "110 m²", "Furnished", "Utilities included", "High-speed Wi-Fi"],
     images: [
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=800&q=80",
     ],
@@ -310,7 +310,7 @@ function DashboardContent() {
     : NEIGHBORHOODS_LIST.filter((nh) => nh.category === selectedCategory || selectedCategory === "all");
 
   return (
-    <div className="flex flex-col w-full bg-[#FAFAFA] min-h-screen text-slate-900 pb-20">
+    <div className="flex flex-col w-full bg-[#FAFAFA] dark:bg-[#0B0F17] min-h-screen text-slate-900 dark:text-slate-100 pb-20 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 w-full flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* ------------------------------------------------------------- */}
@@ -318,164 +318,154 @@ function DashboardContent() {
           {/* ------------------------------------------------------------- */}
           {!isHousingDetail && (
             <div className="lg:col-span-3 space-y-4">
-            {/* Top Destination / Group Card */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 leading-tight">
-                    Florence
-                  </h3>
-                  <p className="text-xs text-slate-400">Spring 2027</p>
+              {/* Top Destination / Group Card */}
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 leading-tight">
+                      Florence
+                    </h3>
+                    <p className="text-xs text-slate-400">Spring 2027</p>
+                  </div>
+                  <Link
+                    href="/create-plan"
+                    className="text-xs font-bold text-[#DC2626] hover:underline"
+                  >
+                    Edit
+                  </Link>
                 </div>
-                <Link
-                  href="/create-plan"
-                  className="text-xs font-bold text-[#DC2626] hover:underline"
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-slate-600 font-semibold flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-slate-400" />
+                    <span>4 Students</span>
+                  </span>
+                  <span className="font-bold text-slate-900">
+                    €4,800/mo
+                  </span>
+                </div>
+              </div>
+
+              {/* Sidebar Navigation Items */}
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-2 shadow-2xs space-y-0.5 text-xs font-semibold">
+                {/* Overview */}
+                <button
+                  onClick={() => setActiveTab("overview")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "overview"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
                 >
-                  Edit
-                </Link>
-              </div>
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Overview</span>
+                </button>
 
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span className="text-slate-600 font-semibold flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-slate-400" />
-                  <span>4 Students</span>
-                </span>
-                <span className="font-bold text-slate-900">
-                  €4,800/mo
-                </span>
-              </div>
-            </div>
-
-            {/* Sidebar Navigation Items */}
-            <div className="bg-white rounded-2xl border border-slate-200/90 p-2 shadow-2xs space-y-0.5 text-xs font-semibold">
-              {/* Overview */}
-              <button
-                onClick={() => setActiveTab("overview")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "overview"
+                {/* Neighborhoods */}
+                <button
+                  onClick={() => setActiveTab("neighborhoods")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "neighborhoods"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Overview</span>
-              </button>
+                    }`}
+                >
+                  <MapPin className="w-4 h-4" />
+                  <span>Neighborhoods</span>
+                </button>
 
-              {/* Neighborhoods */}
-              <button
-                onClick={() => setActiveTab("neighborhoods")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "neighborhoods"
+                {/* Housing Options */}
+                <button
+                  onClick={() => {
+                    setActiveTab("housing");
+                    setHousingSubView("list");
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "housing"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <MapPin className="w-4 h-4" />
-                <span>Neighborhoods</span>
-              </button>
+                    }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <Building2 className="w-4 h-4" />
+                    <span>Housing Options</span>
+                  </span>
+                  <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${activeTab === "housing" ? "bg-red-100 text-[#DC2626]" : "bg-slate-100 text-slate-600"
+                    }`}>
+                    28
+                  </span>
+                </button>
 
-              {/* Housing Options */}
-              <button
-                onClick={() => {
-                  setActiveTab("housing");
-                  setHousingSubView("list");
-                }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "housing"
+                {/* Compare */}
+                <button
+                  onClick={() => setActiveTab("compare")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "compare"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <span className="flex items-center gap-3">
-                  <Building2 className="w-4 h-4" />
-                  <span>Housing Options</span>
-                </span>
-                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
-                  activeTab === "housing" ? "bg-red-100 text-[#DC2626]" : "bg-slate-100 text-slate-600"
-                }`}>
-                  28
-                </span>
-              </button>
+                    }`}
+                >
+                  <GitCompare className="w-4 h-4" />
+                  <span>Compare</span>
+                </button>
 
-              {/* Compare */}
-              <button
-                onClick={() => setActiveTab("compare")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "compare"
+                {/* Group Progress */}
+                <button
+                  onClick={() => setActiveTab("progress")}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "progress"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <GitCompare className="w-4 h-4" />
-                <span>Compare</span>
-              </button>
+                    }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Group Progress</span>
+                  </span>
+                  <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${activeTab === "progress" ? "bg-red-100 text-[#DC2626]" : "bg-slate-100 text-slate-600"
+                    }`}>
+                    14
+                  </span>
+                </button>
 
-              {/* Group Progress */}
-              <button
-                onClick={() => setActiveTab("progress")}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "progress"
+                {/* Messages */}
+                <button
+                  onClick={() => setActiveTab("messages")}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "messages"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <span className="flex items-center gap-3">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>Group Progress</span>
-                </span>
-                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
-                  activeTab === "progress" ? "bg-red-100 text-[#DC2626]" : "bg-slate-100 text-slate-600"
-                }`}>
-                  14
-                </span>
-              </button>
+                    }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Messages</span>
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded-md bg-red-100 text-[#DC2626] text-[10px] font-bold">
+                    2
+                  </span>
+                </button>
 
-              {/* Messages */}
-              <button
-                onClick={() => setActiveTab("messages")}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "messages"
+                {/* Documents */}
+                <button
+                  onClick={() => setActiveTab("documents")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "documents"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <span className="flex items-center gap-3">
-                  <MessageSquare className="w-4 h-4" />
-                  <span>Messages</span>
-                </span>
-                <span className="px-1.5 py-0.5 rounded-md bg-red-100 text-[#DC2626] text-[10px] font-bold">
-                  2
-                </span>
-              </button>
+                    }`}
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Documents</span>
+                </button>
 
-              {/* Documents */}
-              <button
-                onClick={() => setActiveTab("documents")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "documents"
-                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <FileText className="w-4 h-4" />
-                <span>Documents</span>
-              </button>
+                {/* Safety & Hotline */}
+                {/* <button
+                  onClick={() => setActiveTab("safety")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "safety"
+                      ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                >
+                  <ShieldCheck className={`w-4 h-4 ${activeTab === "safety" ? "text-[#DC2626]" : "text-emerald-600"}`} />
+                  <span>Safety &amp; Hotline</span>
+                </button> */}
 
-              {/* Safety & Hotline */}
-              <button
-                onClick={() => setActiveTab("safety")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "safety"
-                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <ShieldCheck className={`w-4 h-4 ${activeTab === "safety" ? "text-[#DC2626]" : "text-emerald-600"}`} />
-                <span>Safety &amp; Hotline</span>
-              </button>
-
-              {/* Daily Life Guide */}
-              <button
+                {/* Daily Life Guide */}
+                {/* <button
                 onClick={() => setActiveTab("daily-life")}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
                   activeTab === "daily-life"
@@ -485,56 +475,54 @@ function DashboardContent() {
               >
                 <Coffee className={`w-4 h-4 ${activeTab === "daily-life" ? "text-[#DC2626]" : "text-red-500"}`} />
                 <span>Daily Life Guide</span>
-              </button>
+              </button> */}
 
-              {/* Parent View */}
-              <button
-                onClick={() => setActiveTab("parent")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "parent"
+                {/* Parent View */}
+                <button
+                  onClick={() => setActiveTab("parent")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "parent"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <Eye className={`w-4 h-4 ${activeTab === "parent" ? "text-[#DC2626]" : "text-indigo-500"}`} />
-                <span>Parent View</span>
-              </button>
+                    }`}
+                >
+                  <Eye className={`w-4 h-4 ${activeTab === "parent" ? "text-[#DC2626]" : "text-indigo-500"}`} />
+                  <span>Parent View</span>
+                </button>
 
-              {/* My Profile */}
-              <button
-                onClick={() => setActiveTab("profile")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "profile"
+                {/* My Profile */}
+                <button
+                  onClick={() => setActiveTab("profile")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "profile"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <User className={`w-4 h-4 ${activeTab === "profile" ? "text-[#DC2626]" : "text-slate-500"}`} />
-                <span>My Profile</span>
-              </button>
-            </div>
-
-            {/* Bottom Alpha Advisor Callout */}
-            <div className="bg-[#FFF8F8] rounded-2xl border border-red-200/80 p-4 space-y-2.5 shadow-2xs">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#DC2626]">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Alpha Advisor</span>
+                    }`}
+                >
+                  <User className={`w-4 h-4 ${activeTab === "profile" ? "text-[#DC2626]" : "text-slate-500"}`} />
+                  <span>My Profile</span>
+                </button>
               </div>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                Need lease contract review or university commute check?
-              </p>
-              <button
-                onClick={() => {
-                  setActiveTab("housing");
-                  setHousingSubView("audit");
-                  setSelectedApartmentId("via-dei-neri");
-                }}
-                className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center transition-colors shadow-2xs"
-              >
-                Run Alpha Check
-              </button>
+
+              {/* Bottom Alpha Advisor Callout */}
+              <div className="bg-[#FFF8F8] dark:bg-[#1C1318] rounded-2xl border border-red-200/80 dark:border-red-900/40 p-4 space-y-2.5 shadow-2xs">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#DC2626]">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Alpha Advisor</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Need lease contract review or university commute check?
+                </p>
+                <button
+                  onClick={() => {
+                    setActiveTab("housing");
+                    setHousingSubView("audit");
+                    setSelectedApartmentId("via-dei-neri");
+                  }}
+                  className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center transition-colors shadow-2xs"
+                >
+                  Run Alpha Check
+                </button>
+              </div>
             </div>
-          </div>
           )}
 
           {/* ------------------------------------------------------------- */}
@@ -773,11 +761,10 @@ function DashboardContent() {
                       <button
                         key={filter.id}
                         onClick={() => setSelectedCategory(filter.id)}
-                        className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                          isSelected
-                            ? "bg-[#DC2626] text-white shadow-xs"
-                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
-                        }`}
+                        className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${isSelected
+                          ? "bg-[#DC2626] text-white shadow-xs"
+                          : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
+                          }`}
                       >
                         {filter.label}
                       </button>
@@ -815,11 +802,10 @@ function DashboardContent() {
                             {/* Heart Icon */}
                             <button
                               onClick={() => toggleFavorite(nh.id)}
-                              className={`absolute top-2.5 right-2.5 p-1.5 rounded-full backdrop-blur-md transition-colors ${
-                                isSaved
-                                  ? "bg-red-500 text-white"
-                                  : "bg-black/40 text-white hover:bg-black/60"
-                              }`}
+                              className={`absolute top-2.5 right-2.5 p-1.5 rounded-full backdrop-blur-md transition-colors ${isSaved
+                                ? "bg-red-500 text-white"
+                                : "bg-black/40 text-white hover:bg-black/60"
+                                }`}
                               aria-label="Save neighborhood"
                             >
                               <Heart className={`w-3.5 h-3.5 ${isSaved ? "fill-white" : ""}`} />
@@ -906,7 +892,7 @@ function DashboardContent() {
                         <span className="text-slate-500">Filtered by:</span>
                         <span className="font-bold text-slate-900">Santa Croce</span>
                         <button
-                          onClick={() => {}}
+                          onClick={() => { }}
                           className="text-[#DC2626] font-bold hover:underline flex items-center gap-0.5 ml-1"
                         >
                           ✕ Clear
@@ -926,11 +912,10 @@ function DashboardContent() {
                           <button
                             key={tab.id}
                             onClick={() => setHousingFilterTab(tab.id as any)}
-                            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                              housingFilterTab === tab.id
-                                ? "bg-[#DC2626] text-white shadow-xs"
-                                : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                            }`}
+                            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${housingFilterTab === tab.id
+                              ? "bg-[#DC2626] text-white shadow-xs"
+                              : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                              }`}
                           >
                             {tab.label}
                           </button>
@@ -1008,11 +993,10 @@ function DashboardContent() {
                                   <div className="flex flex-col items-end shrink-0">
                                     <button
                                       onClick={() => toggleFavorite(apt.id)}
-                                      className={`p-1.5 rounded-full mb-1 transition-colors ${
-                                        isSaved
-                                          ? "bg-rose-50 text-[#DC2626]"
-                                          : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-                                      }`}
+                                      className={`p-1.5 rounded-full mb-1 transition-colors ${isSaved
+                                        ? "bg-rose-50 text-[#DC2626]"
+                                        : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                                        }`}
                                       aria-label="Save"
                                     >
                                       <Heart className={`w-4 h-4 ${isSaved ? "fill-[#DC2626]" : ""}`} />
@@ -1172,11 +1156,10 @@ function DashboardContent() {
                           <button
                             key={idx}
                             onClick={() => setSelectedPhotoIndex(idx)}
-                            className={`relative aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all ${
-                              selectedPhotoIndex === idx
-                                ? "border-[#DC2626] ring-2 ring-red-500/20"
-                                : "border-transparent opacity-75 hover:opacity-100"
-                            }`}
+                            className={`relative aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all ${selectedPhotoIndex === idx
+                              ? "border-[#DC2626] ring-2 ring-red-500/20"
+                              : "border-transparent opacity-75 hover:opacity-100"
+                              }`}
                           >
                             <Image src={img} alt={`Thumb ${idx + 1}`} fill className="object-cover" />
                           </button>
@@ -1603,7 +1586,7 @@ function DashboardContent() {
                         <td className="p-4 font-semibold text-slate-500">Preview</td>
                         <td className="p-4">
                           <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
-                            <Image src="https://images.unsplash.com/photo-1540518614846-7ede433c4ef4?auto=format&fit=crop&w=600&q=80" alt="Via dei Neri" fill className="object-cover" />
+                            <Image src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80" alt="Via dei Neri" fill className="object-cover" />
                           </div>
                         </td>
                         <td className="p-4">
@@ -1969,18 +1952,18 @@ function DashboardContent() {
                   <div>
                     <div className="flex items-center gap-2 text-xs mb-1">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#DC2626]">COMMUNICATIONS</span>
-                      <span className="text-slate-300">•</span>
+                      <span className="text-slate-300 dark:text-slate-600">•</span>
                       <button
                         onClick={() => setActiveTab("parent")}
-                        className="text-slate-500 hover:text-slate-900 text-xs font-semibold"
+                        className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold"
                       >
                         View in Parent Portal →
                       </button>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                       Messages &amp; Inbox
                     </h1>
-                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                       Direct conversations with Italian rental agencies, landlords, roommates, and your Alpha AI advisor.
                     </p>
                   </div>
@@ -2029,11 +2012,10 @@ function DashboardContent() {
                         <button
                           key={cat.id}
                           onClick={() => setChatCategory(cat.id)}
-                          className={`px-2.5 py-1 rounded-full font-semibold transition-all shrink-0 ${
-                            chatCategory === cat.id
-                              ? "bg-slate-900 text-white"
-                              : "text-slate-600 hover:bg-slate-100"
-                          }`}
+                          className={`px-2.5 py-1 rounded-full font-semibold transition-all shrink-0 ${chatCategory === cat.id
+                            ? "bg-slate-900 text-white"
+                            : "text-slate-600 hover:bg-slate-100"
+                            }`}
                         >
                           {cat.label}
                         </button>
@@ -2045,9 +2027,8 @@ function DashboardContent() {
                       {/* Chat 1: Marco Valenti */}
                       <button
                         onClick={() => setActiveChatId("marco")}
-                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
-                          activeChatId === "marco" ? "bg-rose-50/40" : "hover:bg-slate-50"
-                        }`}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${activeChatId === "marco" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                          }`}
                       >
                         <div className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-200 shrink-0">
                           <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Marco" fill className="object-cover" />
@@ -2073,9 +2054,8 @@ function DashboardContent() {
                       {/* Chat 2: Alpha Advisor (AI) */}
                       <button
                         onClick={() => setActiveChatId("advisor")}
-                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
-                          activeChatId === "advisor" ? "bg-rose-50/40" : "hover:bg-slate-50"
-                        }`}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${activeChatId === "advisor" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                          }`}
                       >
                         <div className="w-9 h-9 rounded-full bg-rose-50 text-[#DC2626] flex items-center justify-center shrink-0 border border-rose-200">
                           <Sparkles className="w-4 h-4" />
@@ -2100,9 +2080,8 @@ function DashboardContent() {
                       {/* Chat 3: Roommates Group */}
                       <button
                         onClick={() => setActiveChatId("roommates")}
-                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
-                          activeChatId === "roommates" ? "bg-rose-50/40" : "hover:bg-slate-50"
-                        }`}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${activeChatId === "roommates" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                          }`}
                       >
                         <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200 font-bold text-xs">
                           RG
@@ -2121,9 +2100,8 @@ function DashboardContent() {
                       {/* Chat 4: Parent Escrow Support */}
                       <button
                         onClick={() => setActiveChatId("escrow")}
-                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
-                          activeChatId === "escrow" ? "bg-rose-50/40" : "hover:bg-slate-50"
-                        }`}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${activeChatId === "escrow" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                          }`}
                       >
                         <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200">
                           <ShieldCheck className="w-4 h-4" />
@@ -2145,9 +2123,8 @@ function DashboardContent() {
                       {/* Chat 5: IES Housing Office */}
                       <button
                         onClick={() => setActiveChatId("ies")}
-                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${
-                          activeChatId === "ies" ? "bg-rose-50/40" : "hover:bg-slate-50"
-                        }`}
+                        className={`w-full p-3 text-left transition-colors flex items-start gap-3 ${activeChatId === "ies" ? "bg-rose-50/40" : "hover:bg-slate-50"
+                          }`}
                       >
                         <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200 font-bold text-xs">
                           IES
@@ -2214,11 +2191,10 @@ function DashboardContent() {
                             </div>
 
                             <div
-                              className={`p-3.5 rounded-2xl max-w-[85%] text-xs leading-relaxed shadow-2xs ${
-                                isUser
-                                  ? "bg-[#DC2626] text-white rounded-br-xs"
-                                  : "bg-white border border-slate-200 text-slate-800 rounded-bl-xs"
-                              }`}
+                              className={`p-3.5 rounded-2xl max-w-[85%] text-xs leading-relaxed shadow-2xs ${isUser
+                                ? "bg-[#DC2626] text-white rounded-br-xs"
+                                : "bg-white border border-slate-200 text-slate-800 rounded-bl-xs"
+                                }`}
                             >
                               <p>{msg.text}</p>
 
@@ -2676,11 +2652,10 @@ function DashboardContent() {
                           key={topic}
                           type="button"
                           onClick={() => setAdvisorHelpTopic(topic)}
-                          className={`py-2 px-3 rounded-xl text-[11px] font-semibold border transition-all text-center ${
-                            isSelected
-                              ? "border-[#DC2626] bg-[#FFF5F5] text-[#DC2626] shadow-xs"
-                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                          }`}
+                          className={`py-2 px-3 rounded-xl text-[11px] font-semibold border transition-all text-center ${isSelected
+                            ? "border-[#DC2626] bg-[#FFF5F5] text-[#DC2626] shadow-xs"
+                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                            }`}
                         >
                           {topic}
                         </button>

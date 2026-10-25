@@ -364,7 +364,7 @@ export const FLORENCE_SAFETY_FEATURES: SafetyFeature[] = [
     id: "double-locks",
     title: "Double Security Locks & Keypad Access",
     categoryTag: "Apartment Security",
-    image: "https://images.unsplash.com/photo-1502005229762-ee1b2b8ab68f?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?auto=format&fit=crop&w=800&q=80",
     description: "Every AlphaAbroad verified building features heavy double-deadbolt security cylinder locks, certified electrical DiCo certificates, and safe building intercom entryways.",
     metaPill: "Double Cylinder Deadbolts - Keyram Scam",
   },

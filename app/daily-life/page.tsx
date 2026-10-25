@@ -261,7 +261,7 @@ export default function DailyLifePage() {
                 {/* Photo Thumbnail */}
                 <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden mb-3 bg-slate-900">
                   <Image
-                    src="https://images.unsplash.com/photo-1502005229762-ee1b2b8ab68f?auto=format&fit=crop&w=800&q=80"
+                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
                     alt="Tuscan Living Experience"
                     fill
                     className="object-cover"

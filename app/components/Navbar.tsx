@@ -12,8 +12,12 @@ import {
   Heart, 
   ShieldCheck, 
   FileCheck2,
-  Sparkles
+  Sparkles,
+  Lock,
+  Sun,
+  Moon
 } from "lucide-react";
+import { useTheme } from "./ThemeContext";
 
 interface NavbarProps {
   onOpenPlanModal?: () => void;
@@ -21,6 +25,7 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenPlanModal }: NavbarProps) {
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
@@ -30,7 +35,7 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
     { label: "Safety", href: "/safety" },
     { label: "Daily Life", href: "/daily-life" },
     { label: "How It Works", href: "/how-it-works" },
-    { label: "Pricing", href: "/#pricing" },
+    { label: "Pricing", href: "/pricing" },
   ];
 
   const isActive = (href: string) => {
@@ -124,8 +129,29 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
           })}
         </nav>
 
-        {/* Right Side: Emma's Group Profile Pill (exact same as screenshot) */}
-        <div className="hidden md:flex items-center">
+        {/* Right Side: Theme Toggle + Emma's Group Profile Pill */}
+        <div className="hidden md:flex items-center gap-3">
+          {/* Theme Toggle Button (Light / Dark) */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-2xs cursor-pointer group"
+            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            aria-label="Toggle dark/light mode"
+          >
+            {theme === "dark" ? (
+              <>
+                <Sun className="w-4 h-4 text-amber-400 animate-in spin-in-180 duration-300" />
+                <span className="text-xs font-semibold text-slate-300">Light</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-4 h-4 text-slate-600 group-hover:text-slate-900 transition-colors" />
+                <span className="text-xs font-semibold text-slate-700">Dark</span>
+              </>
+            )}
+          </button>
+
           <div className="relative">
             <button
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
@@ -205,14 +231,57 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                     <FileCheck2 className="w-4 h-4 text-red-500" />
                     <span>Alpha Check™ Audit</span>
                   </Link>
+                  <div className="border-t border-slate-100 pt-1 mt-1">
+                    {/* Theme switcher inside dropdown */}
+                    <button
+                      type="button"
+                      onClick={() => toggleTheme()}
+                      className="w-full flex items-center justify-between px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                    >
+                      <span className="flex items-center gap-2">
+                        {theme === "dark" ? (
+                          <Sun className="w-4 h-4 text-amber-400" />
+                        ) : (
+                          <Moon className="w-4 h-4 text-slate-400" />
+                        )}
+                        <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                      </span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">
+                        {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+                      </span>
+                    </button>
+
+                    <Link
+                      href="/login"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors font-semibold"
+                    >
+                      <Lock className="w-4 h-4 text-slate-400" />
+                      <span>Sign In / Switch Account</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Mobile Hamburger Button */}
+        {/* Mobile Buttons */}
         <div className="flex md:hidden items-center gap-2">
+          {/* Mobile Theme Toggle Icon */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <Sun className="w-5 h-5 text-amber-400" />
+            ) : (
+              <Moon className="w-5 h-5 text-slate-600" />
+            )}
+          </button>
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100"
