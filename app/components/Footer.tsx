@@ -141,7 +141,7 @@ export default function Footer() {
               </h3>
               <ul className="space-y-2 text-xs">
                 <li>
-                  <Link href="/safety" className="hover:text-red-600 transition-colors font-medium text-slate-700">
+                  <Link href="/dashboard?tab=parent" className="hover:text-red-600 transition-colors font-medium text-slate-700">
                     Parent Portal (Peace of Mind)
                   </Link>
                 </li>

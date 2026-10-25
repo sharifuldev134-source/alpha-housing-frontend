@@ -4,6 +4,9 @@ import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import ParentPortalView from "../components/ParentPortalView";
+import DashboardPageLoading from "../components/DashboardPageLoading";
+import UserProfileView from "../components/UserProfileView";
 import { 
   LayoutDashboard, 
   MapPin, 
@@ -459,38 +462,54 @@ function DashboardContent() {
               </button>
 
               {/* Safety & Hotline */}
-              <Link
-                href="/safety"
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              <button
+                onClick={() => setActiveTab("safety")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "safety"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <ShieldCheck className={`w-4 h-4 ${activeTab === "safety" ? "text-[#DC2626]" : "text-emerald-600"}`} />
                 <span>Safety &amp; Hotline</span>
-              </Link>
+              </button>
 
               {/* Daily Life Guide */}
-              <Link
-                href="/daily-life"
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              <button
+                onClick={() => setActiveTab("daily-life")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "daily-life"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
-                <Coffee className="w-4 h-4 text-red-500" />
+                <Coffee className={`w-4 h-4 ${activeTab === "daily-life" ? "text-[#DC2626]" : "text-red-500"}`} />
                 <span>Daily Life Guide</span>
-              </Link>
+              </button>
 
               {/* Parent View */}
-              <Link
-                href="/safety"
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              <button
+                onClick={() => setActiveTab("parent")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "parent"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
-                <Eye className="w-4 h-4 text-indigo-500" />
+                <Eye className={`w-4 h-4 ${activeTab === "parent" ? "text-[#DC2626]" : "text-indigo-500"}`} />
                 <span>Parent View</span>
-              </Link>
+              </button>
 
               {/* My Profile */}
               <button
-                onClick={() => setActiveTab("overview")}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                onClick={() => setActiveTab("profile")}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
+                  activeTab === "profile"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`}
               >
-                <User className="w-4 h-4" />
+                <User className={`w-4 h-4 ${activeTab === "profile" ? "text-[#DC2626]" : "text-slate-500"}`} />
                 <span>My Profile</span>
               </button>
             </div>
@@ -1928,13 +1947,13 @@ function DashboardContent() {
                       ))}
                     </div>
 
-                    <Link
-                      href="/safety"
+                    <button
+                      onClick={() => setActiveTab("parent")}
                       className="w-full py-2.5 px-3 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs"
                     >
                       <Eye className="w-3.5 h-3.5 text-slate-300" />
                       <span>Open Parent Portal</span>
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1951,9 +1970,12 @@ function DashboardContent() {
                     <div className="flex items-center gap-2 text-xs mb-1">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#DC2626]">COMMUNICATIONS</span>
                       <span className="text-slate-300">•</span>
-                      <Link href="/safety" className="text-slate-500 hover:text-slate-900 text-xs font-semibold">
+                      <button
+                        onClick={() => setActiveTab("parent")}
+                        className="text-slate-500 hover:text-slate-900 text-xs font-semibold"
+                      >
                         View in Parent Portal →
-                      </Link>
+                      </button>
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                       Messages &amp; Inbox
@@ -2356,6 +2378,48 @@ function DashboardContent() {
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* ========================================================= */}
+            {/* VIEW 8: PARENT PORTAL / PARENTS VIEW */}
+            {/* ========================================================= */}
+            {activeTab === "parent" && (
+              <ParentPortalView
+                onBackToStudentView={() => setActiveTab("overview")}
+                onOpenAdvisorChat={(topic) => {
+                  setAdvisorHelpTopic(topic);
+                  setAskAdvisorModalOpen(true);
+                }}
+              />
+            )}
+
+            {/* ========================================================= */}
+            {/* UNPROVIDED / PENDING MODULES: LOADING VIEWS */}
+            {/* ========================================================= */}
+            {activeTab === "safety" && (
+              <DashboardPageLoading
+                pageTitle="Safety & Hotline"
+                categoryName="CAMPUS & POLICE PROTOCOLS"
+                onBackToOverview={() => setActiveTab("overview")}
+              />
+            )}
+
+            {activeTab === "daily-life" && (
+              <DashboardPageLoading
+                pageTitle="Daily Life Guide"
+                categoryName="FLORENCE LOCAL ESSENTIALS"
+                onBackToOverview={() => setActiveTab("overview")}
+              />
+            )}
+
+            {/* ========================================================= */}
+            {/* VIEW 9: MY PROFILE */}
+            {/* ========================================================= */}
+            {activeTab === "profile" && (
+              <UserProfileView
+                onBackToOverview={() => setActiveTab("overview")}
+                onOpenParentPortal={() => setActiveTab("parent")}
+              />
             )}
           </div>
         </div>
