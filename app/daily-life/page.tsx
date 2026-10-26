@@ -195,36 +195,28 @@ export default function DailyLifePage() {
   return (
     <div className="flex flex-col w-full bg-white text-slate-900">
       {/* ------------------------------------------------------------- */}
-      {/* HERO SECTION - REDESIGNED TO EXACT SCREENSHOT SPEC */}
+      {/* HERO SECTION - FLORENCE DAILY LIFE & OUTDOOR CAFE */}
       {/* ------------------------------------------------------------- */}
       <section className="relative w-full bg-[#080E1C] text-white overflow-hidden py-16 sm:py-20 lg:py-24">
-        {/* Subdued Italian background scenery */}
+        {/* Florentine Outdoor Street Cafe Scenery */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=2000&q=80"
-            alt="Florence Scenery"
+            src="/images/daily_life_florence_banner.jpg"
+            alt="Florentine Outdoor Street Cafe and Trattoria"
             fill
             priority
-            className="object-cover opacity-15 brightness-60 scale-105"
+            className="object-cover object-center brightness-[0.88] contrast-[1.05]"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C] via-[#080E1C]/95 to-[#0B1325]/90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C] via-[#080E1C]/80 md:via-[#080E1C]/60 to-black/30" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Content Column (7 cols) */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
-              {/* Tag Capsule */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2F0B13]/90 border border-[#5A1523] text-[#FFA8B7] text-[10.5px] font-bold tracking-wider uppercase shadow-xs">
-                {/* 4-point sparkle icon matching screenshot */}
-                <svg
-                  className="w-3 h-3 text-[#FF3B5C] shrink-0"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-                </svg>
-                <span>FLORENTINE STUDENT LIFE &amp; NEIGHBORHOOD GUIDE</span>
+              {/* Tag Capsule matching screenshot */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[10.5px] font-bold tracking-wider uppercase shadow-xs">
+                <span>LIVING IN FLORENCE</span>
               </div>
 
               {/* Title */}
@@ -234,7 +226,7 @@ export default function DailyLifePage() {
 
               {/* Exact Subtitle from screenshot */}
               <p className="text-xs sm:text-sm md:text-[15px] text-[#A0AEC0] leading-relaxed max-w-xl font-normal">
-                From morning espressos and vibrant fresh markets to tram passes, study terraces, and Italian apartment etiquette — here is how you and your roommates will navigate Florence every day during Spring 2027.
+                Everything you need to know to feel at home — from getting around to finding the best coffee, groceries, and local experiences.
               </p>
 
               {/* Buttons */}

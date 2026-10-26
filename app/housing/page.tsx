@@ -368,40 +368,35 @@ export default function HousingPage() {
   return (
     <div className="flex flex-col w-full bg-[#FAFAFA] dark:bg-[#0B0F17] min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-200">
       {/* ========================================================= */}
-      {/* 1. HERO SECTION WITH RICH FLORENCE BACKDROP */}
+      {/* 1. HERO SECTION - SUNLIT APARTMENT & FLORENCE VIEW */}
       {/* ========================================================= */}
-      <section className="relative pt-12 pb-24 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-950">
-        {/* Background Image with Dark Vignette */}
+      <section className="relative pt-12 pb-24 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#080E1C] text-white">
+        {/* Background Image: Sunlit Apartment Interior with Terrace overlooking Florence Duomo */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=2000&q=80"
-            alt="Florence Skyline"
+            src="/images/housing_duomo_room.jpg"
+            alt="Florentine Student Apartment Interior and Duomo View"
             fill
             priority
-            className="object-cover opacity-35 object-center"
+            className="object-cover object-center opacity-65 brightness-[0.88] contrast-[1.05] scale-105 transition-transform duration-1000"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-[#FAFAFA]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C]/90 via-[#080E1C]/65 to-transparent" />
+          <div className="absolute inset-0 bg-radial from-transparent via-[#080E1C]/15 to-[#080E1C]/60" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto space-y-6 text-center sm:text-left">
-          {/* Top Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-500/20 border border-red-500/35 text-red-300 text-[11px] font-bold tracking-wider uppercase backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-            78 VERIFIED STUDENT HOUSING UNITS IN FLORENCE • SPRING 2025
+        <div className="relative max-w-7xl mx-auto space-y-4 text-center sm:text-left">
+          {/* Top Pill matching screenshot */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[10.5px] font-bold tracking-wider uppercase backdrop-blur-md">
+            <span>HOUSING GUIDANCE</span>
           </div>
 
-          {/* Big Titles */}
-          <div className="space-y-1">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
-              Verified Student Housing
-            </h1>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight bg-gradient-to-r from-red-400 via-rose-300 to-amber-200 bg-clip-text text-transparent">
-              in Florence, Italy
-            </h2>
-          </div>
+          {/* Big Title matching screenshot */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+            Find the right place to live in Florence
+          </h1>
 
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Explore pre-vetted, safe student housing apartments within 15 min flat pedestrian walks to your study abroad campuses. Transparent per-student split costs, legal escrow protection, and boots-on-the-ground support.
+          <p className="text-xs sm:text-sm md:text-base text-[#A0AEC0] max-w-2xl leading-relaxed">
+            Explore vetted housing options, get expert guidance on neighborhoods, and understand what fits your lifestyle, budget and university location.
           </p>
 
           {/* ========================================================= */}

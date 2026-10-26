@@ -44,36 +44,36 @@ export default function SafetyPage() {
   return (
     <div className="flex flex-col w-full">
       {/* ------------------------------------------------------------- */}
-      {/* HERO SECTION */}
+      {/* HERO SECTION - FLORENCE SKYLINE & SAFETY BANNER */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full bg-slate-950 text-white overflow-hidden py-16 sm:py-24">
-        {/* Background Skyline */}
+      <section className="relative w-full bg-[#080E1C] text-white overflow-hidden py-16 sm:py-24">
+        {/* Background Skyline - Florence Duomo & Arno River */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=2000&q=80"
-            alt="Florence at Twilight"
+            src="/images/safety_florence_banner.jpg"
+            alt="Florence Arno River and Duomo Panorama"
             fill
             priority
-            className="object-cover opacity-25 brightness-75 scale-105"
+            className="object-cover object-center brightness-[0.88] contrast-[1.05]"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C] via-[#080E1C]/80 md:via-[#080E1C]/60 to-black/30" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Column (7 cols) */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold tracking-wide uppercase">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>VERIFIED FLORENCE SAFETY &amp; FAMILY PROTECTION GUIDE</span>
+            <div className="lg:col-span-7 space-y-5">
+              {/* Tag Capsule matching screenshot */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[10.5px] font-bold tracking-wider uppercase shadow-xs">
+                <span>STUDENT SAFETY &amp; SUPPORT</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
                 Safety &amp; Peace of Mind in Florence
               </h1>
 
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-                Study abroad is an unforgettable adventure. We provide real neighborhood safety ratings, well-lit pedestrian corridors, emergency medical access, and scam-proof housing policies so students thrive and parents rest easy.
+              <p className="text-sm sm:text-base text-[#A0AEC0] leading-relaxed max-w-xl">
+                Practical information, local resources, and real assistance to help students and families feel confident.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">

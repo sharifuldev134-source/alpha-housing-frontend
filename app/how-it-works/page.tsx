@@ -14,11 +14,10 @@ import {
   ArrowRight, 
   CheckCircle2, 
   Sparkles, 
-  Star,
-  Check,
-  FileCheck2,
-  Lock,
-  Compass
+  Star, 
+  Lock, 
+  Compass,
+  FileCheck2
 } from "lucide-react";
 import { HOW_IT_WORKS_FULL_STEPS, FAQS_DATA } from "../data/housingData";
 import FaqAccordion from "../components/FaqAccordion";
@@ -37,9 +36,9 @@ export default function HowItWorksPage() {
       case "03":
         return <MapPin className="w-5 h-5 text-amber-500" />;
       case "04":
-        return <Building2 className="w-5 h-5 text-purple-500" />;
+        return <Building2 className="w-5 h-5 text-blue-500" />;
       case "05":
-        return <BrainCircuit className="w-5 h-5 text-blue-500" />;
+        return <BrainCircuit className="w-5 h-5 text-purple-500" />;
       case "06":
         return <Eye className="w-5 h-5 text-rose-500" />;
       default:
@@ -47,48 +46,71 @@ export default function HowItWorksPage() {
     }
   };
 
+  const getTagStyle = (tagColor: string) => {
+    switch (tagColor) {
+      case "red":
+        return "bg-rose-50 text-rose-600 border-rose-200";
+      case "green":
+        return "bg-emerald-50 text-emerald-600 border-emerald-200";
+      case "amber":
+        return "bg-amber-50 text-amber-600 border-amber-200";
+      case "purple":
+        return "bg-blue-50 text-blue-600 border-blue-200";
+      case "blue":
+        return "bg-purple-50 text-purple-600 border-purple-200";
+      case "pink":
+        return "bg-pink-50 text-pink-600 border-pink-200";
+      default:
+        return "bg-slate-50 text-slate-600 border-slate-200";
+    }
+  };
+
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full bg-white text-slate-900">
       {/* ------------------------------------------------------------- */}
-      {/* HERO SECTION */}
+      {/* HERO SECTION - STUDENT STUDY ABROAD BANNER */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full bg-slate-950 text-white overflow-hidden py-16 sm:py-24 text-center">
+      <section className="relative w-full bg-[#080E1C] text-white overflow-hidden py-16 sm:py-24 text-center">
+        {/* Student Working on Laptop Background */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=2000&q=80"
-            alt="Florence Panorama"
+            src="/images/how_it_works_student.jpg"
+            alt="Student on laptop receiving support"
             fill
             priority
-            className="object-cover opacity-25 brightness-75 scale-105"
+            className="object-cover object-right md:object-center brightness-[0.88] contrast-[1.05]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C] via-[#080E1C]/80 md:via-[#080E1C]/60 to-black/30" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-semibold tracking-wide uppercase mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-red-400" />
+          {/* Tag Capsule matching screenshot */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[11px] font-bold tracking-wider uppercase shadow-xs mb-6 backdrop-blur-md">
             <span>THE STUDY ABROAD HOUSING ROADMAP</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight mb-4">
+          {/* Heading */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight mb-4">
             How AlphaAbroadeez Works
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto mb-8">
+          {/* Subtitle */}
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto mb-8 font-normal">
             From picking roommates to unpacking your bags in Florence. Simple, transparent, scam-free housing guidance for college students and families.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          {/* Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3.5">
             <button
               onClick={() => router.push("/create-plan")}
-              className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-2 transition-all"
+              className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-2 transition-all cursor-pointer"
             >
               <span>Start Your Housing Plan</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <Link
               href="/housing"
-              className="py-3 px-6 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-2"
+              className="py-3 px-6 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer"
             >
               <Building2 className="w-4 h-4" />
               <span>Browse Verified Apartments</span>
@@ -100,11 +122,11 @@ export default function HowItWorksPage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 1: 6-STEP PROCESS GRID */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-24 bg-slate-50">
+      <section className="py-16 sm:py-24 bg-slate-50/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <p className="text-xs font-bold uppercase tracking-wider text-red-600 mb-1">
-              Step-by-Step Process
+              STEP-BY-STEP PROCESS
             </p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
               How We Find &amp; Secure Your Apartment
@@ -123,14 +145,12 @@ export default function HowItWorksPage() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-3xl font-black text-slate-200">
+                    <span className="text-2xl font-black text-slate-300">
                       {step.number}
                     </span>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-wider">
-                        {step.tag}
-                      </span>
-                    </div>
+                    <span className={`px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider ${getTagStyle(step.tagColor)}`}>
+                      {step.tag}
+                    </span>
                   </div>
 
                   <div className="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-3">
@@ -171,7 +191,7 @@ export default function HowItWorksPage() {
             {/* Left Column (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
-                100% Student &amp; Parent Protection
+                100% STUDENT &amp; PARENT PROTECTION
               </span>
 
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
@@ -191,7 +211,7 @@ export default function HowItWorksPage() {
                   <div>
                     <h4 className="text-xs font-bold text-slate-900">Fraud &amp; Scam Guarantee</h4>
                     <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                      Every property is verified with Italian municipal registers before deposits.
+                      Every property representative authenticated via Italian Chamber of Commerce.
                     </p>
                   </div>
                 </div>
@@ -203,7 +223,7 @@ export default function HowItWorksPage() {
                   <div>
                     <h4 className="text-xs font-bold text-slate-900">Alpha AI Advisor</h4>
                     <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                      Italian legal lease checking, transit breakdown, and cost estimation.
+                      Direct legal lease scanning, accurate translations, and transition assistance.
                     </p>
                   </div>
                 </div>
@@ -247,11 +267,11 @@ export default function HowItWorksPage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 3: FAQ */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200/80">
+      <section className="py-16 sm:py-20 bg-slate-50/70 border-t border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <span className="text-xs font-bold uppercase tracking-wider text-red-600 mb-1 block">
-              Got Questions?
+              GOT QUESTIONS?
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Frequently Asked Questions
@@ -260,7 +280,7 @@ export default function HowItWorksPage() {
 
           <FaqAccordion items={FAQS_DATA} />
 
-          {/* Bottom CTA Banner */}
+          {/* Bottom CTA Banner matching screenshot */}
           <div className="mt-14 max-w-3xl mx-auto text-center bg-white rounded-3xl p-8 border border-slate-200 shadow-md">
             <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">
               Ready to find your Florence apartment?
@@ -270,7 +290,7 @@ export default function HowItWorksPage() {
             </p>
             <button
               onClick={() => router.push("/create-plan")}
-              className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-red-600/30 inline-flex items-center gap-2 transition-all"
+              className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-red-600/30 inline-flex items-center gap-2 transition-all cursor-pointer"
             >
               <span>Create Your Housing Plan</span>
               <ArrowRight className="w-4 h-4" />

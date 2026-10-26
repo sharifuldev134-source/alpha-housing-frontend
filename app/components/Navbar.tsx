@@ -159,15 +159,15 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
             >
               <div className="w-7 h-7 rounded-full bg-slate-200 overflow-hidden relative">
                 <Image
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                  alt="Emma Watson"
+                  src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80"
+                  alt="Dennis Dang"
                   width={28}
                   height={28}
                   className="object-cover"
                 />
               </div>
               <span className="text-xs font-semibold text-slate-800">
-                Emma&apos;s Group
+                Dennis Dang
               </span>
               <ChevronDown
                 className={`w-3.5 h-3.5 text-slate-400 transition-transform ${

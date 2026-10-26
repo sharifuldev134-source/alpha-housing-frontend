@@ -24,39 +24,48 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-slate-200">
           {/* Brand & Guarantee Column (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white shadow-sm">
-                <span className="font-extrabold text-base">α</span>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1 font-bold text-lg tracking-tight text-slate-900">
-                  <span>AlphaAbroad</span>
-                  <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-extrabold tracking-normal">
-                    eez
-                  </span>
-                </div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
-                  STUDY ABROAD HOUSING
+            <Link href="/" className="flex items-center gap-1.5 group select-none">
+              <svg
+                className="w-7 h-7 shrink-0 -mr-1"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M4 27C7 26 13 25 18 24C12 28 6 29 4 27Z" fill="#00B4D8" />
+                <path d="M5 24C8 22 14 21 19 21C13 24 7 26 5 24Z" fill="#06D6A0" />
+                <path d="M7 20C10 17 16 17 21 18C15 20 9 22 7 20Z" fill="#FFD166" />
+                <path d="M9 16C12 13 18 13 22 15C16 17 11 19 9 16Z" fill="#F77F00" />
+                <path d="M12 12C15 9 21 10 24 13C18 14 14 16 12 12Z" fill="#E01E5A" />
+                <path d="M19 8L27 28H23L21.5 24H18.5L20 20H21L19.5 15L17 24H14L19 8Z" fill="#DC2626" />
+              </svg>
+              <div className="flex items-baseline">
+                <span className="font-black text-xl tracking-tight text-red-600 leading-none">
+                  ALPHA
+                </span>
+                <span className="font-bold text-xl tracking-tight text-slate-800 leading-none ml-0.5">
+                  Housing
                 </span>
               </div>
             </Link>
 
             <p className="text-xs leading-relaxed text-slate-500 max-w-sm">
-              Find the right place to live abroad — together. AI-powered housing
-              guidance, group planning, and verified rental options for college
-              students and parents.
+              First-time abroad housing platform designed for students and parents. We
+              eliminate scams, simplify group roommate matching, and deliver verified
+              safe apartments.
             </p>
 
-            {/* Trust Badges */}
-            <div className="flex flex-wrap items-center gap-2 pt-2">
+            {/* Trust Badges matching screenshot */}
+            <div className="flex flex-wrap items-center gap-2 pt-1">
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>100% Anti-Scam Guarantee</span>
+                <span>100% Safe Lease Guarantee</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 text-rose-700 text-[11px] font-semibold border border-rose-200">
-                <Lock className="w-3.5 h-3.5 text-rose-600" />
-                <span>Escrow Payments</span>
-              </div>
+              <Link
+                href="/housing"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 text-rose-700 text-[11px] font-semibold border border-rose-200 hover:bg-rose-100 transition-colors"
+              >
+                <span>Become a Partner</span>
+              </Link>
             </div>
           </div>
 
@@ -199,7 +208,7 @@ export default function Footer() {
 
         {/* Bottom copyright row */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
-          <p>© 2026 AlphaAbroad Technologies, Inc. All rights reserved.</p>
+          <p>© 2024 AlphaHousing Technologies, Inc. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <Link href="/" className="hover:text-slate-600 transition-colors">
               Privacy Policy
@@ -208,7 +217,7 @@ export default function Footer() {
               Terms and Conditions
             </Link>
             <Link href="/" className="hover:text-slate-600 transition-colors">
-              Student Housing Standard
+              Student Housing Directory
             </Link>
             <Link href="/safety" className="hover:text-slate-600 transition-colors">
               Safety Compliance
