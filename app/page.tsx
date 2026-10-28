@@ -20,7 +20,8 @@ import {
   Clock,
   HelpCircle,
   PhoneCall,
-  Search
+  Search,
+  ChevronDown
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { 
@@ -54,100 +55,100 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* HERO SECTION */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full min-h-[580px] lg:min-h-[660px] flex items-center justify-center overflow-hidden bg-slate-900">
-        {/* Students Overlooking Florence Study Abroad Background Photo */}
-        <div className="absolute inset-0 z-0">
+      <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-visible bg-slate-900 pb-12 sm:pb-16">
+        {/* Leaning Tower of Pisa Background Photo */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
-            src="/images/home_students_banner.jpg"
-            alt="Students Overlooking Florence Study Abroad"
+            src="/images/pisa_banner.jpg"
+            alt="Study Abroad Background - Leaning Tower of Pisa"
             fill
             priority
-            className="object-cover object-center brightness-[0.78] contrast-[1.05] scale-105 transition-transform duration-1000"
+            className="object-cover object-center md:object-[center_35%] scale-100 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/45 to-black/35" />
-          <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/50" />
+          {/* Subtle natural gradient vignette for text legibility while preserving vibrant teal sky and architecture */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/25 to-black/35" />
+          <div className="absolute inset-0 bg-radial from-transparent via-black/15 to-black/40" />
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 text-center flex flex-col items-center">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-0 text-left flex flex-col items-start">
           {/* Registration Announcement Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white/95 text-xs font-semibold tracking-wide uppercase shadow-sm mb-6 animate-in fade-in slide-in-from-top-3 duration-500">
-            <span className="w-2 h-2 rounded-full bg-red-500 inline-block animate-pulse" />
-            <span>SPRING &amp; FALL 2024 HOUSING REGISTRATIONS OPEN</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-xs font-semibold tracking-wide uppercase shadow-sm mb-6 animate-in fade-in slide-in-from-top-3 duration-500">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>SPRING &amp; FALL 2027 HOUSING REGISTRATIONS OPEN</span>
           </div>
 
           {/* Hero Title */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.15] mb-4">
             Find the right place to live abroad —{" "}
-            <span className="text-[#FF5A5F] drop-shadow-sm">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5A5F] via-[#FF7A70] to-[#FBBF24]">
               together.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sm sm:text-base md:text-lg text-slate-200/95 max-w-2xl font-normal leading-relaxed mb-8">
+          <p className="text-sm sm:text-base md:text-lg text-slate-200/90 max-w-2xl font-normal leading-relaxed mb-8">
             AI-powered housing guidance, group planning, and real support for students and parents.
           </p>
 
           {/* Search Card */}
-          <div className="w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-3 sm:p-4 border border-slate-100/90 text-left">
+          <div className="w-full bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-5 border border-slate-100/90 text-left">
             <form
               onSubmit={handleSearchSubmit}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-end"
             >
               {/* Destination Dropdown (4 cols) */}
-              <div className="lg:col-span-4 px-3 py-2 border-b sm:border-b-0 sm:border-r border-slate-100">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+              <div className="lg:col-span-4">
+                <label className="block text-xs font-bold text-slate-900 mb-1.5">
                   Where are you studying?
                 </label>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-red-600 shrink-0" />
+                <div className="relative flex items-center justify-between border border-slate-200 rounded-xl px-3.5 py-2.5 bg-white hover:border-slate-300 transition-colors">
                   <select
                     value={selectedCity}
                     onChange={(e) => setSelectedCity(e.target.value)}
-                    className="w-full font-bold text-slate-800 text-sm focus:outline-none bg-transparent cursor-pointer uppercase"
+                    className="w-full font-medium text-slate-700 text-sm focus:outline-none bg-transparent cursor-pointer appearance-none pr-6"
                   >
-                    <option value="Florence, Italy">FLORENCE, ITALY</option>
-                    <option value="Barcelona, Spain">BARCELONA, SPAIN</option>
-                    <option value="Paris, France">PARIS, FRANCE</option>
-                    <option value="Rome, Italy">ROME, ITALY</option>
-                    <option value="Madrid, Spain">MADRID, SPAIN</option>
-                    <option value="Lisbon, Portugal">LISBON, PORTUGAL</option>
+                    <option value="Florence, Italy">Florence, Italy</option>
+                    <option value="Barcelona, Spain">Barcelona, Spain</option>
+                    <option value="Paris, France">Paris, France</option>
+                    <option value="Rome, Italy">Rome, Italy</option>
+                    <option value="Madrid, Spain">Madrid, Spain</option>
+                    <option value="Lisbon, Portugal">Lisbon, Portugal</option>
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 pointer-events-none" />
                 </div>
               </div>
 
               {/* Semester Dropdown (3 cols) */}
-              <div className="lg:col-span-3 px-3 py-2 border-b sm:border-b-0 sm:border-r border-slate-100">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+              <div className="lg:col-span-3">
+                <label className="block text-xs font-bold text-slate-900 mb-1.5">
                   Semester
                 </label>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-slate-500 shrink-0" />
+                <div className="relative flex items-center justify-between border border-slate-200 rounded-xl px-3.5 py-2.5 bg-white hover:border-slate-300 transition-colors">
                   <select
                     value={selectedSemester}
                     onChange={(e) => setSelectedSemester(e.target.value)}
-                    className="w-full font-bold text-slate-800 text-sm focus:outline-none bg-transparent cursor-pointer uppercase"
+                    className="w-full font-medium text-slate-700 text-sm focus:outline-none bg-transparent cursor-pointer appearance-none pr-6"
                   >
-                    <option value="Spring 2027">SPRING 2027</option>
-                    <option value="Fall 2027">FALL 2027</option>
-                    <option value="Full Year 2027/28">FULL YEAR 2027/28</option>
-                    <option value="Summer 2027">SUMMER 2027</option>
+                    <option value="Spring 2027">Spring 2027</option>
+                    <option value="Fall 2027">Fall 2027</option>
+                    <option value="Full Year 2027/28">Full Year 2027/28</option>
+                    <option value="Summer 2027">Summer 2027</option>
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 pointer-events-none" />
                 </div>
               </div>
 
               {/* Students Dropdown (2 cols) */}
-              <div className="lg:col-span-2 px-3 py-2 border-b sm:border-b-0 lg:border-r border-slate-100">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+              <div className="lg:col-span-2">
+                <label className="block text-xs font-bold text-slate-900 mb-1.5">
                   Students
                 </label>
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-slate-500 shrink-0" />
+                <div className="relative flex items-center justify-between border border-slate-200 rounded-xl px-3.5 py-2.5 bg-white hover:border-slate-300 transition-colors">
                   <select
                     value={selectedStudents}
                     onChange={(e) => setSelectedStudents(Number(e.target.value))}
-                    className="w-full font-bold text-slate-800 text-sm focus:outline-none bg-transparent cursor-pointer"
+                    className="w-full font-medium text-slate-700 text-sm focus:outline-none bg-transparent cursor-pointer appearance-none pr-6"
                   >
                     <option value={1}>1</option>
                     <option value={2}>2</option>
@@ -155,14 +156,15 @@ export default function HomePage() {
                     <option value={4}>4</option>
                     <option value={5}>5</option>
                   </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 pointer-events-none" />
                 </div>
               </div>
 
               {/* Submit Button (3 cols) */}
-              <div className="lg:col-span-3 px-1">
+              <div className="lg:col-span-3">
                 <button
                   type="submit"
-                  className="w-full py-3.5 px-4 rounded-xl sm:rounded-2xl bg-red-600 hover:bg-red-700 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-[#C8102E] hover:bg-[#A60D25] text-white font-semibold text-xs sm:text-sm shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01] cursor-pointer"
                 >
                   <span>Create Your Housing Plan</span>
                   <ArrowRight className="w-4 h-4" />
@@ -172,14 +174,14 @@ export default function HomePage() {
           </div>
 
           {/* 5 Value Props Bar */}
-          <div className="w-full max-w-4xl mt-6 pt-3.5 pb-3 px-4 rounded-2xl bg-white shadow-xl border border-slate-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-left">
+          <div className="w-full -mb-10 sm:-mb-12 relative z-20 mt-6 pt-3.5 pb-3 px-4 sm:px-6 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-left">
             <div className="flex items-center gap-2 p-1">
               <div className="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">City Intelligence</p>
-                <p className="text-[10px] text-slate-500">neighborhood safety &amp; transit</p>
+                <p className="text-[11px] font-bold text-slate-900 leading-tight">City intelligence</p>
+                <p className="text-[10px] text-slate-500">rich neighbourhood insights</p>
               </div>
             </div>
 
@@ -188,8 +190,8 @@ export default function HomePage() {
                 <Users className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">Group matching</p>
-                <p className="text-[10px] text-slate-500">2-6 budget pools</p>
+                <p className="text-[11px] font-bold text-slate-900 leading-tight">Group planning</p>
+                <p className="text-[10px] text-slate-500">and budget pools</p>
               </div>
             </div>
 
@@ -198,8 +200,8 @@ export default function HomePage() {
                 <Building2 className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">Real housing options</p>
-                <p className="text-[10px] text-slate-500">verified safe rentals</p>
+                <p className="text-[11px] font-bold text-slate-900 leading-tight">Real booking options</p>
+                <p className="text-[10px] text-slate-500">from trusted partners</p>
               </div>
             </div>
 
@@ -209,7 +211,7 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-slate-900 leading-tight">AI advisor</p>
-                <p className="text-[10px] text-slate-500">personalized guidance</p>
+                <p className="text-[10px] text-slate-500">with human assistance</p>
               </div>
             </div>
 
@@ -219,7 +221,7 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-slate-900 leading-tight">Parent visibility</p>
-                <p className="text-[10px] text-slate-500">peace of mind</p>
+                <p className="text-[10px] text-slate-500">and peace of mind</p>
               </div>
             </div>
           </div>
@@ -229,7 +231,7 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 1: POPULAR STUDY ABROAD CITIES */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-20 bg-white">
+      <section className="pt-20 sm:pt-24 pb-16 sm:pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">

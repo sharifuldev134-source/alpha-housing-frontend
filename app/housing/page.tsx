@@ -260,6 +260,208 @@ const HOUSING_LISTINGS: HousingItem[] = [
     isAuditedAvailable: true,
     nearIes: true,
   },
+  {
+    id: "santa-maria-novella-loft",
+    title: "Santa Maria Novella Central Loft",
+    address: "Via della Scala, 34, 50123 Firenze FI, Italy",
+    neighborhood: "Duomo / Center",
+    totalPrice: 3600,
+    perStudentPrice: 900,
+    safetyScore: 92,
+    walkMinutes: 7,
+    campusName: "Stanford in Florence / Gonzaga",
+    agency: "HousingAnywhere",
+    agencyType: "alpha",
+    bedrooms: "4 Single Beds",
+    bathrooms: "2 Baths",
+    sqm: "118 m²",
+    image: "https://images.unsplash.com/photo-1502005229762-ee152da915d6?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1502005229762-ee152da915d6?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=800&q=80",
+    ],
+    amenities: ["Furnished", "Air conditioning", "Wi-Fi", "Dishwasher", "Washing machine"],
+    isEmmaMatch: true,
+    isAlphaCertified: true,
+    isAuditedAvailable: true,
+    nearIes: true,
+  },
+  {
+    id: "oltrarno-artisan-residence",
+    title: "Oltrarno Artisan Flat",
+    address: "Via de' Serragli, 58, 50124 Firenze FI, Italy",
+    neighborhood: "Santo Spirito",
+    totalPrice: 3560,
+    perStudentPrice: 890,
+    safetyScore: 91,
+    walkMinutes: 11,
+    campusName: "FSU / NYU Florence",
+    agency: "SpotAHome",
+    agencyType: "alpha",
+    bedrooms: "4 Single Beds",
+    bathrooms: "2 Baths",
+    sqm: "112 m²",
+    image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80",
+    ],
+    amenities: ["Furnished", "Balcony", "Wi-Fi", "Washing machine", "Air conditioning"],
+    isEmmaMatch: false,
+    isAlphaCertified: true,
+    isAuditedAvailable: true,
+    nearIes: false,
+  },
+  {
+    id: "san-lorenzo-market-flat",
+    title: "San Lorenzo Market Student Flat",
+    address: "Piazza del Mercato Centrale, 12, 50123 Firenze FI, Italy",
+    neighborhood: "Duomo / Center",
+    totalPrice: 3400,
+    perStudentPrice: 850,
+    safetyScore: 93,
+    walkMinutes: 6,
+    campusName: "IES Abroad",
+    agency: "Local Agency",
+    agencyType: "local",
+    bedrooms: "4 Single Beds",
+    bathrooms: "2 Baths",
+    sqm: "110 m²",
+    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+    ],
+    amenities: ["Furnished", "Wi-Fi", "Air conditioning", "Elevator", "Washing machine"],
+    isEmmaMatch: true,
+    isAlphaCertified: false,
+    isAuditedAvailable: true,
+    nearIes: true,
+  },
+  {
+    id: "piazza-beccaria-sunny",
+    title: "Piazza Beccaria Sunny Apartment",
+    address: "Viale Giovanni Amendola, 22, 50121 Firenze FI, Italy",
+    neighborhood: "Santa Croce",
+    totalPrice: 3200,
+    perStudentPrice: 800,
+    safetyScore: 94,
+    walkMinutes: 14,
+    campusName: "FSU / Syracuse",
+    agency: "SpotAHome",
+    agencyType: "alpha",
+    bedrooms: "4 Single Beds",
+    bathrooms: "1 Bath",
+    sqm: "105 m²",
+    image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80",
+    ],
+    amenities: ["Furnished", "Balcony", "Wi-Fi", "Air conditioning", "Washing machine"],
+    isEmmaMatch: false,
+    isAlphaCertified: true,
+    isAuditedAvailable: true,
+    nearIes: true,
+  },
+  {
+    id: "porta-romana-garden",
+    title: "Porta Romana Garden Retreat",
+    address: "Via Senese, 15, 50124 Firenze FI, Italy",
+    neighborhood: "San Frediano",
+    totalPrice: 3100,
+    perStudentPrice: 775,
+    safetyScore: 92,
+    walkMinutes: 18,
+    campusName: "University of Florence",
+    agency: "HousingAnywhere",
+    agencyType: "alpha",
+    bedrooms: "4 Single Beds",
+    bathrooms: "2 Baths",
+    sqm: "125 m²",
+    image: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=1200&q=80",
+    ],
+    amenities: ["Furnished", "Private garden / patio", "Wi-Fi", "Washing machine", "Dishwasher"],
+    isEmmaMatch: false,
+    isAlphaCertified: true,
+    isAuditedAvailable: false,
+    nearIes: false,
+  },
+  {
+    id: "le-cure-view-apartment",
+    title: "Le Cure Panoramic Student Flat",
+    address: "Via Antonio Burlamacchi, 8, 50133 Firenze FI, Italy",
+    neighborhood: "Campo di Marte",
+    totalPrice: 2900,
+    perStudentPrice: 725,
+    safetyScore: 90,
+    walkMinutes: 20,
+    campusName: "University of Florence",
+    agency: "Local Agency",
+    agencyType: "local",
+    bedrooms: "4 Single Beds",
+    bathrooms: "1 Bath",
+    sqm: "98 m²",
+    image: "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80",
+    ],
+    amenities: ["Furnished", "Balcony", "Wi-Fi", "Heating", "Washing machine"],
+    isEmmaMatch: false,
+    isAlphaCertified: false,
+    isAuditedAvailable: true,
+    nearIes: false,
+  },
+  {
+    id: "sant-ambrogio-palazzo",
+    title: "Sant'Ambrogio Historic Flat",
+    address: "Borgo la Croce, 29, 50121 Firenze FI, Italy",
+    neighborhood: "Santa Croce",
+    totalPrice: 3800,
+    perStudentPrice: 950,
+    safetyScore: 95,
+    walkMinutes: 10,
+    campusName: "IES Abroad / FSU",
+    agency: "SpotAHome",
+    agencyType: "alpha",
+    bedrooms: "4 Single Beds",
+    bathrooms: "2 Baths",
+    sqm: "115 m²",
+    image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80",
+    ],
+    amenities: ["Furnished", "Wi-Fi", "Air conditioning", "Dishwasher", "Washing machine"],
+    isEmmaMatch: true,
+    isAlphaCertified: true,
+    isAuditedAvailable: true,
+    nearIes: true,
+  },
+  {
+    id: "fortezza-da-basso-suite",
+    title: "Fortezza Student Residence",
+    address: "Viale Filippo Strozzi, 40, 50129 Firenze FI, Italy",
+    neighborhood: "San Marco",
+    totalPrice: 3300,
+    perStudentPrice: 825,
+    safetyScore: 91,
+    walkMinutes: 12,
+    campusName: "Accademia / Stanford",
+    agency: "HousingAnywhere",
+    agencyType: "alpha",
+    bedrooms: "4 Single Beds",
+    bathrooms: "2 Baths",
+    sqm: "120 m²",
+    image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80",
+    ],
+    amenities: ["Furnished", "Elevator", "Wi-Fi", "Air conditioning", "Dishwasher"],
+    isEmmaMatch: false,
+    isAlphaCertified: true,
+    isAuditedAvailable: true,
+    nearIes: true,
+  },
 ];
 
 export default function HousingPage() {
@@ -270,17 +472,18 @@ export default function HousingPage() {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState("all");
   const [selectedCampus, setSelectedCampus] = useState("all");
   const [selectedBedrooms, setSelectedBedrooms] = useState("all");
-  const [maxStudentBudget, setMaxStudentBudget] = useState(1400);
+  const [maxStudentBudget, setMaxStudentBudget] = useState(1500);
 
   // Amenities Filter
   const [selectedAmenities, setSelectedAmenities] = useState<Record<string, boolean>>({
-    "Air Conditioning": false,
+    "Furnished": false,
+    "Air conditioning": false,
     "Wi-Fi": false,
-    "Elevator": false,
-    "Study Desks": false,
-    "Dishwasher": false,
     "Balcony": false,
-    "Private Bath": false,
+    "Washing machine": false,
+    "Dishwasher": false,
+    "Elevator": false,
+    "Private garden / patio": false,
   });
 
   // Category tab
@@ -368,71 +571,78 @@ export default function HousingPage() {
   return (
     <div className="flex flex-col w-full bg-[#FAFAFA] dark:bg-[#0B0F17] min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-200">
       {/* ========================================================= */}
-      {/* 1. HERO SECTION - SUNLIT APARTMENT & FLORENCE VIEW */}
+      {/* 1. HERO SECTION - SUNLIT PISA & FLORENCE VIEW */}
       {/* ========================================================= */}
-      <section className="relative pt-12 pb-24 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#080E1C] text-white">
-        {/* Background Image: Sunlit Apartment Interior with Terrace overlooking Florence Duomo */}
-        <div className="absolute inset-0">
+      <section className="relative pt-12 pb-20 md:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-950 text-white">
+        {/* Leaning Tower of Pisa Background Photo */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
             src="/images/housing_duomo_room.jpg"
-            alt="Florentine Student Apartment Interior and Duomo View"
+            alt="Study Abroad Background - Leaning Tower of Pisa"
             fill
             priority
-            className="object-cover object-center opacity-65 brightness-[0.88] contrast-[1.05] scale-105 transition-transform duration-1000"
+            className="object-cover object-center md:object-[center_35%] scale-100 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C]/90 via-[#080E1C]/65 to-transparent" />
-          <div className="absolute inset-0 bg-radial from-transparent via-[#080E1C]/15 to-[#080E1C]/60" />
+          {/* Subtle natural gradient vignette for text legibility while preserving vibrant teal sky and architecture */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/25 to-black/35" />
+          <div className="absolute inset-0 bg-radial from-transparent via-black/15 to-black/40" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto space-y-4 text-center sm:text-left">
+        <div className="relative z-10 max-w-7xl mx-auto space-y-4 text-center sm:text-left">
           {/* Top Pill matching screenshot */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[10.5px] font-bold tracking-wider uppercase backdrop-blur-md">
-            <span>HOUSING GUIDANCE</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-[11px] font-semibold tracking-wider uppercase shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>78 VERIFIED STUDENT HOUSING UNITS IN FLORENCE • SPRING &amp; FALL 2027</span>
           </div>
 
-          {/* Big Title matching screenshot */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
-            Find the right place to live in Florence
-          </h1>
+          {/* Big Titles matching screenshot */}
+          <div className="space-y-1">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+              Verified Student Housing
+            </h1>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-[#DC2626]">
+              in Florence, Italy
+            </h2>
+          </div>
 
-          <p className="text-xs sm:text-sm md:text-base text-[#A0AEC0] max-w-2xl leading-relaxed">
-            Explore vetted housing options, get expert guidance on neighborhoods, and understand what fits your lifestyle, budget and university location.
+          <p className="text-xs sm:text-sm md:text-base text-slate-200/90 max-w-2xl leading-relaxed">
+            Explore pre-vetted, safe student apartments near Florence study abroad campuses. Transparent per-person pricing, official Italian rental contracts, and boots-on-the-ground support.
           </p>
 
           {/* ========================================================= */}
           {/* FLOATING INTERACTIVE SEARCH & FILTER CARD */}
           {/* ========================================================= */}
-          <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200/90 text-left space-y-4 text-xs mt-6">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-100/90 text-left space-y-4 text-xs mt-6">
             {/* Row 1: 4 Main Selectors */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Search input */}
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                  Search Apartment or Street
+                <label className="flex items-center gap-1.5 text-xs font-bold text-slate-800 mb-1.5">
+                  <Search className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                  <span>Search Apartment or Street</span>
                 </label>
                 <div className="relative">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="e.g. Via dei Neri, Florence..."
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626]"
+                    placeholder="e.g. Via dei Neri, Santa Croce, Lemon..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] font-medium"
                   />
                 </div>
               </div>
 
               {/* Neighborhood dropdown */}
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                  Neighborhood
+                <label className="flex items-center gap-1.5 text-xs font-bold text-slate-800 mb-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                  <span>Neighborhood</span>
                 </label>
                 <div className="relative">
-                  <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <select
                     value={selectedNeighborhood}
                     onChange={(e) => setSelectedNeighborhood(e.target.value)}
-                    className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] appearance-none"
+                    className="w-full px-3.5 pr-8 py-2.5 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] appearance-none font-medium cursor-pointer"
                   >
                     <option value="all">All Florence Neighborhoods</option>
                     <option value="Santa Croce">Santa Croce (9.3 Safe)</option>
@@ -442,21 +652,21 @@ export default function HousingPage() {
                     <option value="Campo di Marte">Campo di Marte (8.9 Safe)</option>
                     <option value="San Marco">San Marco (9.2 Safe)</option>
                   </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
 
               {/* Study Campus dropdown */}
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                  Your Study Campus
+                <label className="flex items-center gap-1.5 text-xs font-bold text-slate-800 mb-1.5">
+                  <GraduationCap className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                  <span>Your Study Program</span>
                 </label>
                 <div className="relative">
-                  <GraduationCap className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <select
                     value={selectedCampus}
                     onChange={(e) => setSelectedCampus(e.target.value)}
-                    className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] appearance-none"
+                    className="w-full px-3.5 pr-8 py-2.5 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] appearance-none font-medium cursor-pointer"
                   >
                     <option value="all">All University Programs</option>
                     <option value="IES Abroad">IES Abroad Florence</option>
@@ -465,28 +675,28 @@ export default function HousingPage() {
                     <option value="Stanford">Stanford in Florence</option>
                     <option value="Gonzaga">Gonzaga / Syracuse</option>
                   </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
 
               {/* Bedrooms dropdown */}
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                  Bedrooms
+                <label className="flex items-center gap-1.5 text-xs font-bold text-slate-800 mb-1.5">
+                  <Bed className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                  <span>Bedrooms</span>
                 </label>
                 <div className="relative">
-                  <Bed className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <select
                     value={selectedBedrooms}
                     onChange={(e) => setSelectedBedrooms(e.target.value)}
-                    className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] appearance-none"
+                    className="w-full px-3.5 pr-8 py-2.5 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] appearance-none font-medium cursor-pointer"
                   >
                     <option value="all">Any (3–5)</option>
                     <option value="3">3 Bedrooms</option>
                     <option value="4">4 Bedrooms</option>
                     <option value="5">5 Bedrooms</option>
                   </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
             </div>
@@ -495,8 +705,8 @@ export default function HousingPage() {
             <div className="pt-2 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               {/* Amenities tags */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
-                  <SlidersHorizontal className="w-3 h-3" />
+                <span className="text-xs font-bold text-slate-500 mr-1 flex items-center gap-1">
+                  <SlidersHorizontal className="w-3 h-3 text-slate-400" />
                   Amenities:
                 </span>
                 {Object.keys(selectedAmenities).map((name) => (
@@ -504,11 +714,10 @@ export default function HousingPage() {
                     key={name}
                     type="button"
                     onClick={() => toggleAmenity(name)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                      selectedAmenities[name]
-                        ? "bg-[#DC2626] text-white shadow-2xs"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${selectedAmenities[name]
+                      ? "bg-[#DC2626] text-white shadow-xs"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
                   >
                     {name}
                   </button>
@@ -516,9 +725,9 @@ export default function HousingPage() {
               </div>
 
               {/* Max Student Budget */}
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Max/Student:
+              <div className="flex items-center gap-2.5 shrink-0">
+                <span className="text-xs font-medium text-slate-600">
+                  Max. rent/person:
                 </span>
                 <span className="text-sm font-extrabold text-[#DC2626]">
                   €{maxStudentBudget}/mo
@@ -530,7 +739,7 @@ export default function HousingPage() {
                   step="50"
                   value={maxStudentBudget}
                   onChange={(e) => setMaxStudentBudget(Number(e.target.value))}
-                  className="w-28 accent-[#DC2626] cursor-pointer"
+                  className="w-24 accent-[#DC2626] cursor-pointer"
                 />
               </div>
             </div>
@@ -544,8 +753,8 @@ export default function HousingPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 relative z-20 w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           {/* Pill 1 */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+          <div className="bg-[#E8F8F0] rounded-2xl border border-emerald-100/90 p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -553,14 +762,14 @@ export default function HousingPage() {
                 100% In-Person Inspected
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Photos verified, noise levels checked
+                Every flat visited &amp; certified
               </div>
             </div>
           </div>
 
           {/* Pill 2 */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+          <div className="bg-[#EBF3FE] rounded-2xl border border-blue-100/90 p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
               <FileText className="w-5 h-5" />
             </div>
             <div>
@@ -568,14 +777,14 @@ export default function HousingPage() {
                 Legal Italian Leases
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Standard student registered contracts
+                Registered with official registration laws
               </div>
             </div>
           </div>
 
           {/* Pill 3 */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+          <div className="bg-[#F5EDFE] rounded-2xl border border-purple-100/90 p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm">
               <Users className="w-5 h-5" />
             </div>
             <div>
@@ -583,22 +792,22 @@ export default function HousingPage() {
                 Equal Price Splits
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Fair room share formulas for group members
+                Calculated fair group room distribution
               </div>
             </div>
           </div>
 
           {/* Pill 4 */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+          <div className="bg-[#FEF6E9] rounded-2xl border border-amber-100/90 p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-sm">
               <Lock className="w-5 h-5" />
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
-                Escrow Protection
+                Parent Real-time Access
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Deposits held until move-in check
+                Full visibility for families
               </div>
             </div>
           </div>
@@ -629,11 +838,10 @@ export default function HousingPage() {
             <span className="text-slate-400 text-[11px] font-semibold">Filter:</span>
             <button
               onClick={() => setSortOption("price-asc")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-colors ${
-                sortOption === "price-asc"
-                  ? "bg-slate-900 text-white border-slate-900"
-                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-              }`}
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-colors ${sortOption === "price-asc"
+                ? "bg-slate-900 text-white border-slate-900"
+                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                }`}
             >
               Budget Friendly
             </button>
@@ -661,41 +869,37 @@ export default function HousingPage() {
         <div className="flex items-center gap-2 pt-3 overflow-x-auto text-xs">
           <button
             onClick={() => setActiveCategoryTab("all")}
-            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
-              activeCategoryTab === "all"
-                ? "bg-[#DC2626] text-white shadow-2xs"
-                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
+            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${activeCategoryTab === "all"
+              ? "bg-[#DC2626] text-white shadow-2xs"
+              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
           >
             All Flats (78)
           </button>
           <button
             onClick={() => setActiveCategoryTab("audited")}
-            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
-              activeCategoryTab === "audited"
-                ? "bg-[#DC2626] text-white shadow-2xs"
-                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
+            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${activeCategoryTab === "audited"
+              ? "bg-[#DC2626] text-white shadow-2xs"
+              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
           >
             Audited Available (32)
           </button>
           <button
             onClick={() => setActiveCategoryTab("alpha")}
-            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
-              activeCategoryTab === "alpha"
-                ? "bg-[#DC2626] text-white shadow-2xs"
-                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
+            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${activeCategoryTab === "alpha"
+              ? "bg-[#DC2626] text-white shadow-2xs"
+              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
           >
             Alpha 100% Compliant (54)
           </button>
           <button
             onClick={() => setActiveCategoryTab("nearIes")}
-            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
-              activeCategoryTab === "nearIes"
-                ? "bg-[#DC2626] text-white shadow-2xs"
-                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
+            className={`px-4 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${activeCategoryTab === "nearIes"
+              ? "bg-[#DC2626] text-white shadow-2xs"
+              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
           >
             Near IES (14)
           </button>
@@ -767,11 +971,10 @@ export default function HousingPage() {
                       {/* Heart Save Button */}
                       <button
                         onClick={(e) => toggleSave(flat.id, e)}
-                        className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                          isSaved
-                            ? "bg-[#DC2626] text-white shadow-md"
-                            : "bg-white/80 backdrop-blur-md text-slate-700 hover:bg-white"
-                        }`}
+                        className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${isSaved
+                          ? "bg-[#DC2626] text-white shadow-md"
+                          : "bg-white/80 backdrop-blur-md text-slate-700 hover:bg-white"
+                          }`}
                         title="Save to Group Favorites"
                       >
                         <Heart className={`w-4 h-4 ${isSaved ? "fill-white text-white" : ""}`} />
@@ -926,11 +1129,10 @@ export default function HousingPage() {
                       key={num}
                       type="button"
                       onClick={() => setSplitterRoommates(num)}
-                      className={`w-10 h-10 rounded-xl font-bold transition-all ${
-                        splitterRoommates === num
-                          ? "bg-[#DC2626] text-white shadow-md shadow-red-500/30"
-                          : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
-                      }`}
+                      className={`w-10 h-10 rounded-xl font-bold transition-all ${splitterRoommates === num
+                        ? "bg-[#DC2626] text-white shadow-md shadow-red-500/30"
+                        : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
+                        }`}
                     >
                       {num}
                     </button>
@@ -1036,11 +1238,10 @@ export default function HousingPage() {
                 <button
                   key={idx}
                   onClick={() => setActiveModalPhoto(idx)}
-                  className={`relative h-16 rounded-xl overflow-hidden border-2 transition-all ${
-                    activeModalPhoto === idx
-                      ? "border-[#DC2626] scale-102"
-                      : "border-slate-200 opacity-60 hover:opacity-100"
-                  }`}
+                  className={`relative h-16 rounded-xl overflow-hidden border-2 transition-all ${activeModalPhoto === idx
+                    ? "border-[#DC2626] scale-102"
+                    : "border-slate-200 opacity-60 hover:opacity-100"
+                    }`}
                 >
                   <Image src={img} alt="Thumbnail" fill className="object-cover" />
                 </button>

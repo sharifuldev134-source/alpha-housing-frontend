@@ -3,30 +3,30 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  ShieldCheck, 
-  MapPin, 
-  Phone, 
-  PhoneCall, 
-  Copy, 
-  Check, 
-  ExternalLink, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Eye, 
-  Building2, 
-  ArrowRight, 
-  Clock, 
+import {
+  ShieldCheck,
+  MapPin,
+  Phone,
+  PhoneCall,
+  Copy,
+  Check,
+  ExternalLink,
+  AlertTriangle,
+  CheckCircle2,
+  Eye,
+  Building2,
+  ArrowRight,
+  Clock,
   HeartHandshake,
   ChevronRight,
   Sparkles,
   Lock
 } from "lucide-react";
-import { 
-  FLORENCE_SAFETY_FEATURES, 
-  NEIGHBORHOOD_SAFETY_SCORES, 
-  EMERGENCY_HOTLINES, 
-  SCAM_PROOF_GUARANTEES 
+import {
+  FLORENCE_SAFETY_FEATURES,
+  NEIGHBORHOOD_SAFETY_SCORES,
+  EMERGENCY_HOTLINES,
+  SCAM_PROOF_GUARANTEES
 } from "../data/housingData";
 import { usePlanModal } from "../components/PlanModalContext";
 
@@ -46,17 +46,19 @@ export default function SafetyPage() {
       {/* ------------------------------------------------------------- */}
       {/* HERO SECTION - FLORENCE SKYLINE & SAFETY BANNER */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full bg-[#080E1C] text-white overflow-hidden py-16 sm:py-24">
-        {/* Background Skyline - Florence Duomo & Arno River */}
-        <div className="absolute inset-0 z-0">
+      <section className="relative w-full bg-slate-950 text-white overflow-hidden py-16 sm:py-24">
+        {/* Leaning Tower of Pisa Background Photo */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
             src="/images/safety_florence_banner.jpg"
-            alt="Florence Arno River and Duomo Panorama"
+            alt="Study Abroad Background - Leaning Tower of Pisa"
             fill
             priority
-            className="object-cover object-center brightness-[0.88] contrast-[1.05]"
+            className="object-cover object-center md:object-[center_35%] scale-100 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C] via-[#080E1C]/80 md:via-[#080E1C]/60 to-black/30" />
+          {/* Subtle natural gradient vignette for text legibility while preserving vibrant teal sky and architecture */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/25 to-black/35" />
+          <div className="absolute inset-0 bg-radial from-transparent via-black/15 to-black/40" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,31 +66,33 @@ export default function SafetyPage() {
             {/* Left Column (7 cols) */}
             <div className="lg:col-span-7 space-y-5">
               {/* Tag Capsule matching screenshot */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[10.5px] font-bold tracking-wider uppercase shadow-xs">
-                <span>STUDENT SAFETY &amp; SUPPORT</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/35 text-emerald-300 text-[11px] font-semibold tracking-wider uppercase shadow-xs backdrop-blur-md">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>VERIFIED FLORENCE STUDENT HOUSING SAFETY STANDARDS</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
-                Safety &amp; Peace of Mind in Florence
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
+                Safety &amp; Peace of Mind in <br />
+                Florence
               </h1>
 
-              <p className="text-sm sm:text-base text-[#A0AEC0] leading-relaxed max-w-xl">
-                Practical information, local resources, and real assistance to help students and families feel confident.
+              <p className="text-sm sm:text-base text-slate-200/90 leading-relaxed max-w-xl">
+                Study abroad housing verified for safety. Real neighborhood safety ratings, well-lit evening routes, verified building locks, and on-ground emergency protocols.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   onClick={() => setParentModalOpen(true)}
-                  className="py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all"
+                  className="py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <Eye className="w-4 h-4" />
                   <span>Open Parent Portal</span>
                 </button>
                 <Link
                   href="/housing"
-                  className="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-2"
+                  className="py-3 px-5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-semibold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <Building2 className="w-4 h-4" />
+                  <Building2 className="w-4 h-4 text-slate-700" />
                   <span>View Verified Flats</span>
                 </Link>
               </div>
@@ -96,33 +100,33 @@ export default function SafetyPage() {
 
             {/* Right Column: Floating Preview Card (5 cols) */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="w-full max-w-sm rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-white/15 p-5 shadow-2xl relative">
+              <div className="w-full max-w-sm rounded-3xl bg-slate-900/60 backdrop-blur-xl border border-white/20 p-5 shadow-2xl relative">
                 {/* Photo preview */}
                 <div className="relative aspect-video w-full rounded-2xl overflow-hidden mb-4">
                   <Image
-                    src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80"
+                    src="https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=800&q=80"
                     alt="Florence Historic Center"
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-emerald-600/90 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider">
-                    Florence Grand Valley 9.2/10
+                  <div className="absolute bottom-2.5 left-2.5 px-3 py-1 rounded-full bg-emerald-600/95 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                    Florence Safety Rating: 9.2 / 10
                   </div>
                 </div>
 
                 {/* Stat pills */}
                 <div className="space-y-2.5 text-xs">
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-slate-400">Overall Safety Index</span>
-                    <span className="font-bold text-emerald-400">9.2/10 Very Low</span>
+                    <span className="text-slate-300">Overall Safety Index</span>
+                    <span className="font-bold text-emerald-400">9.2/10 Very Safe</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-slate-400">Walkable to University</span>
-                    <span className="font-bold text-slate-200">94% historic zone</span>
+                    <span className="text-slate-300">Pedestrian Zone Safety</span>
+                    <span className="font-bold text-slate-200">ZTL Protected Zone</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-slate-400">English Medical Care</span>
-                    <span className="font-bold text-slate-200">24/7 Available</span>
+                    <span className="text-slate-300">Night Emergency Care</span>
+                    <span className="font-bold text-slate-200">24/7 Care Access</span>
                   </div>
                 </div>
               </div>
@@ -169,7 +173,7 @@ export default function SafetyPage() {
                     className="object-cover hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  
+
                   {/* Category tag */}
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white font-bold text-[10px] uppercase tracking-wider">
                     {item.categoryTag}
@@ -237,7 +241,7 @@ export default function SafetyPage() {
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-                    
+
                     {/* Score badge */}
                     <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
                       <span className="px-2 py-0.5 rounded-md bg-emerald-500 text-white font-extrabold text-xs shadow-xs">

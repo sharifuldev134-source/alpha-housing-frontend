@@ -4,18 +4,18 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { 
-  Users, 
-  MapPin, 
-  Building2, 
-  ShieldCheck, 
-  BrainCircuit, 
-  Eye, 
-  ArrowRight, 
-  CheckCircle2, 
-  Sparkles, 
-  Star, 
-  Lock, 
+import {
+  Users,
+  MapPin,
+  Building2,
+  ShieldCheck,
+  BrainCircuit,
+  Eye,
+  ArrowRight,
+  CheckCircle2,
+  Sparkles,
+  Star,
+  Lock,
   Compass,
   FileCheck2
 } from "lucide-react";
@@ -70,32 +70,35 @@ export default function HowItWorksPage() {
       {/* ------------------------------------------------------------- */}
       {/* HERO SECTION - STUDENT STUDY ABROAD BANNER */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full bg-[#080E1C] text-white overflow-hidden py-16 sm:py-24 text-center">
-        {/* Student Working on Laptop Background */}
-        <div className="absolute inset-0 z-0">
+      <section className="relative w-full bg-slate-950 text-white overflow-hidden py-16 sm:py-24 text-center">
+        {/* Leaning Tower of Pisa Background Photo */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
             src="/images/how_it_works_student.jpg"
-            alt="Student on laptop receiving support"
+            alt="Study Abroad Background - Leaning Tower of Pisa"
             fill
             priority
-            className="object-cover object-right md:object-center brightness-[0.88] contrast-[1.05]"
+            className="object-cover object-center md:object-[center_35%] scale-100 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C] via-[#080E1C]/80 md:via-[#080E1C]/60 to-black/30" />
+          {/* Subtle natural gradient vignette for text legibility while preserving vibrant teal sky and architecture */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/25 to-black/35" />
+          <div className="absolute inset-0 bg-radial from-transparent via-black/15 to-black/40" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Tag Capsule matching screenshot */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[11px] font-bold tracking-wider uppercase shadow-xs mb-6 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-[11px] font-semibold tracking-wider uppercase shadow-sm mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>THE STUDY ABROAD HOUSING ROADMAP</span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight mb-4">
             How AlphaAbroadeez Works
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto mb-8 font-normal">
+          <p className="text-sm sm:text-base text-slate-200/90 leading-relaxed max-w-2xl mx-auto mb-8 font-normal">
             From picking roommates to unpacking your bags in Florence. Simple, transparent, scam-free housing guidance for college students and families.
           </p>
 
@@ -103,16 +106,15 @@ export default function HowItWorksPage() {
           <div className="flex flex-wrap items-center justify-center gap-3.5">
             <button
               onClick={() => router.push("/create-plan")}
-              className="py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-2 transition-all cursor-pointer"
+              className="py-3 px-6 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-2 transition-all cursor-pointer"
             >
               <span>Start Your Housing Plan</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <Link
               href="/housing"
-              className="py-3 px-6 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer"
+              className="py-3 px-6 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer"
             >
-              <Building2 className="w-4 h-4" />
               <span>Browse Verified Apartments</span>
             </Link>
           </div>

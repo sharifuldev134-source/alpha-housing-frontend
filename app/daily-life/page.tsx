@@ -195,19 +195,21 @@ export default function DailyLifePage() {
   return (
     <div className="flex flex-col w-full bg-white text-slate-900">
       {/* ------------------------------------------------------------- */}
-      {/* HERO SECTION - FLORENCE DAILY LIFE & OUTDOOR CAFE */}
+      {/* HERO SECTION - FLORENCE DAILY LIFE & COASTAL SCENERY */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full bg-[#080E1C] text-white overflow-hidden py-16 sm:py-20 lg:py-24">
-        {/* Florentine Outdoor Street Cafe Scenery */}
-        <div className="absolute inset-0 z-0">
+      <section className="relative w-full bg-slate-950 text-white overflow-hidden py-16 sm:py-20 lg:py-24">
+        {/* Italian Coastal Scenery Background Photo */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
-            src="/images/daily_life_florence_banner.jpg"
-            alt="Florentine Outdoor Street Cafe and Trattoria"
+            src="/images/cinque_terre_banner.jpg"
+            alt="Study Abroad Background - Italian Coastline"
             fill
             priority
-            className="object-cover object-center brightness-[0.88] contrast-[1.05]"
+            className="object-cover object-center scale-100 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080E1C] via-[#080E1C]/80 md:via-[#080E1C]/60 to-black/30" />
+          {/* Natural vignette overlay preserving the vibrant colors while ensuring text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/25 to-black/35" />
+          <div className="absolute inset-0 bg-radial from-transparent via-black/15 to-black/40" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -215,32 +217,33 @@ export default function DailyLifePage() {
             {/* Left Content Column (7 cols) */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
               {/* Tag Capsule matching screenshot */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3B1218]/90 border border-[#6B1E2B] text-[#FFA8B8] text-[10.5px] font-bold tracking-wider uppercase shadow-xs">
-                <span>LIVING IN FLORENCE</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-[11px] font-semibold tracking-wider uppercase shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>FLORENTINE STUDENT LIFE &amp; NEIGHBORHOOD GUIDE</span>
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
                 Daily Life in Florence
               </h1>
 
               {/* Exact Subtitle from screenshot */}
-              <p className="text-xs sm:text-sm md:text-[15px] text-[#A0AEC0] leading-relaxed max-w-xl font-normal">
-                Everything you need to know to feel at home — from getting around to finding the best coffee, groceries, and local experiences.
+              <p className="text-sm sm:text-base text-slate-200/90 leading-relaxed max-w-xl font-normal">
+                From morning espressos and vibrant fresh markets to tram passes, study terraces, and Italian apartment etiquette — here is how you and your roommates will navigate Florence every day during Spring 2027.
               </p>
 
               {/* Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-3">
                 <button
                   onClick={() => openPlanModal()}
-                  className="py-3 px-5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-[0_4px_22px_rgba(220,38,38,0.45)] flex items-center gap-2 transition-all"
+                  className="py-3 px-5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <span>Explore Housing Near Campus</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <Link
                   href="/housing"
-                  className="py-3 px-5 rounded-xl bg-[#222E42]/90 hover:bg-[#2A3952] border border-[#354663]/60 text-white font-semibold text-xs sm:text-sm transition-all"
+                  className="py-3 px-5 rounded-xl bg-white hover:bg-slate-50 text-slate-900 font-semibold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <span>Check Neighborhoods</span>
                 </Link>
@@ -249,38 +252,38 @@ export default function DailyLifePage() {
 
             {/* Right Column: Floating Preview Card (5 cols) */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="w-full max-w-[340px] sm:max-w-[360px] rounded-2xl bg-[#162032]/90 backdrop-blur-md border border-[#27354E] p-3.5 sm:p-4 shadow-2xl">
+              <div className="w-full max-w-[340px] sm:max-w-[360px] rounded-3xl bg-slate-900/60 backdrop-blur-xl border border-white/20 p-4 sm:p-5 shadow-2xl relative">
                 {/* Photo Thumbnail */}
-                <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden mb-3 bg-slate-900">
+                <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-3.5 bg-slate-900">
                   <Image
-                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
+                    src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
                     alt="Tuscan Living Experience"
                     fill
                     className="object-cover"
                   />
                   {/* Exact Red Badge from screenshot: Tuscan Living Experience */}
-                  <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-md bg-[#DC2626] text-white text-[10px] font-extrabold tracking-wide shadow-sm">
+                  <div className="absolute bottom-2.5 left-2.5 px-3 py-1 rounded-full bg-[#DC2626] text-white text-[10px] font-bold uppercase tracking-wide shadow-sm">
                     Tuscan Living Experience
                   </div>
                 </div>
 
                 {/* 3 Exact Stats Rows from screenshot */}
-                <div className="space-y-2 pt-1 text-[11px] font-medium">
+                <div className="space-y-2.5 text-xs font-medium">
                   {/* Row 1 */}
-                  <div className="flex items-center justify-between pb-2 border-b border-[#24314A]/80">
-                    <span className="text-slate-400">Average Daily Transit</span>
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <span className="text-slate-300">Average Daily Transit</span>
                     <span className="font-bold text-white">100% Walkable</span>
                   </div>
 
                   {/* Row 2 */}
-                  <div className="flex items-center justify-between pb-2 border-b border-[#24314A]/80">
-                    <span className="text-slate-400">Monthly Grocery Cost</span>
-                    <span className="font-bold text-[#10B981]">~€220 - €280</span>
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <span className="text-slate-300">Monthly Grocery Cost</span>
+                    <span className="font-bold text-emerald-400">~€220 - €280</span>
                   </div>
 
                   {/* Row 3 */}
-                  <div className="flex items-center justify-between pt-0.5">
-                    <span className="text-slate-400">Coffee Counter Price</span>
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <span className="text-slate-300">Coffee Counter Price</span>
                     <span className="font-bold text-slate-200">€1.20 Espresso</span>
                   </div>
                 </div>
