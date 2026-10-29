@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   ShieldCheck,
   AlertCircle,
@@ -17,11 +18,22 @@ import {
   Check,
   Copy,
   MapPin,
-  X,
-  Phone,
-  Hospital,
-  AlertTriangle
+  X
 } from "lucide-react";
+
+// Dynamically import Leaflet map to ensure it runs only in client environment (no SSR window error)
+const FlorenceSafetyMap = dynamic(
+  () => import("../components/FlorenceSafetyMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full min-h-[350px] lg:min-h-[420px] bg-slate-100 dark:bg-slate-900 rounded-2xl flex flex-col items-center justify-center text-slate-400 gap-2">
+        <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs font-medium">Loading interactive Florence map...</span>
+      </div>
+    ),
+  }
+);
 
 interface NeighborhoodSafetyRow {
   id: string;
@@ -75,6 +87,7 @@ export default function SafetyPage() {
   const [emergencyModalOpen, setEmergencyModalOpen] = useState(false);
   const [actionModal, setActionModal] = useState<"medical" | "passport" | "phone" | "contact" | null>(null);
   const [copiedNumber, setCopiedNumber] = useState<string | null>(null);
+  const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string>("santa-croce");
 
   const handleCopy = (num: string) => {
     navigator.clipboard.writeText(num);
@@ -134,21 +147,21 @@ export default function SafetyPage() {
   return (
     <div className="flex flex-col w-full bg-slate-50/70 dark:bg-[#0B0F17]">
       {/* ------------------------------------------------------------- */}
-      {/* 1. HERO SECTION - MATCHING SCREENSHOT EXACTLY */}
+      {/* 1. HERO SECTION - BRIGHT & VIBRANT MATCHING SCREENSHOT */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full bg-slate-950 text-white overflow-hidden py-14 sm:py-20 lg:py-24">
-        {/* Leaning Tower of Pisa Background Photo */}
+      <section className="relative w-full bg-slate-900 text-white overflow-hidden py-14 sm:py-20 lg:py-24">
+        {/* Leaning Tower of Pisa Background Photo in full daylight brightness */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
             src="/images/pisa_banner.jpg"
             alt="Study Abroad Background - Leaning Tower of Pisa"
             fill
             priority
-            className="object-cover object-center md:object-[center_35%] scale-100 transition-transform duration-700"
+            className="object-cover object-center md:object-[center_35%] scale-100 brightness-[1.03] contrast-[1.02]"
           />
-          {/* Subtle natural gradient vignette for high contrast while maintaining vibrant colors */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/30 to-black/35" />
-          <div className="absolute inset-0 bg-radial from-transparent via-black/15 to-black/45" />
+          {/* Subtle natural daylight gradient behind left text only for clean legibility without dimming the photo */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/45 via-slate-950/15 to-transparent z-1" />
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950/20 to-transparent z-1" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -156,19 +169,19 @@ export default function SafetyPage() {
             {/* Left Column (7 cols) */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-5 text-left">
               {/* Tag Capsule matching screenshot */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/35 text-emerald-300 text-[11px] font-semibold tracking-wider uppercase shadow-xs backdrop-blur-md">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-600/30 border border-emerald-400/40 text-emerald-200 text-[11px] font-semibold tracking-wider uppercase shadow-xs backdrop-blur-md">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
                 <span>VERIFIED FLORENCE STUDENT SAFETY &amp; PROTECTION GUIDE</span>
               </div>
 
-              {/* Headline matching screenshot: Safety & Support in Florence */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
+              {/* Headline matching screenshot */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
                 Safety &amp; Support <br />
                 in Florence
               </h1>
 
               {/* Subtitle matching screenshot */}
-              <p className="text-xs sm:text-sm md:text-base text-slate-200/90 leading-relaxed max-w-xl font-normal">
+              <p className="text-xs sm:text-sm md:text-base text-slate-100 leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)]">
                 Study abroad is an unforgettable adventure. We provide real neighborhood safety ratings, well-lit pedestrian corridors, emergency medical access, and scam-proof housing policies so students thrive and parents rest easy.
               </p>
 
@@ -176,14 +189,14 @@ export default function SafetyPage() {
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   onClick={() => setParentModalOpen(true)}
-                  className="py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all cursor-pointer"
+                  className="py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-900/30 flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <Eye className="w-4 h-4" />
                   <span>Open Parent Portal</span>
                 </button>
                 <Link
                   href="/housing"
-                  className="py-3 px-5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 border border-slate-200 font-semibold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
+                  className="py-3 px-5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-semibold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Building2 className="w-4 h-4 text-slate-700" />
                   <span>View Verified Flats</span>
@@ -193,7 +206,7 @@ export default function SafetyPage() {
 
             {/* Right Column: Floating Preview Glass Card (5 cols) */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="w-full max-w-sm rounded-3xl bg-slate-900/60 backdrop-blur-xl border border-white/20 p-5 shadow-2xl relative text-left">
+              <div className="w-full max-w-sm rounded-3xl bg-slate-900/35 backdrop-blur-md border border-white/25 p-5 shadow-2xl relative text-left">
                 {/* Photo preview */}
                 <div className="relative aspect-video w-full rounded-2xl overflow-hidden mb-4">
                   <Image
@@ -209,19 +222,19 @@ export default function SafetyPage() {
 
                 {/* Stat pills matching screenshot */}
                 <div className="space-y-2.5 text-xs">
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-slate-300">Violent Crime Index</span>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 text-[11px]">
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 border border-white/15">
+                    <span className="text-slate-200">Violent Crime Index</span>
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 font-bold border border-emerald-400/40 text-[11px]">
                       Extremely Low
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-slate-300">Pedestrian Walkability</span>
-                    <span className="font-bold text-slate-200">98% Historic Core</span>
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 border border-white/15">
+                    <span className="text-slate-200">Pedestrian Walkability</span>
+                    <span className="font-bold text-white">98% Historic Core</span>
                   </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-slate-300">English Medical Care</span>
-                    <span className="font-bold text-slate-200">24/7 Available</span>
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 border border-white/15">
+                    <span className="text-slate-200">English Medical Care</span>
+                    <span className="font-bold text-white">24/7 Available</span>
                   </div>
                 </div>
               </div>
@@ -286,7 +299,7 @@ export default function SafetyPage() {
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* 4. NEIGHBORHOOD SAFETY & LIVING INFORMATION (MAP + LIST) */}
+      {/* 4. NEIGHBORHOOD SAFETY & LIVING INFORMATION (LIVE MAP + LIST) */}
       {/* ------------------------------------------------------------- */}
       <div
         id="neighborhood-section"
@@ -307,51 +320,58 @@ export default function SafetyPage() {
             </Link>
           </div>
 
-          {/* 2-column Layout: Map on Left (7 cols) + List on Right (5 cols) */}
+          {/* 2-column Layout: Interactive Leaflet Map on Left (7 cols) + Neighborhood Cards on Right (5 cols) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* Map Column */}
-            <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 relative aspect-[16/11] sm:aspect-[16/10] lg:aspect-auto lg:min-h-[350px]">
-              <Image
-                src="/images/florence_safety_map.png"
-                alt="Florence Neighborhood Safety Map"
-                fill
-                priority
-                className="object-cover object-center"
+            {/* Live Interactive Leaflet Map Column */}
+            <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 relative min-h-[350px] lg:min-h-[420px]">
+              <FlorenceSafetyMap
+                selectedId={selectedNeighborhoodId}
+                onSelectNeighborhood={(id) => setSelectedNeighborhoodId(id)}
               />
             </div>
 
             {/* Neighborhood List Column */}
             <div className="lg:col-span-5 flex flex-col justify-between space-y-3">
-              {NEIGHBORHOOD_ROWS.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/housing?neighborhood=${encodeURIComponent(item.name)}`}
-                  className="p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm bg-white dark:bg-slate-900/50 flex items-center justify-between gap-3 transition-all group cursor-pointer"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-slate-100">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform"
-                      />
+              {NEIGHBORHOOD_ROWS.map((item) => {
+                const isSelected = item.id === selectedNeighborhoodId;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => setSelectedNeighborhoodId(item.id)}
+                    className={`p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                      isSelected
+                        ? "border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-sm ring-1 ring-emerald-500/30"
+                        : "border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="text-left min-w-0">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate flex items-center gap-1.5">
+                          <span>{item.name}</span>
+                          {isSelected && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          )}
+                        </h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                          {item.subtitle}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-left min-w-0">
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-red-600 transition-colors">
-                        {item.name}
-                      </h4>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                        {item.subtitle}
-                      </p>
-                    </div>
-                  </div>
 
-                  <span className="shrink-0 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs px-2.5 py-1 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50">
-                    {item.score}
-                  </span>
-                </Link>
-              ))}
+                    <span className="shrink-0 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs px-2.5 py-1 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50">
+                      {item.score}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
