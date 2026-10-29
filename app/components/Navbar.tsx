@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { 
-  ChevronDown, 
-  Menu, 
-  X, 
-  Users, 
-  Heart, 
-  ShieldCheck, 
+import {
+  ChevronDown,
+  Menu,
+  X,
+  Users,
+  Heart,
+  ShieldCheck,
   FileCheck2,
   Sparkles,
   Lock,
@@ -30,7 +30,7 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const navLinks = [
-    { label: "Travel", href: "/" },
+    { label: "Home", href: "/" },
     { label: "Housing", href: "/housing" },
     { label: "Safety", href: "/safety" },
     { label: "Daily Life", href: "/daily-life" },
@@ -117,11 +117,10 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
               <Link
                 key={link.label}
                 href={link.href}
-                className={`text-sm transition-all duration-150 ${
-                  active
+                className={`text-sm transition-all duration-150 ${active
                     ? "bg-[#FFF4F4] text-red-600 font-semibold px-4 py-1.5 rounded-xl border border-red-200/90 shadow-2xs"
                     : "text-slate-700 hover:text-slate-950 font-medium px-1 py-1"
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
@@ -170,9 +169,8 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                 Dennis Dang
               </span>
               <ChevronDown
-                className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
-                  profileDropdownOpen ? "rotate-180" : ""
-                }`}
+                className={`w-3.5 h-3.5 text-slate-400 transition-transform ${profileDropdownOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -307,11 +305,10 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                    active
+                  className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${active
                       ? "bg-[#FFF4F4] text-red-600 font-semibold border border-red-200"
                       : "text-slate-700 hover:bg-slate-50"
-                  }`}
+                    }`}
                 >
                   {link.label}
                 </Link>
