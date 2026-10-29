@@ -313,7 +313,7 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 2: HOW IT WORKS (4 Simple Steps) */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-20 bg-slate-50/70 border-y border-slate-200/80">
+      <section className="py-16 sm:py-20 bg-slate-50/70 dark:bg-[#0B0F17] border-y border-slate-200/80 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 text-red-700 text-xs font-bold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5 text-red-600" />
@@ -341,7 +341,7 @@ export default function HomePage() {
               return (
                 <div
                   key={step.number}
-                  className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow relative flex flex-col justify-between"
+                  className="bg-white dark:bg-[#111827] rounded-2xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md transition-shadow relative flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
@@ -383,7 +383,7 @@ export default function HomePage() {
             </button>
             <Link
               href="/how-it-works"
-              className="py-3 px-6 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-sm transition-all flex items-center gap-2"
+              className="py-3 px-6 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all flex items-center gap-2"
             >
               <span>View Full Guide</span>
               <ChevronRight className="w-4 h-4" />
@@ -396,7 +396,7 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 3: TRANSPARENT PRICING */}
       {/* ------------------------------------------------------------- */}
-      <section id="pricing" className="py-16 sm:py-20 bg-white">
+      <section id="pricing" className="py-16 sm:py-20 bg-white dark:bg-[#0B0F17]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 text-red-700 text-xs font-bold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5 text-red-600" />
@@ -410,7 +410,7 @@ export default function HomePage() {
           </p>
 
           {/* Pricing Toggle */}
-          <div className="mt-8 inline-flex items-center p-1 rounded-full bg-slate-100 border border-slate-200">
+          <div className="mt-8 inline-flex items-center p-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <button
               onClick={() => setPricingMode("student")}
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
@@ -445,8 +445,8 @@ export default function HomePage() {
                   key={plan.id}
                   className={`relative rounded-3xl p-7 flex flex-col justify-between transition-all duration-300 ${
                     isPopular
-                      ? "bg-white border-2 border-red-500 shadow-xl ring-4 ring-red-500/10 scale-105 z-10"
-                      : "bg-white border border-slate-200 shadow-sm hover:shadow-md"
+                      ? "bg-white dark:bg-[#111827] border-2 border-red-500 shadow-xl ring-4 ring-red-500/10 scale-105 z-10"
+                      : "bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md"
                   }`}
                 >
                   {isPopular && (
@@ -530,7 +530,7 @@ export default function HomePage() {
           </div>
 
           {/* Guarantee banner */}
-          <div className="mt-12 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-medium">
+          <div className="mt-12 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-medium">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>
               <strong>100% Risk-Free Guarantee:</strong> Full refund if we cannot find living arrangements aligned with your approved parameters.
@@ -542,7 +542,7 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 4: FAQS */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-20 bg-slate-50/70 border-t border-slate-200/80">
+      <section className="py-16 sm:py-20 bg-slate-50/70 dark:bg-[#0B0F17] border-t border-slate-200/80 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 text-red-700 text-xs font-bold uppercase tracking-wider mb-3">

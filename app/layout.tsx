@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body className="antialiased text-slate-900 bg-white min-h-screen flex flex-col">
+    <html lang="en" className={inter.className} suppressHydrationWarning>
+      <body className="antialiased text-slate-900 dark:text-slate-100 bg-white dark:bg-[#0B0F17] min-h-screen flex flex-col transition-colors">
         <ClientShell>{children}</ClientShell>
       </body>
     </html>
