@@ -3,997 +3,1108 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { 
-  Check, 
-  Users, 
-  Wallet, 
-  Bed, 
-  Bath, 
-  AlertCircle, 
-  ArrowRight, 
-  Pencil, 
-  Trash2, 
-  Plus, 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Home, 
-  Building, 
-  Sparkles, 
+import {
+  Check,
+  Users,
+  Building,
+  Home,
+  Sparkles,
+  ArrowRight,
   ArrowLeft,
-  CheckCircle2,
-  Sliders,
+  X,
   ChevronDown,
-  Compass
+  Clock,
+  Euro,
+  MapPin,
+  CheckCircle2,
+  Plus
 } from "lucide-react";
 
-interface Student {
+// Dynamically import Leaflet map to prevent SSR window issues
+const FlorenceSafetyMap = dynamic(
+  () => import("../components/FlorenceSafetyMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full min-h-[340px] bg-slate-100 dark:bg-slate-900 rounded-2xl flex flex-col items-center justify-center text-slate-400 gap-2">
+        <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs font-medium">Loading Florence map...</span>
+      </div>
+    ),
+  }
+);
+
+interface GroupMember {
   id: string;
   name: string;
   avatar: string;
-  budget: number;
+  status: "Group Admin" | "Invited" | "Joined";
+  statusColor: string;
   isLead?: boolean;
 }
+
+interface NeighborhoodDetail {
+  id: string;
+  name: string;
+  tag: string;
+  tagColor: string;
+  image: string;
+  description: string;
+  walkTime: string;
+  price: string;
+  safety: string;
+}
+
+const NEIGHBORHOODS_LIST: NeighborhoodDetail[] = [
+  {
+    id: "santa-croce",
+    name: "Santa Croce",
+    tag: "Most Popular for Students",
+    tagColor: "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50",
+    image: "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=400&q=80",
+    description: "A historic and vibrant neighborhood with cafes, restaurants, shops, and a great student atmosphere. Walkable to university campuses and the Duomo.",
+    walkTime: "10-20 min walk",
+    price: "€700 - €1,200 /mo",
+    safety: "Safety: 8.8 / 10",
+  },
+  {
+    id: "san-lorenzo",
+    name: "San Lorenzo",
+    tag: "Central & Convenient",
+    tagColor: "bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50",
+    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
+    description: "Central location near Florence's famous leather market and Mercato Centrale. Fast commutes and unbeatable connectivity for weekend European travel.",
+    walkTime: "10-15 min walk",
+    price: "€650 - €1,100 /mo",
+    safety: "Safety: 8.5 / 10",
+  },
+  {
+    id: "santo-spirito",
+    name: "Santo Spirito",
+    tag: "Artisan & Trendy",
+    tagColor: "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950/40 dark:border-amber-900/50",
+    image: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=400&q=80",
+    description: "Charming cobblestone streets, antique stores, and lively piazzas. A favorite for students seeking authentic Florentine character and local nightlife.",
+    walkTime: "15-20 min walk",
+    price: "€700 - €1,150 /mo",
+    safety: "Safety: 9.0 / 10",
+  },
+  {
+    id: "oltrarno",
+    name: "Oltrarno",
+    tag: "Authentic & Local Feel",
+    tagColor: "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/40 dark:border-blue-900/50",
+    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80",
+    description: "South bank of the Arno with panoramic views, craft studios, and quiet residential lanes. Ideal for students wanting a quieter, authentic Italian lifestyle.",
+    walkTime: "15-25 min walk",
+    price: "€680 - €1,100 /mo",
+    safety: "Safety: 9.2 / 10",
+  },
+  {
+    id: "campo-di-marte",
+    name: "Campo di Marte",
+    tag: "Best Value & Space",
+    tagColor: "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-900/50",
+    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80",
+    description: "A green residential district offering significantly larger bedrooms and modern amenities at the most affordable price per student.",
+    walkTime: "20-25 min transit",
+    price: "€550 - €900 /mo",
+    safety: "Safety: 9.4 / 10",
+  },
+];
 
 export default function CreatePlanPage() {
   const router = useRouter();
 
-  // Wizard Step: 1, 2, 3, 4
+  // Wizard Step: 1 = Group, 2 = Preferences, 3 = Summary / Confirmation
   const [currentStep, setCurrentStep] = useState<number>(1);
 
-  // STEP 1 STATE: Students
-  const [students, setStudents] = useState<Student[]>([
+  // STEP 1 STATE
+  const [groupName, setGroupName] = useState("Emma's Florence Group");
+  const [semester, setSemester] = useState("Spring 2027");
+  const [city, setCity] = useState("Florence");
+  const [studentCount, setStudentCount] = useState<number>(4);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteFeedback, setInviteFeedback] = useState<string | null>(null);
+
+  const [members, setMembers] = useState<GroupMember[]>([
     {
       id: "emma",
       name: "Emma",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
-      budget: 1300,
+      status: "Group Admin",
+      statusColor: "text-slate-500 dark:text-slate-400",
       isLead: true,
     },
     {
-      id: "sophie",
-      name: "Sophie",
+      id: "sophia",
+      name: "Sophia",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80",
-      budget: 1200,
+      status: "Invited",
+      statusColor: "text-amber-600 dark:text-amber-400",
     },
     {
       id: "olivia",
       name: "Olivia",
       avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80",
-      budget: 1400,
+      status: "Joined",
+      statusColor: "text-emerald-600 dark:text-emerald-400",
     },
     {
-      id: "mia",
-      name: "Mia",
+      id: "isabella",
+      name: "Isabella",
       avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80",
-      budget: 1300,
+      status: "Joined",
+      statusColor: "text-emerald-600 dark:text-emerald-400",
     },
   ]);
 
-  // Add / Edit Student Modal State
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [newMemberName, setNewMemberName] = useState("");
-  const [newMemberBudget, setNewMemberBudget] = useState(1150);
-  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+  // Modal State for adding student
+  const [addStudentModalOpen, setAddStudentModalOpen] = useState(false);
+  const [newStudentName, setNewStudentName] = useState("");
+  const [newStudentEmail, setNewStudentEmail] = useState("");
 
-  // STEP 2 STATE: Program & Dates
-  const [university, setUniversity] = useState("IES Abroad - Florence");
-  const [moveInDate, setMoveInDate] = useState("Jan 8, 2027");
-  const [moveOutDate, setMoveOutDate] = useState("May 15, 2027");
-  const [maxCommute, setMaxCommute] = useState(25);
+  // STEP 2 STATE
+  const [viewMode, setViewMode] = useState<"map" | "list">("map");
+  const [budgetMax, setBudgetMax] = useState<number>(1100);
+  const [housingType, setHousingType] = useState<"apartment" | "shared" | "residence" | "studio">("apartment");
+  const [bedroomsNeeded, setBedroomsNeeded] = useState<number | string>(4);
 
-  // STEP 3 STATE: Preferences
-  const [housingType, setHousingType] = useState("Entire apartment");
-  const [budgetSlider, setBudgetSlider] = useState(2000);
-  const [bedroomsNeeded, setBedroomsNeeded] = useState(4);
-  const [bathroomsPreferred, setBathroomsPreferred] = useState("2+");
-  const [mustHaves, setMustHaves] = useState<Record<string, boolean>>({
-    furnished: true,
-    utilities: true,
-    shortTerm: true,
-    elevator: false,
-    washingMachine: false,
-    balcony: false,
+  // Must Haves Checkboxes
+  const [mustHaves, setMustHaves] = useState({
+    closeToUniversity: true,
+    walkableRestaurants: true,
+    publicTransit: true,
+    safeArea: true,
+    airConditioning: false,
   });
 
-  // Calculate Group Totals
-  const totalPooledBudget = students.reduce((sum, s) => sum + s.budget, 0);
+  // Map Filter Layers
+  const [mapLayers, setMapLayers] = useState({
+    campus: true,
+    grocery: true,
+    restaurants: true,
+    transit: true,
+  });
 
-  // Handlers for Step 1
-  const handleRemoveStudent = (id: string) => {
-    if (students.length <= 2) return;
-    setStudents(students.filter((s) => s.id !== id));
+  // Selected Neighborhood for details / map zoom
+  const [selectedNeighborhoodId, setSelectedNeighborhoodId] = useState<string>("santa-croce");
+  const [neighborhoodModal, setNeighborhoodModal] = useState<NeighborhoodDetail | null>(null);
+
+  // Handlers
+  const handleRemoveMember = (id: string) => {
+    setMembers((prev) => prev.filter((m) => m.id !== id));
   };
 
-  const handleOpenAddModal = () => {
-    setEditingStudent(null);
-    setNewMemberName("");
-    setNewMemberBudget(1150);
-    setAddModalOpen(true);
-  };
-
-  const handleOpenEditModal = (st: Student) => {
-    setEditingStudent(st);
-    setNewMemberName(st.name);
-    setNewMemberBudget(st.budget);
-    setAddModalOpen(true);
-  };
-
-  const handleSaveMember = (e: React.FormEvent) => {
+  const handleSendInvite = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMemberName.trim()) return;
+    if (!inviteEmail.trim()) return;
 
-    if (editingStudent) {
-      setStudents(
-        students.map((s) =>
-          s.id === editingStudent.id
-            ? { ...s, name: newMemberName.trim(), budget: newMemberBudget }
-            : s
-        )
-      );
-    } else {
-      if (students.length >= 5) return;
-      const avatarList = [
-        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80",
-        "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80",
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
-      ];
-      const newStudent: Student = {
-        id: `student-${Date.now()}`,
-        name: newMemberName.trim(),
-        avatar: avatarList[students.length % avatarList.length],
-        budget: newMemberBudget,
-      };
-      setStudents([...students, newStudent]);
-    }
+    const emailName = inviteEmail.split("@")[0] || "New Student";
+    const capitalized = emailName.charAt(0).toUpperCase() + emailName.slice(1);
 
-    setAddModalOpen(false);
+    const newMember: GroupMember = {
+      id: `member-${Date.now()}`,
+      name: capitalized,
+      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+      status: "Invited",
+      statusColor: "text-amber-600 dark:text-amber-400",
+    };
+
+    setMembers((prev) => [...prev, newMember]);
+    setInviteEmail("");
+    setInviteFeedback(`Invite sent to ${capitalized}!`);
+    setTimeout(() => setInviteFeedback(null), 3000);
   };
 
-  const toggleMustHave = (key: string) => {
-    setMustHaves((prev) => ({ ...prev, [key]: !prev[key] }));
+  const handleAddStudentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newStudentName.trim()) return;
+
+    const newMember: GroupMember = {
+      id: `member-${Date.now()}`,
+      name: newStudentName,
+      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+      status: "Joined",
+      statusColor: "text-emerald-600 dark:text-emerald-400",
+    };
+
+    setMembers((prev) => [...prev, newMember]);
+    setNewStudentName("");
+    setNewStudentEmail("");
+    setAddStudentModalOpen(false);
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-[#FDFDFD] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 pb-20 transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50/70 dark:bg-[#0B0F17] py-6 sm:py-10 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
       {/* ------------------------------------------------------------- */}
-      {/* STEP PROGRESS BAR (MATCHING SCREENSHOTS) */}
+      {/* MAIN WIZARD CARD CONTAINER */}
       {/* ------------------------------------------------------------- */}
-      <div className="w-full bg-white dark:bg-[#111827] border-b border-slate-200/80 dark:border-slate-800 py-4 sm:py-5 shadow-2xs">
-        <div className="max-w-4xl mx-auto px-4 flex items-center justify-between">
-          {[
-            { step: 1, label: "Group" },
-            { step: 2, label: "Program & Dates" },
-            { step: 3, label: "Preferences" },
-            { step: 4, label: "Review" },
-          ].map((item, idx, arr) => {
-            const isCompleted = currentStep > item.step;
-            const isCurrent = currentStep === item.step;
-
-            return (
-              <React.Fragment key={item.step}>
-                <div 
-                  onClick={() => setCurrentStep(item.step)}
-                  className="flex items-center gap-2 cursor-pointer group"
-                >
-                  {isCompleted ? (
-                    <div className="w-6 h-6 rounded-full bg-[#DC2626] text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                      <Check className="w-3.5 h-3.5" />
-                    </div>
-                  ) : isCurrent ? (
-                    <div className="w-6 h-6 rounded-full bg-[#DC2626] text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                      {item.step}
-                    </div>
-                  ) : (
-                    <div className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 text-slate-400 flex items-center justify-center text-xs font-medium">
-                      {item.step}
-                    </div>
-                  )}
-
-                  <span
-                    className={`text-xs font-bold transition-colors ${
-                      isCurrent
-                        ? "text-[#DC2626]"
-                        : isCompleted
-                        ? "text-slate-800"
-                        : "text-slate-400"
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                </div>
-
-                {idx < arr.length - 1 && (
-                  <div
-                    className={`flex-1 h-0.5 mx-3 sm:mx-6 rounded transition-colors ${
-                      currentStep > item.step ? "bg-[#DC2626]" : "bg-slate-200"
-                    }`}
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ------------------------------------------------------------- */}
-      {/* STEP 1: CREATE YOUR HOUSING GROUP */}
-      {/* ------------------------------------------------------------- */}
-      {currentStep === 1 && (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 w-full">
-          <div className="text-center sm:text-left mb-8">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Create Your Housing Group
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Add 3–5 students so we can find the best options for everyone.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left: Students List (7 cols) */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="flex items-center justify-between pb-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  STUDENTS ({students.length})
-                </span>
-                <span className="text-[11px] font-semibold text-[#DC2626] dark:text-red-400">
-                  Click any student to adjust budget
-                </span>
+      <div className="max-w-4xl mx-auto w-full">
+        {/* ============================================================= */}
+        {/* STEP 1: CREATE YOUR GROUP (SCREENSHOT 1) */}
+        {/* ============================================================= */}
+        {currentStep === 1 && (
+          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6 sm:space-y-8 animate-in fade-in duration-200">
+            {/* Top Header Row with Title on Left and Pisa Card on Right */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              {/* Left Column (7 cols) */}
+              <div className="md:col-span-7 text-left space-y-2">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.15]">
+                  Let&apos;s Plan <br />
+                  <span className="text-[#DC2626]">Your Housing Together.</span>
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-md">
+                  Create your group, set your preferences, and we&apos;ll help you find the best areas and housing options in Florence.
+                </p>
               </div>
 
-              {/* Student Cards */}
-              <div className="space-y-3">
-                {students.map((student) => (
-                  <div
-                    key={student.id}
-                    className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-3.5 sm:p-4 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+              {/* Right Column: Pisa Preview Card (5 cols) */}
+              <div className="md:col-span-5 flex justify-center md:justify-end">
+                <div className="relative aspect-[16/10] w-full max-w-[280px] rounded-2xl overflow-hidden shadow-lg border border-slate-200/60 dark:border-slate-800">
+                  <Image
+                    src="/images/pisa_banner.jpg"
+                    alt="Piazzale Michelangelo, Florence, Italy"
+                    fill
+                    className="object-cover brightness-[1.02]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <div className="absolute bottom-2 left-2.5 text-[10px] font-medium text-white/90 drop-shadow-xs">
+                    Piazzale Michelangelo, Florence, Italy
+                  </div>
+                  <div className="absolute bottom-2 right-2.5 px-2 py-0.5 rounded-md bg-blue-600 text-white text-[10px] font-bold shadow-xs">
+                    Spring 2027
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Inner Form Card: 1. Create Your Group */}
+            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 space-y-5 text-left bg-white dark:bg-[#111827]">
+              {/* Form Title & Subtitle */}
+              <div>
+                <h2 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  1. Create Your Group
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Invite your child&apos;s roommates to plan together.
+                </p>
+              </div>
+
+              {/* Row 1: GROUP NAME & UNIVERSITY / PROGRAM */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                    GROUP NAME
+                  </label>
+                  <input
+                    type="text"
+                    value={groupName}
+                    onChange={(e) => setGroupName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                    UNIVERSITY / PROGRAM
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="relative">
+                      <select
+                        value={semester}
+                        onChange={(e) => setSemester(e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-100 appearance-none focus:outline-none focus:border-red-500 pr-7"
+                      >
+                        <option value="Spring 2027">Spring 2027</option>
+                        <option value="Fall 2026">Fall 2026</option>
+                        <option value="Full Year 2026-27">Full Year 2026-27</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-3.5 pointer-events-none" />
+                    </div>
+
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2: NUMBER OF STUDENTS */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                  NUMBER OF STUDENTS
+                </label>
+                <div className="flex items-center gap-2">
+                  {[2, 3, 4, 5, "6+"].map((count) => {
+                    const numVal = typeof count === "number" ? count : 6;
+                    const isSelected = studentCount === numVal;
+                    return (
+                      <button
+                        key={count}
+                        type="button"
+                        onClick={() => setStudentCount(numVal)}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
+                          isSelected
+                            ? "bg-[#DC2626] text-white shadow-sm"
+                            : "bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        }`}
+                      >
+                        {count}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Row 3: INVITE STUDENTS (OPTIONAL) */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                  INVITE STUDENTS (OPTIONAL)
+                </label>
+                <form onSubmit={handleSendInvite} className="flex gap-2">
+                  <input
+                    type="email"
+                    placeholder="Enter email address"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-red-500"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors cursor-pointer shrink-0 shadow-xs"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden relative bg-slate-100 dark:bg-slate-800 ring-2 ring-slate-100 dark:ring-slate-800 shrink-0">
+                    Send Invite
+                  </button>
+                </form>
+                {inviteFeedback && (
+                  <p className="text-[11px] font-semibold text-emerald-600 mt-1">
+                    {inviteFeedback}
+                  </p>
+                )}
+              </div>
+
+              {/* Row 4: GROUP MEMBERS */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                  GROUP MEMBERS ({members.length})
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {members.map((member) => (
+                    <div
+                      key={member.id}
+                      className="relative p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 flex flex-col items-center text-center gap-1.5 shadow-2xs group"
+                    >
+                      {!member.isLead && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveMember(member.id)}
+                          className="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors p-0.5 cursor-pointer"
+                          title="Remove member"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <div className="w-11 h-11 rounded-full overflow-hidden relative ring-2 ring-white dark:ring-slate-800 bg-slate-200 shrink-0">
                         <Image
-                          src={student.avatar}
-                          alt={student.name}
-                          width={40}
-                          height={40}
+                          src={member.avatar}
+                          alt={member.name}
+                          fill
                           className="object-cover"
                         />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-sm text-slate-900 dark:text-white">
-                            {student.name}
-                          </span>
-                          {student.isLead && (
-                            <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
-                              Group Lead
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs font-bold text-[#DC2626] dark:text-red-400 mt-0.5">
-                          ${student.budget.toLocaleString()} / month
-                        </p>
-                      </div>
+                      <span className="font-bold text-xs text-slate-900 dark:text-white leading-tight">
+                        {member.name}
+                      </span>
+                      <span className={`text-[10px] font-semibold ${member.statusColor}`}>
+                        {member.status}
+                      </span>
                     </div>
-
-                    <div className="flex items-center gap-1 text-slate-400">
-                      <button
-                        onClick={() => handleOpenEditModal(student)}
-                        className="p-1.5 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
-                        title="Edit student"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      {!student.isLead && (
-                        <button
-                          onClick={() => handleRemoveStudent(student.id)}
-                          className="p-1.5 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                          title="Remove student"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
-              {/* Add Student Button */}
-              {students.length < 5 && (
-                <button
-                  onClick={handleOpenAddModal}
-                  className="w-full py-3.5 rounded-2xl border-2 border-dashed border-red-200/90 dark:border-red-900/40 hover:border-red-300 bg-[#FFF8F8] dark:bg-[#1C1318] text-[#DC2626] dark:text-red-400 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Student (3–5 total)</span>
-                </button>
-              )}
-            </div>
+              {/* Row 5: Add Student Dotted Button */}
+              <button
+                type="button"
+                onClick={() => setAddStudentModalOpen(true)}
+                className="w-full py-2.5 rounded-xl border border-dashed border-red-300 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Student (3-5 total)</span>
+              </button>
 
-            {/* Right: Group Summary Card (5 cols) */}
-            <div className="lg:col-span-5">
-              <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-sm space-y-5">
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  Group Summary
-                </h3>
-
-                {/* 2x2 Specs Grid matching screenshot */}
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Students */}
-                  <div className="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 flex flex-col justify-between min-h-[75px]">
-                    <Users className="w-4 h-4 text-[#DC2626] dark:text-red-400" />
-                    <div>
-                      <p className="text-xl font-black text-slate-900 dark:text-white leading-none">
-                        {students.length}
-                      </p>
-                      <p className="text-[11px] font-medium text-slate-400 mt-1">
-                        Students
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Combined Monthly Budget */}
-                  <div className="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 flex flex-col justify-between min-h-[75px]">
-                    <Wallet className="w-4 h-4 text-[#10B981]" />
-                    <div>
-                      <p className="text-xl font-black text-slate-900 dark:text-white leading-none">
-                        ${totalPooledBudget.toLocaleString()}
-                      </p>
-                      <p className="text-[11px] font-medium text-slate-400 mt-1">
-                        Combined Monthly Budget
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bedrooms Needed */}
-                  <div className="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 flex flex-col justify-between min-h-[75px]">
-                    <Bed className="w-4 h-4 text-[#F97316]" />
-                    <div>
-                      <p className="text-xl font-black text-slate-900 dark:text-white leading-none">
-                        {students.length}
-                      </p>
-                      <p className="text-[11px] font-medium text-slate-400 mt-1">
-                        Bedrooms Needed
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bathrooms Preferred */}
-                  <div className="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 flex flex-col justify-between min-h-[75px]">
-                    <Bath className="w-4 h-4 text-[#8B5CF6]" />
-                    <div>
-                      <p className="text-xl font-black text-slate-900 dark:text-white leading-none">
-                        2+
-                      </p>
-                      <p className="text-[11px] font-medium text-slate-400 mt-1">
-                        Bathrooms Preferred
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* AI Note Callout */}
-                <div className="p-3.5 rounded-2xl bg-[#FFF6F6] dark:bg-[#1C1318] border border-red-100 dark:border-red-900/30 flex items-start gap-2.5">
-                  <AlertCircle className="w-4 h-4 text-[#DC2626] dark:text-red-400 shrink-0 mt-0.5" />
-                  <p className="text-[11px] text-[#7A1F2D] dark:text-red-300 leading-relaxed">
-                    Each student can set their own budget and preferences. The AI advisor balances cost splits automatically.
-                  </p>
-                </div>
-
-                {/* Next Button */}
-                <button
-                  onClick={() => setCurrentStep(2)}
-                  className="w-full py-3.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all"
-                >
-                  <span>Next: Program &amp; Dates</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              {/* Row 6: Primary Continue Button */}
+              <button
+                type="button"
+                onClick={() => setCurrentStep(2)}
+                className="w-full py-3.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <span>Continue to Group Preferences</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
+        )}
 
-          {/* Add / Edit Group Member Modal matching screenshot */}
-          {addModalOpen && (
-            <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-5 sm:p-6 w-full max-w-sm animate-in fade-in zoom-in-95 duration-150">
-                <h3 className="text-base font-bold text-slate-900">
-                  {editingStudent ? "Edit Group Member" : "Add Group Member"}
-                </h3>
-                <p className="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">
-                  Invite your study abroad roommate to set up pooled budget &amp; preferences.
+        {/* ============================================================= */}
+        {/* STEP 2: SET GROUP PREFERENCES (MAP VIEW / LIST VIEW) */}
+        {/* ============================================================= */}
+        {currentStep === 2 && (
+          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-5 sm:p-7 space-y-6 animate-in fade-in duration-200 text-left">
+            {/* Header: Title + Subtitle on Left, Map/List Toggle on Right */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <h2 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  2. Set Group Preferences
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Tell us what&apos;s important to your group. We&apos;ll use this to suggest the best neighborhoods and housing options.
                 </p>
-
-                <form onSubmit={handleSaveMember} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={newMemberName}
-                      onChange={(e) => setNewMemberName(e.target.value)}
-                      placeholder="e.g. Mia Jenkins"
-                      className="w-full px-3.5 py-2 rounded-xl border border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-sm font-medium text-slate-800"
-                      autoFocus
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Target Monthly Budget ($USD)
-                    </label>
-                    <input
-                      type="number"
-                      required
-                      min={500}
-                      max={4000}
-                      step={50}
-                      value={newMemberBudget}
-                      onChange={(e) => setNewMemberBudget(Number(e.target.value))}
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 text-sm font-semibold text-slate-800"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-end gap-3 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setAddModalOpen(false)}
-                      className="text-xs font-semibold text-slate-500 hover:text-slate-800 px-2 py-1.5 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs shadow-xs transition-colors"
-                    >
-                      {editingStudent ? "Save Changes" : "Add to Group"}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ------------------------------------------------------------- */}
-      {/* STEP 2: STUDY PROGRAM & DATES */}
-      {/* ------------------------------------------------------------- */}
-      {currentStep === 2 && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 w-full">
-          {/* Header */}
-          <div className="text-center sm:text-left mb-8">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-[#DC2626] text-[11px] font-bold uppercase tracking-wider mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Step 2 of 4 • University &amp; Location Parameters</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Study Program &amp; Dates
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Where are you attending classes, and when do your classes begin and end?
-            </p>
-          </div>
-
-          {/* Form Card */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm space-y-6">
-            {/* University Select */}
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                WHERE ARE YOU STUDYING IN FLORENCE?
-              </label>
-              <div className="relative">
-                <select
-                  value={university}
-                  onChange={(e) => setUniversity(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 appearance-none cursor-pointer"
-                >
-                  <option value="IES Abroad - Florence">IES Abroad - Florence</option>
-                  <option value="FSU Florence Study Center">FSU Florence Study Center</option>
-                  <option value="NYU Florence (Villa La Pietra)">NYU Florence (Villa La Pietra)</option>
-                  <option value="Syracuse University Florence">Syracuse University Florence</option>
-                  <option value="Stanford in Florence">Stanford in Florence</option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-              <p className="text-[11px] text-slate-400 mt-1.5">
-                We calibrate walking times and bus connections specifically to this campus location.
-              </p>
-            </div>
-
-            {/* Semester Lease Dates */}
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-2">
-                SEMESTER LEASE DATES
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-[#DC2626] shrink-0" />
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">MOVE IN DATE</span>
-                    <span className="text-sm font-bold text-slate-800">{moveInDate}</span>
-                  </div>
-                </div>
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">MOVE OUT DATE</span>
-                    <span className="text-sm font-bold text-slate-800">{moveOutDate}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Maximum Commute Slider */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                  MAXIMUM COMMUTE TO PROGRAM
-                </label>
-                <span className="px-2.5 py-0.5 rounded-md bg-red-50 text-[#DC2626] text-xs font-bold border border-red-100">
-                  {maxCommute} minutes
-                </span>
-              </div>
-              <input
-                type="range"
-                min={10}
-                max={45}
-                step={5}
-                value={maxCommute}
-                onChange={(e) => setMaxCommute(Number(e.target.value))}
-                className="w-full accent-[#DC2626] cursor-pointer"
-              />
-              <div className="flex justify-between text-[11px] text-slate-400 mt-1">
-                <span>10 min (Walk only)</span>
-                <span className="font-bold text-slate-700">25 min (Standard)</span>
-                <span>45 min (Max)</span>
-              </div>
-            </div>
-
-            {/* Florence Map Preview Card matching screenshot */}
-            <div className="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50">
-              <div className="relative h-44 w-full bg-[#E5EEF4] flex items-center justify-center overflow-hidden">
-                {/* Styled Map Background */}
-                <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:16px_16px]" />
-                
-                {/* Concentric distance rings */}
-                <div className="w-32 h-32 rounded-full border-2 border-dashed border-red-300/80 absolute" />
-                <div className="w-56 h-56 rounded-full border border-red-200/50 absolute" />
-
-                {/* Campus Pin */}
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-md ring-4 ring-red-100">
-                    <MapPin className="w-4 h-4 fill-white" />
-                  </div>
-                  <div className="mt-1 px-3 py-1 rounded-full bg-slate-900/90 text-white text-[10px] font-bold shadow-md">
-                    {university}
-                  </div>
-                </div>
               </div>
 
-              {/* Commute bar footer */}
-              <div className="p-3 bg-white border-t border-slate-100 flex flex-wrap items-center justify-center gap-4 text-xs">
-                <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-                  15 min Walk
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-red-700 font-semibold bg-red-50 px-2.5 py-1 rounded-lg">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
-                  15 min Transit
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-slate-700 font-semibold bg-slate-100 px-2.5 py-1 rounded-lg">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-                  22 min Drive
-                </span>
-              </div>
-              <p className="text-center text-[10.5px] text-slate-400 py-1.5 bg-slate-50/50">
-                Typical commute times from Santa Croce, Duomo &amp; Santo Spirito
-              </p>
-            </div>
-          </div>
-
-          {/* Bottom Navigation */}
-          <div className="flex items-center justify-between mt-6">
-            <button
-              onClick={() => setCurrentStep(1)}
-              className="py-2.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 flex items-center gap-1.5"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Group Setup</span>
-            </button>
-            <button
-              onClick={() => setCurrentStep(3)}
-              className="py-2.5 px-6 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5"
-            >
-              <span>Next: Preferences</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ------------------------------------------------------------- */}
-      {/* STEP 3: GROUP PREFERENCES */}
-      {/* ------------------------------------------------------------- */}
-      {currentStep === 3 && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 w-full">
-          {/* Header */}
-          <div className="text-center sm:text-left mb-8">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-[#DC2626] text-[11px] font-bold uppercase tracking-wider mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Step 3 of 4 • Living Style &amp; Non-Negotiables</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Group Preferences
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Choose your group&apos;s preferred property layout, budget thresholds, and must-have amenities.
-            </p>
-          </div>
-
-          {/* Form Card */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm space-y-6">
-            {/* Housing Type (4 cards) */}
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-2">
-                HOUSING TYPE
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {[
-                  { id: "Entire apartment", label: "Entire apartment", icon: Home },
-                  { id: "Shared apartment", label: "Shared apartment", icon: Building },
-                  { id: "Student residence", label: "Student residence", icon: Bed },
-                  { id: "Flexible", label: "Flexible", icon: Sliders },
-                ].map((type) => {
-                  const Icon = type.icon;
-                  const isSelected = housingType === type.id;
-                  return (
-                    <button
-                      key={type.id}
-                      type="button"
-                      onClick={() => setHousingType(type.id)}
-                      className={`p-3.5 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 ${
-                        isSelected
-                          ? "border-[#DC2626] bg-red-50/20 text-[#DC2626] shadow-2xs font-bold"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50 font-medium"
-                      }`}
-                    >
-                      <Icon className={`w-4 h-4 ${isSelected ? "text-[#DC2626]" : "text-slate-400"}`} />
-                      <span className="text-xs">{type.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Budget Range (Per Student / Month) */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                  BUDGET RANGE (PER STUDENT / MONTH)
-                </label>
-                <span className="px-2.5 py-0.5 rounded-md bg-red-50 text-[#DC2626] text-xs font-bold border border-red-100">
-                  €600 — €2000
-                </span>
-              </div>
-              <input
-                type="range"
-                min={600}
-                max={2500}
-                step={50}
-                value={budgetSlider}
-                onChange={(e) => setBudgetSlider(Number(e.target.value))}
-                className="w-full accent-[#DC2626] cursor-pointer"
-              />
-              <div className="flex justify-between text-[11px] text-slate-400 mt-1">
-                <span>€600</span>
-                <span className="font-bold text-[#DC2626]">Max €2000 / student</span>
-                <span>€2,000+</span>
-              </div>
-            </div>
-
-            {/* Bedrooms & Bathrooms */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                  BEDROOMS NEEDED
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[3, 4, 5].map((cnt) => (
-                    <button
-                      key={cnt}
-                      type="button"
-                      onClick={() => setBedroomsNeeded(cnt)}
-                      className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
-                        bedroomsNeeded === cnt
-                          ? "bg-[#DC2626] text-white border-[#DC2626] shadow-xs"
-                          : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                      }`}
-                    >
-                      {cnt} Bedrooms
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                  BATHROOMS PREFERRED
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {["1 Baths", "2+ Baths", "3+ Baths"].map((bth) => (
-                    <button
-                      key={bth}
-                      type="button"
-                      onClick={() => setBathroomsPreferred(bth)}
-                      className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
-                        bathroomsPreferred === bth
-                          ? "bg-[#DC2626] text-white border-[#DC2626] shadow-xs"
-                          : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                      }`}
-                    >
-                      {bth}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Must Haves (2 columns of 3) */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                  MUST HAVES
-                </label>
-                <span className="text-[11px] text-slate-400">select up to 3 (3/3)</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {[
-                  { key: "furnished", label: "Furnished" },
-                  { key: "elevator", label: "Elevator (preferred)" },
-                  { key: "utilities", label: "Utilities included" },
-                  { key: "washingMachine", label: "In-unit washing machine" },
-                  { key: "shortTerm", label: "Allow short-term lease" },
-                  { key: "balcony", label: "Outdoor space / balcony" },
-                ].map((item) => {
-                  const isChecked = mustHaves[item.key];
-                  return (
-                    <button
-                      key={item.key}
-                      type="button"
-                      onClick={() => toggleMustHave(item.key)}
-                      className={`p-3 rounded-xl border text-left text-xs font-semibold flex items-center justify-between transition-colors ${
-                        isChecked
-                          ? "border-red-200 bg-[#FFF8F8] text-slate-900"
-                          : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                      <div
-                        className={`w-4 h-4 rounded-md flex items-center justify-center ${
-                          isChecked
-                            ? "bg-[#DC2626] text-white"
-                            : "border border-slate-300"
-                        }`}
-                      >
-                        {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Navigation */}
-          <div className="flex items-center justify-between mt-6">
-            <button
-              onClick={() => setCurrentStep(2)}
-              className="py-2.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 flex items-center gap-1.5"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Program &amp; Dates</span>
-            </button>
-            <button
-              onClick={() => setCurrentStep(4)}
-              className="py-2.5 px-6 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5"
-            >
-              <span>Next: Review</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ------------------------------------------------------------- */}
-      {/* STEP 4: REVIEW YOUR HOUSING PLAN */}
-      {/* ------------------------------------------------------------- */}
-      {currentStep === 4 && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 w-full">
-          {/* Header */}
-          <div className="text-center sm:text-left mb-8">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-[#DC2626] text-[11px] font-bold uppercase tracking-wider mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Step 4 of 4 • Final Confirmation</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Review Your Housing Plan
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Everything is set! Confirm your group configuration and proceed to explore verified flats.
-            </p>
-          </div>
-
-          {/* Review Summary Cards Stack */}
-          <div className="space-y-4">
-            {/* Card 1: Housing Group */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-[#DC2626]" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Housing Group ({students.length} Roommates)
-                  </h3>
-                </div>
+              {/* Toggle Buttons: [ Map View ] [ List View ] */}
+              <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800 self-start sm:self-auto shrink-0">
                 <button
-                  onClick={() => setCurrentStep(1)}
-                  className="text-xs font-semibold text-[#DC2626] flex items-center gap-1 hover:underline"
+                  type="button"
+                  onClick={() => setViewMode("map")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    viewMode === "map"
+                      ? "bg-[#DC2626] text-white shadow-xs"
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                  }`}
                 >
-                  <Pencil className="w-3 h-3" />
-                  <span>Edit</span>
+                  Map View
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("list")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    viewMode === "list"
+                      ? "bg-[#DC2626] text-white shadow-xs"
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900"
+                  }`}
+                >
+                  List View
                 </button>
               </div>
+            </div>
 
-              {/* Roommate pills in horizontal row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {students.map((st) => (
-                  <div
-                    key={st.id}
-                    className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-100 flex items-center gap-2"
+            {/* 2-Column Content Grid: Left = Preferences Form, Right = Map or List */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* ------------------------------------------------------------- */}
+              {/* LEFT COLUMN: PREFERENCES FORM (5 cols) */}
+              {/* ------------------------------------------------------------- */}
+              <div className="lg:col-span-5 space-y-5">
+                {/* 1. Monthly Budget Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      MONTHLY BUDGET PER STUDENT
+                    </span>
+                    <span className="text-xs font-extrabold text-[#DC2626]">
+                      €500 – €{budgetMax}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={600}
+                    max={1500}
+                    step={50}
+                    value={budgetMax}
+                    onChange={(e) => setBudgetMax(Number(e.target.value))}
+                    className="w-full accent-[#DC2626] cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-400 mt-0.5">
+                    <span>€500</span>
+                    <span>€1,500+</span>
+                  </div>
+                </div>
+
+                {/* 2. Housing Type 2x2 Grid */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                    HOUSING TYPE
+                  </label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {/* Apartment */}
+                    <button
+                      type="button"
+                      onClick={() => setHousingType("apartment")}
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                        housingType === "apartment"
+                          ? "border-rose-400 bg-rose-50/50 dark:bg-rose-950/20 ring-1 ring-rose-400 text-slate-900 dark:text-white"
+                          : "border-slate-200 dark:border-slate-800 hover:border-slate-300 text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      <Home className="w-4 h-4 text-red-500" />
+                      <span className="font-bold text-xs">Apartment</span>
+                    </button>
+
+                    {/* Shared Home */}
+                    <button
+                      type="button"
+                      onClick={() => setHousingType("shared")}
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                        housingType === "shared"
+                          ? "border-rose-400 bg-rose-50/50 dark:bg-rose-950/20 ring-1 ring-rose-400 text-slate-900 dark:text-white"
+                          : "border-slate-200 dark:border-slate-800 hover:border-slate-300 text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      <Users className="w-4 h-4 text-blue-500" />
+                      <span className="font-bold text-xs">Shared Home</span>
+                    </button>
+
+                    {/* Student Residence */}
+                    <button
+                      type="button"
+                      onClick={() => setHousingType("residence")}
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                        housingType === "residence"
+                          ? "border-rose-400 bg-rose-50/50 dark:bg-rose-950/20 ring-1 ring-rose-400 text-slate-900 dark:text-white"
+                          : "border-slate-200 dark:border-slate-800 hover:border-slate-300 text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      <Building className="w-4 h-4 text-emerald-500" />
+                      <span className="font-bold text-xs">Student Residence</span>
+                    </button>
+
+                    {/* Studio / 1BR */}
+                    <button
+                      type="button"
+                      onClick={() => setHousingType("studio")}
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                        housingType === "studio"
+                          ? "border-rose-400 bg-rose-50/50 dark:bg-rose-950/20 ring-1 ring-rose-400 text-slate-900 dark:text-white"
+                          : "border-slate-200 dark:border-slate-800 hover:border-slate-300 text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      <Sparkles className="w-4 h-4 text-amber-500" />
+                      <span className="font-bold text-xs">Studio / 1BR</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Bedrooms Needed */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                    BEDROOMS NEEDED
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {[2, 3, 4, "5+"].map((count) => {
+                      const isSelected = bedroomsNeeded === count;
+                      return (
+                        <button
+                          key={count}
+                          type="button"
+                          onClick={() => setBedroomsNeeded(count)}
+                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
+                            isSelected
+                              ? "bg-[#DC2626] text-white shadow-sm"
+                              : "bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
+                          }`}
+                        >
+                          {count}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 4. Must Haves Checkboxes */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                    MUST HAVES
+                  </label>
+                  <div className="space-y-2 text-xs">
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={mustHaves.closeToUniversity}
+                        onChange={(e) =>
+                          setMustHaves((prev) => ({
+                            ...prev,
+                            closeToUniversity: e.target.checked,
+                          }))
+                        }
+                        className="rounded accent-[#DC2626] w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">
+                        Close to university
+                      </span>
+                    </label>
+
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={mustHaves.walkableRestaurants}
+                        onChange={(e) =>
+                          setMustHaves((prev) => ({
+                            ...prev,
+                            walkableRestaurants: e.target.checked,
+                          }))
+                        }
+                        className="rounded accent-[#DC2626] w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">
+                        Walkable to restaurants &amp; cafes
+                      </span>
+                    </label>
+
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={mustHaves.publicTransit}
+                        onChange={(e) =>
+                          setMustHaves((prev) => ({
+                            ...prev,
+                            publicTransit: e.target.checked,
+                          }))
+                        }
+                        className="rounded accent-[#DC2626] w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">
+                        Good public transportation
+                      </span>
+                    </label>
+
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={mustHaves.safeArea}
+                        onChange={(e) =>
+                          setMustHaves((prev) => ({
+                            ...prev,
+                            safeArea: e.target.checked,
+                          }))
+                        }
+                        className="rounded accent-[#DC2626] w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">
+                        Safe area
+                      </span>
+                    </label>
+
+                    <label className="flex items-center gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={mustHaves.airConditioning}
+                        onChange={(e) =>
+                          setMustHaves((prev) => ({
+                            ...prev,
+                            airConditioning: e.target.checked,
+                          }))
+                        }
+                        className="rounded accent-[#DC2626] w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-slate-700 dark:text-slate-300 font-medium">
+                        Air conditioning
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Submit Button & Back Link */}
+                <div className="pt-2 space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(3)}
+                    className="w-full py-3.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
                   >
-                    <div className="w-8 h-8 rounded-full overflow-hidden relative shrink-0">
-                      <Image
-                        src={st.avatar}
-                        alt={st.name}
-                        width={32}
-                        height={32}
-                        className="object-cover"
+                    <span>Save and Continue</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(1)}
+                    className="w-full py-2 text-center text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Back to Group Setup</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* ------------------------------------------------------------- */}
+              {/* RIGHT COLUMN: MAP VIEW OR LIST VIEW (7 cols) */}
+              {/* ------------------------------------------------------------- */}
+              <div className="lg:col-span-7 space-y-3.5">
+                {/* --------------------------------------------------------- */}
+                {/* 2A. MAP VIEW (SCREENSHOT 2) */}
+                {/* --------------------------------------------------------- */}
+                {viewMode === "map" && (
+                  <div className="space-y-3.5">
+                    {/* Layer Filter Pills above Map */}
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-slate-600 dark:text-slate-400">
+                      <span className="font-bold text-slate-700 dark:text-slate-300">
+                        Show on map:
+                      </span>
+                      <label className="flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">
+                        <input
+                          type="checkbox"
+                          checked={mapLayers.campus}
+                          onChange={(e) =>
+                            setMapLayers((p) => ({ ...p, campus: e.target.checked }))
+                          }
+                          className="accent-purple-600 w-3 h-3"
+                        />
+                        <span>University / Campus</span>
+                      </label>
+                      <label className="flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">
+                        <input
+                          type="checkbox"
+                          checked={mapLayers.grocery}
+                          onChange={(e) =>
+                            setMapLayers((p) => ({ ...p, grocery: e.target.checked }))
+                          }
+                          className="accent-amber-500 w-3 h-3"
+                        />
+                        <span>Grocery Stores</span>
+                      </label>
+                      <label className="flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">
+                        <input
+                          type="checkbox"
+                          checked={mapLayers.restaurants}
+                          onChange={(e) =>
+                            setMapLayers((p) => ({ ...p, restaurants: e.target.checked }))
+                          }
+                          className="accent-rose-500 w-3 h-3"
+                        />
+                        <span>Restaurants &amp; Cafes</span>
+                      </label>
+                      <label className="flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">
+                        <input
+                          type="checkbox"
+                          checked={mapLayers.transit}
+                          onChange={(e) =>
+                            setMapLayers((p) => ({ ...p, transit: e.target.checked }))
+                          }
+                          className="accent-blue-500 w-3 h-3"
+                        />
+                        <span>Public Transportation</span>
+                      </label>
+                    </div>
+
+                    {/* Interactive Leaflet Map */}
+                    <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 min-h-[320px] relative bg-slate-100 dark:bg-slate-900">
+                      <FlorenceSafetyMap
+                        selectedId={selectedNeighborhoodId}
+                        onSelectNeighborhood={(id) => setSelectedNeighborhoodId(id)}
                       />
                     </div>
-                    <div>
-                      <p className="text-xs font-bold text-slate-900 leading-tight">
-                        {st.name}
-                      </p>
-                      <p className="text-[10.5px] font-bold text-[#DC2626]">
-                        ${st.budget}/mo
-                      </p>
+
+                    {/* 3 Snapshot Cards Below Map matching screenshot */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      {NEIGHBORHOODS_LIST.slice(0, 3).map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => {
+                            setSelectedNeighborhoodId(item.id);
+                            setNeighborhoodModal(item);
+                          }}
+                          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 shadow-2xs cursor-pointer flex flex-col justify-between"
+                        >
+                          <div>
+                            <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                              {item.name}
+                            </h4>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                              {item.walkTime}
+                            </p>
+                          </div>
+                          <span className="text-[10px] font-bold text-red-600 hover:underline pt-1.5 flex items-center justify-end">
+                            Details &gt;
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                )}
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span className="text-slate-500">Combined Monthly Purchasing Power:</span>
-                <span className="text-base font-black text-slate-900">
-                  ${totalPooledBudget.toLocaleString()} / month
-                </span>
-              </div>
-            </div>
+                {/* --------------------------------------------------------- */}
+                {/* 2B. LIST VIEW (SCREENSHOT 3) */}
+                {/* --------------------------------------------------------- */}
+                {viewMode === "list" && (
+                  <div className="space-y-3">
+                    {/* Header: Title + "List Mode Active" Badge */}
+                    <div className="flex items-center justify-between pb-1">
+                      <div>
+                        <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
+                          Florence Neighborhoods (5)
+                        </h3>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Ranked by convenience, safety, and student feedback
+                        </p>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-600 border border-red-200 text-[10px] font-bold">
+                        List Mode Active
+                      </span>
+                    </div>
 
-            {/* Card 2: University & Commute Limits */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-[#DC2626]" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    University &amp; Commute Limits
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setCurrentStep(2)}
-                  className="text-xs font-semibold text-[#DC2626] flex items-center gap-1 hover:underline"
-                >
-                  <Pencil className="w-3 h-3" />
-                  <span>Edit</span>
-                </button>
-              </div>
+                    {/* 5 Neighborhood Cards */}
+                    <div className="space-y-2.5">
+                      {NEIGHBORHOODS_LIST.map((item) => (
+                        <div
+                          key={item.id}
+                          className="p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/40 shadow-2xs hover:shadow-xs transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left"
+                        >
+                          <div className="flex items-start gap-3 min-w-0">
+                            <div className="relative w-16 h-14 sm:w-20 sm:h-16 rounded-xl overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800">
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                                <h4 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                                  {item.name}
+                                </h4>
+                                <span
+                                  className={`px-2 py-0.5 rounded-md border text-[9px] font-bold ${item.tagColor}`}
+                                >
+                                  {item.tag}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-2">
+                                {item.description}
+                              </p>
+                              <div className="flex items-center gap-2 text-[10px] text-slate-600 dark:text-slate-400 font-semibold pt-1">
+                                <span>{item.walkTime}</span>
+                                <span>•</span>
+                                <span className="text-[#DC2626]">{item.price}</span>
+                                <span>•</span>
+                                <span className="text-emerald-600">{item.safety}</span>
+                              </div>
+                            </div>
+                          </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">STUDY PROGRAM</span>
-                  <span className="text-xs font-bold text-slate-900 block">{university}</span>
-                  <span className="text-[10px] text-slate-500">Florence, Italy</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">SEMESTER LEASE DATES</span>
-                  <span className="text-xs font-bold text-slate-900 block">{moveInDate} – {moveOutDate}</span>
-                  <span className="text-[10px] text-slate-500">Spring 2027</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">MAX COMMUTE LIMIT</span>
-                  <span className="text-xs font-bold text-[#DC2626] flex items-center gap-1 mt-0.5">
-                    <Clock className="w-3 h-3" />
-                    <span>{maxCommute} minutes walking/transit</span>
-                  </span>
-                  <span className="text-[10px] text-slate-500">Filtered strictly</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Housing Layout & Non-Negotiables */}
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Home className="w-4 h-4 text-[#DC2626]" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Housing Layout &amp; Non-Negotiables
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setCurrentStep(3)}
-                  className="text-xs font-semibold text-[#DC2626] flex items-center gap-1 hover:underline"
-                >
-                  <Pencil className="w-3 h-3" />
-                  <span>Edit</span>
-                </button>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                  {housingType}
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                  {bedroomsNeeded} Bedrooms
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                  {bathroomsPreferred} Bathrooms
-                </span>
-                <span className="px-3 py-1 rounded-full bg-red-50 text-[#DC2626] text-xs font-bold border border-red-100">
-                  €600 – €2000 / student
-                </span>
-              </div>
-
-              <div className="space-y-1 pt-1">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
-                  SELECTED MUST-HAVES
-                </span>
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
-                    <Check className="w-3 h-3 text-emerald-600" />
-                    Furnished
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
-                    <Check className="w-3 h-3 text-emerald-600" />
-                    Utilities included
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
-                    <Check className="w-3 h-3 text-emerald-600" />
-                    Allow short-term lease
-                  </span>
-                </div>
+                          <button
+                            type="button"
+                            onClick={() => setNeighborhoodModal(item)}
+                            className="text-xs font-bold text-slate-600 hover:text-red-600 transition-colors shrink-0 whitespace-nowrap self-end sm:self-center cursor-pointer"
+                          >
+                            Details &gt;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
+        )}
 
-          {/* Bottom CTA to View Verified Matching Flats */}
-          <div className="flex items-center justify-between mt-8">
-            <button
-              onClick={() => setCurrentStep(3)}
-              className="py-2.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 flex items-center gap-1.5"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Preferences</span>
-            </button>
-            <Link
-              href="/housing"
-              className="py-3 px-7 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/30 flex items-center gap-2 transition-all"
-            >
-              <span>Explore Matching Flats</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+        {/* ============================================================= */}
+        {/* STEP 3: CONFIRMATION / SUMMARY */}
+        {/* ============================================================= */}
+        {currentStep === 3 && (
+          <div className="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6 animate-in fade-in duration-200 text-center max-w-2xl mx-auto">
+            <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-sm">
+              <Check className="w-7 h-7 stroke-[3]" />
+            </div>
+
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                Your Housing Plan is Ready!
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+                We&apos;ve customized verified student apartments in Florence based on {groupName}&apos;s preferences.
+              </p>
+            </div>
+
+            {/* Summary Details Box */}
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-left space-y-2 text-xs">
+              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                <span className="text-slate-500">Group Name</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{groupName}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                <span className="text-slate-500">Destination &amp; Semester</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{city}, Italy • {semester}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                <span className="text-slate-500">Students / Roommates</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{members.length} Members ({members.map(m => m.name).join(", ")})</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                <span className="text-slate-500">Budget Range</span>
+                <span className="font-bold text-red-600">€500 – €{budgetMax} / student</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Top Recommended Area</span>
+                <span className="font-bold text-emerald-600">Santa Croce &amp; San Lorenzo</span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <Link
+                href="/housing"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <span>Browse Matching Florentine Flats</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setCurrentStep(2)}
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs transition-colors cursor-pointer"
+              >
+                Edit Preferences
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ------------------------------------------------------------- */}
+      {/* MODAL: ADD STUDENT */}
+      {/* ------------------------------------------------------------- */}
+      {addStudentModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#111827] rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 text-left">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                Add Student Roommate
+              </h3>
+              <button
+                type="button"
+                onClick={() => setAddStudentModalOpen(false)}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddStudentSubmit} className="py-4 space-y-3">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                  STUDENT NAME
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Liam, Chloe"
+                  value={newStudentName}
+                  onChange={(e) => setNewStudentName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-red-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                  EMAIL ADDRESS
+                </label>
+                <input
+                  type="email"
+                  placeholder="student@university.edu"
+                  value={newStudentEmail}
+                  onChange={(e) => setNewStudentEmail(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-red-500"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAddStudentModalOpen(false)}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Add Roommate
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* MODAL: NEIGHBORHOOD DETAIL */}
+      {/* ------------------------------------------------------------- */}
+      {neighborhoodModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#111827] rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 text-left">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                  {neighborhoodModal.name}
+                </h3>
+                <span className={`px-2 py-0.5 rounded-md border text-[9px] font-bold ${neighborhoodModal.tagColor}`}>
+                  {neighborhoodModal.tag}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNeighborhoodModal(null)}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="py-4 space-y-3">
+              <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-100">
+                <Image
+                  src={neighborhoodModal.image}
+                  alt={neighborhoodModal.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                {neighborhoodModal.description}
+              </p>
+
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Commute Time:</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{neighborhoodModal.walkTime}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Typical Rent:</span>
+                  <span className="font-bold text-red-600">{neighborhoodModal.price}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Safety Index:</span>
+                  <span className="font-bold text-emerald-600">{neighborhoodModal.safety}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setNeighborhoodModal(null)}
+                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold cursor-pointer"
+              >
+                Close
+              </button>
+              <Link
+                href={`/housing?neighborhood=${encodeURIComponent(neighborhoodModal.name)}`}
+                className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
+              >
+                <span>View Flats in Area</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
       )}

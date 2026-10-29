@@ -3,13 +3,15 @@
 import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import { useSearchParams, useRouter } from "next/navigation";
 import ParentPortalView from "../components/ParentPortalView";
 import DashboardPageLoading from "../components/DashboardPageLoading";
 import UserProfileView from "../components/UserProfileView";
 import {
   LayoutDashboard,
   MapPin,
+  Map,
   Building2,
   GitCompare,
   TrendingUp,
@@ -20,6 +22,7 @@ import {
   Eye,
   User,
   ArrowRight,
+  ArrowLeft,
   Heart,
   Check,
   CheckCircle2,
@@ -44,8 +47,22 @@ import {
   Phone,
   Paperclip,
   Search,
-  Plus
+  Plus,
+  Utensils,
+  Bus
 } from "lucide-react";
+
+const FlorenceSafetyMap = dynamic(
+  () => import("../components/FlorenceSafetyMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-80 bg-slate-100 dark:bg-slate-900 rounded-2xl flex items-center justify-center text-slate-400 text-xs">
+        Loading Florence map...
+      </div>
+    ),
+  }
+);
 
 interface NeighborhoodItem {
   id: string;
@@ -72,7 +89,7 @@ const NEIGHBORHOODS_LIST: NeighborhoodItem[] = [
     description: "Vibrant, walkable, student area",
     safety: "Good",
     walk: "8 min walk",
-    image: "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=800&q=80",
+    image: "/images/pisa_banner.jpg",
     badge: "Best Match",
     isSaved: true,
     category: "students",
@@ -86,7 +103,7 @@ const NEIGHBORHOODS_LIST: NeighborhoodItem[] = [
     description: "Great local atmosphere",
     safety: "Good",
     walk: "14 min walk",
-    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80",
+    image: "/images/cinque_terre_banner.jpg",
     category: "students",
   },
   {
@@ -98,7 +115,7 @@ const NEIGHBORHOODS_LIST: NeighborhoodItem[] = [
     description: "Authentic, quieter",
     safety: "Excellent",
     walk: "16 min walk",
-    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
     category: "quiet",
   },
   {
@@ -110,7 +127,7 @@ const NEIGHBORHOODS_LIST: NeighborhoodItem[] = [
     description: "More space, good value",
     safety: "Excellent",
     walk: "20 min transit / cycle",
-    image: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
     category: "space",
   },
   {
@@ -139,16 +156,155 @@ const NEIGHBORHOODS_LIST: NeighborhoodItem[] = [
   },
 ];
 
+interface NeighborhoodRichDetail {
+  name: string;
+  tag: string;
+  sub: string;
+  heroImage: string;
+  sideImage: string;
+  about: string;
+  walkToUni: string;
+  restaurants: string;
+  transport: string;
+  grocery: string;
+  atmosphere: string;
+  character: string;
+  considerations: string[];
+  budgetRange: string;
+  utilities: string;
+}
+
+const NEIGHBORHOOD_DETAIL_DATA: Record<string, NeighborhoodRichDetail> = {
+  "santa-croce": {
+    name: "Santa Croce",
+    tag: "FLORENCE, ITALY",
+    sub: "Historic, lively and popular with students.",
+    heroImage: "/images/pisa_banner.jpg",
+    sideImage: "/images/cinque_terre_banner.jpg",
+    about: "A historic and vibrant neighborhood with cafes, restaurants, shops, and a great student atmosphere. Popular with international students and within walking distance to many university campuses.",
+    walkToUni: "10–20 min",
+    restaurants: "Great",
+    transport: "Excellent",
+    grocery: "Nearby",
+    atmosphere: "Vibrant Student",
+    character: "Historic",
+    considerations: [
+      "Lively area with nightlife",
+      "Some streets can be busy at night",
+      "Higher prices than other areas",
+      "Very convenient location",
+    ],
+    budgetRange: "€700 – €1,200",
+    utilities: "~€50-€80/mo per person",
+  },
+  "san-lorenzo": {
+    name: "San Lorenzo",
+    tag: "FLORENCE, ITALY",
+    sub: "Central, bustling, famous market district.",
+    heroImage: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+    sideImage: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+    about: "Central location near Florence's famous leather market and Mercato Centrale. Fast commutes and unbeatable connectivity for regional and European travel.",
+    walkToUni: "10–15 min",
+    restaurants: "World-Class",
+    transport: "Unbeatable",
+    grocery: "Mercato Centrale",
+    atmosphere: "Bustling Central",
+    character: "Historic Market",
+    considerations: [
+      "Steps from Santa Maria Novella rail hub",
+      "Vibrant daily market stalls and tourists",
+      "Abundant fresh food options at Mercato Centrale",
+      "Convenient for weekend trips across Italy",
+    ],
+    budgetRange: "€650 – €1,100",
+    utilities: "~€45-€75/mo per person",
+  },
+  "santo-spirito": {
+    name: "Santo Spirito",
+    tag: "FLORENCE, ITALY",
+    sub: "Artisan workshops, trendy piazzas and bohemian charm.",
+    heroImage: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80",
+    sideImage: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80",
+    about: "Charming cobblestone streets, antique stores, and lively piazzas. A favorite for students seeking authentic Florentine character, local aperitivo spots, and nightlife.",
+    walkToUni: "15–20 min",
+    restaurants: "Artisan & Local",
+    transport: "Very Good",
+    grocery: "Local Bottegas",
+    atmosphere: "Bohemian & Lively",
+    character: "Artisan Quartiere",
+    considerations: [
+      "Famous evening aperitivo culture around piazza",
+      "Authentic craftsman workshops and quiet lanes",
+      "Slightly further walk across the Arno bridges",
+      "Strong local neighborhood identity",
+    ],
+    budgetRange: "€700 – €1,150",
+    utilities: "~€50-€80/mo per person",
+  },
+  "oltrarno": {
+    name: "Oltrarno",
+    tag: "FLORENCE, ITALY",
+    sub: "Authentic, quieter streets on the south bank of the Arno.",
+    heroImage: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+    sideImage: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+    about: "South bank of the Arno with panoramic views, craft studios, and quiet residential lanes. Ideal for students wanting a quieter, authentic Italian lifestyle within easy reach of the center.",
+    walkToUni: "15–25 min",
+    restaurants: "Authentic Trattorias",
+    transport: "Good",
+    grocery: "Local Grocers",
+    atmosphere: "Peaceful & Local",
+    character: "Historic Residential",
+    considerations: [
+      "Quieter nights with fewer tourist crowds",
+      "Spacious classical apartments with high ceilings",
+      "Scenic riverside walks and gardens nearby",
+      "Requires crossing river for northern campuses",
+    ],
+    budgetRange: "€680 – €1,100",
+    utilities: "~€50-€75/mo per person",
+  },
+  "campo-di-marte": {
+    name: "Campo di Marte",
+    tag: "FLORENCE, ITALY",
+    sub: "Green, residential and spacious with great budget value.",
+    heroImage: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",
+    sideImage: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=800&q=80",
+    about: "A green residential district offering significantly larger bedrooms and modern amenities at the most affordable price per student. Excellent bus and train links to the center.",
+    walkToUni: "20–25 min",
+    restaurants: "Family Pizzerias",
+    transport: "Direct Bus & Train",
+    grocery: "Large Supermarkets",
+    atmosphere: "Quiet Residential",
+    character: "Modern Florentine",
+    considerations: [
+      "Best square footage and value per euro",
+      "Near major sports grounds and parks",
+      "10-min bus or bike ride into historic core",
+      "Less immediate late-night student bustle",
+    ],
+    budgetRange: "€550 – €900",
+    utilities: "~€40-€70/mo per person",
+  },
+};
+
 interface ApartmentItem {
   id: string;
   name: string;
+  badge?: string;
+  badgeType?: "emerald" | "rose" | "blue";
   neighborhood: string;
   commute: string;
   beds: number;
   baths: number;
+  feature?: string;
+  hasBalcony?: boolean;
+  distanceToUni?: string;
+  bestFor?: string;
   sqft: string;
   price: number;
   pricePerStudent: number;
+  priceDisplay?: string;
+  type?: "Apartments" | "Shared Homes" | "Student Residences";
   status: "Available" | "Waiting for response";
   statusColor: "emerald" | "amber";
   source: string;
@@ -162,64 +318,114 @@ interface ApartmentItem {
 
 const APARTMENTS_DATA: ApartmentItem[] = [
   {
-    id: "via-dei-neri",
-    name: "Via dei Neri Apartment",
+    id: "spacious-4bed",
+    name: "Spacious 4-Bedroom Apartment",
+    badge: "Good for Groups",
+    badgeType: "emerald",
     neighborhood: "Santa Croce",
     commute: "12 min to program",
     beds: 4,
     baths: 2,
-    sqft: "120 m²",
-    price: 4800,
-    pricePerStudent: 1200,
+    feature: "Balcony",
+    hasBalcony: true,
+    distanceToUni: "15 min walk",
+    bestFor: "Groups, central location",
+    sqft: "125 m²",
+    price: 3800,
+    pricePerStudent: 950,
+    priceDisplay: "~€950",
+    type: "Apartments",
     status: "Available",
     statusColor: "emerald",
-    source: "Spotahome",
-    tags: ["Furnished", "Wi-Fi", "Elevator", "+3 more"],
-    fullSpecs: ["4 beds", "2 bathrooms", "120 m²", "Furnished", "Utilities not included", "High-speed Wi-Fi", "Elevator"],
+    source: "Alpha Verified Landlord",
+    tags: ["Furnished", "Wi-Fi", "Balcony", "Good for Groups"],
+    fullSpecs: ["4 bedrooms", "2 bathrooms", "Balcony", "125 m²", "Furnished", "High-speed Wi-Fi"],
     images: [
-      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
     ],
-    address: "Via dei Neri, 42, 50122 Firenze FI, Italy",
-    about: "Spacious and bright apartment in the heart of Santa Croce. Recently renovated, fully furnished, and ideal for a group of 4 students. Close to restaurants, cafés and public transportation. Features high beamed ceilings, dedicated study desks in each room, high-speed fiber internet, and quiet double-glazed windows.",
-    amenities: ["Furnished", "Wi-Fi", "Elevator", "Air conditioning", "Washing machine", "Dishwasher"],
+    address: "Via de' Benci, 18, 50122 Firenze FI, Italy",
+    about: "Spacious 4-bedroom apartment in Santa Croce designed for student groups. High-speed fiber Wi-Fi, open living areas, balcony, and modern kitchen. Walking distance to historic piazzas and universities.",
+    amenities: ["Furnished", "Wi-Fi", "Balcony", "Washing machine", "Dishwasher", "Air conditioning"],
   },
   {
-    id: "santa-croce-apt",
-    name: "Santa Croce Apartment",
+    id: "modern-balcony",
+    name: "Modern Apartment with Balcony",
+    badge: "Popular with Students",
+    badgeType: "rose",
     neighborhood: "Santa Croce",
-    commute: "15 min to program",
+    commute: "10 min to program",
     beds: 4,
     baths: 2,
-    sqft: "110 m²",
-    price: 4500,
-    pricePerStudent: 1125,
-    status: "Waiting for response",
-    statusColor: "amber",
-    source: "HousingAnywhere",
-    tags: ["Furnished", "Utilities included", "Wi-Fi", "+2 more"],
-    fullSpecs: ["4 beds", "2 bathrooms", "110 m²", "Furnished", "Utilities included", "High-speed Wi-Fi"],
+    feature: "Balcony",
+    hasBalcony: true,
+    distanceToUni: "18 min walk",
+    bestFor: "Modern, great amenities",
+    sqft: "115 m²",
+    price: 3520,
+    pricePerStudent: 880,
+    priceDisplay: "~€880",
+    type: "Apartments",
+    status: "Available",
+    statusColor: "emerald",
+    source: "Alpha Verified Partner",
+    tags: ["Furnished", "Balcony", "Air Conditioning", "Popular with Students"],
+    fullSpecs: ["4 bedrooms", "2 bathrooms", "Balcony", "115 m²", "Furnished", "High-speed Wi-Fi"],
     images: [
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&w=800&q=80",
     ],
-    address: "Piazza Santa Croce, 14, 50122 Firenze FI, Italy",
-    about: "Modernized historic apartment overlooking a charming side piazza. Generous common areas, sound insulation, and walking distance to study hubs.",
-    amenities: ["Furnished", "Wi-Fi", "Utilities included", "Air conditioning", "Washing machine"],
+    address: "Corso dei Tintori, 8, 50122 Firenze FI, Italy",
+    about: "Sunlit modern apartment with private balcony in Santa Croce. Clean minimalist finishes, large dining table for group dinners, and quiet bedrooms.",
+    amenities: ["Furnished", "Wi-Fi", "Balcony", "Air conditioning", "Elevator", "Washing machine"],
+  },
+  {
+    id: "charming-historic",
+    name: "Charming Historic Apartment",
+    badge: "Historic Building",
+    badgeType: "rose",
+    neighborhood: "Santa Croce",
+    commute: "14 min to program",
+    beds: 4,
+    baths: 2,
+    feature: "High ceilings",
+    hasBalcony: false,
+    distanceToUni: "20 min walk",
+    bestFor: "Historic charm, spacious",
+    sqft: "120 m²",
+    price: 4400,
+    pricePerStudent: 1100,
+    priceDisplay: "~€1,100",
+    type: "Apartments",
+    status: "Available",
+    statusColor: "emerald",
+    source: "Alpha Verified Landlord",
+    tags: ["Historic", "High Ceilings", "Furnished", "Wi-Fi"],
+    fullSpecs: ["4 bedrooms", "2 bathrooms", "High ceilings", "120 m²", "Furnished", "Wi-Fi"],
+    images: [
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80",
+    ],
+    address: "Via Giuseppe Verdi, 22, 50122 Firenze FI, Italy",
+    about: "Authentic Tuscan apartment with grand ceilings and exposed wooden beams. Spacious double bedrooms, updated bathrooms, and classic Florentine elegance.",
+    amenities: ["Furnished", "Wi-Fi", "High ceilings", "Washing machine", "Dishwasher", "Study desks"],
   },
 ];
 
 function DashboardContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "overview";
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedDashboardNeighborhood, setSelectedDashboardNeighborhood] = useState<string>("santa-croce");
+  const [neighborhoodViewMode, setNeighborhoodViewMode] = useState<"grid" | "detail">("grid");
   const [selectedNeighborhoodModal, setSelectedNeighborhoodModal] = useState<NeighborhoodItem | null>(null);
   const [savedFavorites, setSavedFavorites] = useState<Record<string, boolean>>({
     "santa-croce": true,
@@ -227,9 +433,13 @@ function DashboardContent() {
 
   // Housing Options Tab Sub-Views State
   const [housingSubView, setHousingSubView] = useState<"list" | "detail" | "audit">("list");
+  const [housingTypeFilter, setHousingTypeFilter] = useState<string>("Apartments");
   const [housingFilterTab, setHousingFilterTab] = useState<"all" | "available" | "contacted" | "saved">("all");
-  const [selectedApartmentId, setSelectedApartmentId] = useState<string>("via-dei-neri");
+  const [selectedApartmentId, setSelectedApartmentId] = useState<string>("spacious-4bed");
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
+  const [housingMapModalOpen, setHousingMapModalOpen] = useState<boolean>(false);
+  const [availabilityRequestedModal, setAvailabilityRequestedModal] = useState<ApartmentItem | null>(null);
+  const [availabilitySuccessToast, setAvailabilitySuccessToast] = useState<string | null>(null);
   const [askAdvisorModalOpen, setAskAdvisorModalOpen] = useState<boolean>(false);
   const [advisorHelpTopic, setAdvisorHelpTopic] = useState<string>("Clarify lease terms");
   const [advisorQuestion, setAdvisorQuestion] = useState<string>("");
@@ -403,6 +613,23 @@ function DashboardContent() {
                 >
                   <GitCompare className="w-4 h-4" />
                   <span>Compare</span>
+                </button>
+
+                {/* Provider Communication */}
+                <button
+                  onClick={() => setActiveTab("communication")}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "communication"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <Send className="w-4 h-4" />
+                    <span>Provider Communication</span>
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded-md bg-red-100 text-[#DC2626] text-[10px] font-bold">
+                    2
+                  </span>
                 </button>
 
                 {/* Group Progress */}
@@ -734,137 +961,392 @@ function DashboardContent() {
             )}
 
             {/* ========================================================= */}
-            {/* VIEW 2: NEIGHBORHOODS TAB */}
+            {/* VIEW 2: NEIGHBORHOODS TAB (MATCHING SCREENSHOT EXACTLY) */}
             {/* ========================================================= */}
-            {activeTab === "neighborhoods" && (
-              <div className="space-y-6">
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                    Explore Neighborhoods
-                  </h1>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Compare areas based on commute, prices, safety, and student life.
-                  </p>
-                </div>
+            {activeTab === "neighborhoods" && (() => {
+              const currentNh = NEIGHBORHOOD_DETAIL_DATA[selectedDashboardNeighborhood] || NEIGHBORHOOD_DETAIL_DATA["santa-croce"];
+              const isSaved = savedFavorites[selectedDashboardNeighborhood];
 
-                {/* Filter Pills */}
-                <div className="flex flex-wrap items-center gap-2">
-                  {[
-                    { id: "all", label: "All" },
-                    { id: "nearest", label: "Nearest to Program" },
-                    { id: "students", label: "Best for Students" },
-                    { id: "space", label: "More Space" },
-                    { id: "quiet", label: "More Quiet" },
-                  ].map((filter) => {
-                    const isSelected = selectedCategory === filter.id;
-                    return (
+              return neighborhoodViewMode === "detail" ? (
+                <div className="space-y-5 animate-in fade-in duration-200">
+                  {/* Top Header Navigation Bar */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <button
+                      onClick={() => setActiveTab("overview")}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs cursor-pointer self-start sm:self-auto"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Back to Dashboard Overview</span>
+                    </button>
+
+                    <div className="flex items-center gap-3 self-end sm:self-auto">
                       <button
-                        key={filter.id}
-                        onClick={() => setSelectedCategory(filter.id)}
-                        className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${isSelected
-                          ? "bg-[#DC2626] text-white shadow-xs"
-                          : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
-                          }`}
+                        onClick={() => setNeighborhoodViewMode("grid")}
+                        className="text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
                       >
-                        {filter.label}
+                        <span>All Neighborhoods</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </button>
-                    );
-                  })}
-                </div>
 
-                {/* 6 Neighborhood Cards in 3x2 Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {filteredNeighborhoods.map((nh) => {
-                    const isSaved = savedFavorites[nh.id];
-                    return (
-                      <div
-                        key={nh.id}
-                        className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between"
+                      <button
+                        onClick={() => setActiveTab("housing")}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
                       >
-                        <div>
-                          {/* Image */}
-                          <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
-                            <Image
-                              src={nh.image}
-                              alt={nh.name}
-                              fill
-                              className="object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span>Housing Options</span>
+                      </button>
+                    </div>
+                  </div>
 
-                            {/* Top Badge */}
-                            {nh.badge && (
-                              <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-emerald-600 text-white font-bold text-[10px] uppercase tracking-wider shadow-xs">
-                                {nh.badge}
-                              </div>
-                            )}
+                  {/* Main Hero Card for Selected Neighborhood */}
+                  <div className="relative aspect-[16/7] sm:aspect-[16/5.8] w-full rounded-2xl overflow-hidden shadow-sm bg-slate-900 text-left">
+                    <Image
+                      src={currentNh.heroImage}
+                      alt={currentNh.name}
+                      fill
+                      priority
+                      className="object-cover object-center brightness-[1.02]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 z-1" />
 
-                            {/* Heart Icon */}
-                            <button
-                              onClick={() => toggleFavorite(nh.id)}
-                              className={`absolute top-2.5 right-2.5 p-1.5 rounded-full backdrop-blur-md transition-colors ${isSaved
-                                ? "bg-red-500 text-white"
-                                : "bg-black/40 text-white hover:bg-black/60"
-                                }`}
-                              aria-label="Save neighborhood"
-                            >
-                              <Heart className={`w-3.5 h-3.5 ${isSaved ? "fill-white" : ""}`} />
-                            </button>
+                    <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 z-10 text-white space-y-1">
+                      <span className="px-2.5 py-0.5 rounded-md bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider inline-block">
+                        {currentNh.tag}
+                      </span>
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight drop-shadow-xs">
+                        {currentNh.name}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-white/90 font-normal max-w-xl">
+                        {currentNh.sub}
+                      </p>
+                    </div>
 
-                            {/* Title overlay */}
-                            <div className="absolute bottom-2.5 left-3 text-white">
-                              <h4 className="text-sm font-bold text-white drop-shadow-xs">
-                                {nh.name}
-                              </h4>
-                              <p className="text-[10px] text-slate-300">
-                                {nh.sub}
-                              </p>
-                            </div>
+                    <button
+                      onClick={() => toggleFavorite(selectedDashboardNeighborhood)}
+                      className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 z-10 px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white text-slate-800 text-xs font-bold backdrop-blur-md shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <Heart className={`w-3.5 h-3.5 ${isSaved ? "fill-red-500 text-red-500" : "text-slate-600"}`} />
+                      <span>{isSaved ? "Saved" : "Save"}</span>
+                    </button>
+                  </div>
+
+                  {/* About Section: 2 Columns */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch text-left">
+                    {/* Left Column (7 cols): Description + 6 Attribute Cards */}
+                    <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+                      <div>
+                        <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white mb-1.5">
+                          About {currentNh.name}
+                        </h3>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+                          {currentNh.about}
+                        </p>
+                      </div>
+
+                      {/* 6 Attribute Cards in 3x2 Grid */}
+                      <div className="grid grid-cols-3 gap-2.5">
+                        {/* 1. Walk to Uni */}
+                        <div className="p-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs space-y-1">
+                          <div className="w-6 h-6 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 flex items-center justify-center">
+                            <Clock className="w-3.5 h-3.5" />
                           </div>
-
-                          {/* Body Content */}
-                          <div className="p-3.5 space-y-2 text-xs">
-                            <div className="flex items-center justify-between text-[11px] pb-1 border-b border-slate-100">
-                              <span className="text-slate-500 font-medium flex items-center gap-1">
-                                <Clock className="w-3 h-3 text-slate-400" />
-                                <span>{nh.commute}</span>
-                              </span>
-                              <span className="font-bold text-slate-900">
-                                {nh.price}
-                              </span>
-                            </div>
-
-                            <p className="text-[11px] text-slate-500 leading-snug line-clamp-1">
-                              {nh.description}
-                            </p>
-
-                            <div className="flex items-center gap-1.5 pt-1">
-                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-bold">
-                                Safety: {nh.safety}
-                              </span>
-                              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-medium">
-                                {nh.walk}
-                              </span>
-                            </div>
+                          <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                            {currentNh.walkToUni}
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            Walk to University
                           </div>
                         </div>
 
-                        {/* Footer button to open modal */}
-                        <div className="p-3.5 pt-0">
-                          <button
-                            onClick={() => setSelectedNeighborhoodModal(nh)}
-                            className="w-full py-1.5 rounded-xl border border-slate-200 hover:border-red-300 text-slate-700 hover:text-[#DC2626] text-xs font-bold flex items-center justify-center gap-1 transition-colors"
-                          >
-                            <span>Explore</span>
-                            <ArrowRight className="w-3 h-3" />
-                          </button>
+                        {/* 2. Restaurants */}
+                        <div className="p-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs space-y-1">
+                          <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center">
+                            <Utensils className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                            {currentNh.restaurants}
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            Restaurants &amp; Cafes
+                          </div>
+                        </div>
+
+                        {/* 3. Transport */}
+                        <div className="p-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs space-y-1">
+                          <div className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center">
+                            <Bus className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                            {currentNh.transport}
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            Public Transport
+                          </div>
+                        </div>
+
+                        {/* 4. Grocery */}
+                        <div className="p-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs space-y-1">
+                          <div className="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 flex items-center justify-center">
+                            <ShoppingBag className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                            {currentNh.grocery}
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            Nearby
+                          </div>
+                        </div>
+
+                        {/* 5. Atmosphere */}
+                        <div className="p-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs space-y-1">
+                          <div className="w-6 h-6 rounded-lg bg-pink-50 dark:bg-pink-950/40 text-pink-600 flex items-center justify-center">
+                            <Sparkles className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                            {currentNh.atmosphere}
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            Atmosphere
+                          </div>
+                        </div>
+
+                        {/* 6. Character */}
+                        <div className="p-3 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs space-y-1">
+                          <div className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center">
+                            <Building2 className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                            {currentNh.character}
+                          </div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            Neighborhood
+                          </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+
+                    {/* Right Column (5 cols): Photo Card */}
+                    <div className="lg:col-span-5">
+                      <div className="relative aspect-[16/10] lg:h-full w-full rounded-2xl overflow-hidden shadow-xs bg-slate-100 dark:bg-slate-800 min-h-[200px]">
+                        <Image
+                          src={currentNh.sideImage}
+                          alt={currentNh.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Two Boxes Section: Things to Consider & Typical Budget Range */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    {/* Left: Things to Consider */}
+                    <div className="p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs">
+                      <h4 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white mb-3">
+                        Things to Consider
+                      </h4>
+                      <div className="space-y-2">
+                        {currentNh.considerations.map((item, idx) => (
+                          <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                            <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5 stroke-[2.5]" />
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Right: Typical Budget Range */}
+                    <div className="p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-2xs flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <h4 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
+                            Typical Budget Range
+                          </h4>
+                          <span className="text-[11px] text-slate-400 font-normal">
+                            (per student / month)
+                          </span>
+                        </div>
+                        <div className="text-xl sm:text-2xl font-extrabold text-[#DC2626] my-2">
+                          {currentNh.budgetRange}
+                        </div>
+                        <p className="text-[11px] text-slate-400">
+                          Based on recent similar group inquiries.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+                        <span className="text-slate-500">Utilities estimate:</span>
+                        <span className="font-bold text-slate-700 dark:text-slate-300">
+                          {currentNh.utilities}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Action Bar */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                    <button
+                      onClick={() => router.push("/create-plan")}
+                      className="text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Back to Preferences</span>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab("housing")}
+                      className="py-2.5 px-5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/25 flex items-center gap-2 transition-all cursor-pointer self-stretch sm:self-auto justify-center"
+                    >
+                      <span>View Housing Options in {currentNh.name}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              ) : (
+                /* Grid of All Neighborhoods when user clicks "All Neighborhoods" */
+                <div className="space-y-6">
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                      Explore Neighborhoods
+                    </h1>
+                    <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                      Compare areas based on commute, prices, safety, and student life.
+                    </p>
+                  </div>
+
+                  {/* Filter Pills */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {[
+                      { id: "all", label: "All" },
+                      { id: "nearest", label: "Nearest to Program" },
+                      { id: "students", label: "Best for Students" },
+                      { id: "space", label: "More Space" },
+                      { id: "quiet", label: "More Quiet" },
+                    ].map((filter) => {
+                      const isSelected = selectedCategory === filter.id;
+                      return (
+                        <button
+                          key={filter.id}
+                          onClick={() => setSelectedCategory(filter.id)}
+                          className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${isSelected
+                            ? "bg-[#DC2626] text-white shadow-xs"
+                            : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
+                            }`}
+                        >
+                          {filter.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* 6 Neighborhood Cards in 3x2 Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {filteredNeighborhoods.map((nh) => {
+                      const isSavedNh = savedFavorites[nh.id];
+                      return (
+                        <div
+                          key={nh.id}
+                          className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between"
+                        >
+                          <div>
+                            {/* Card Image - clicking opens quick guide modal */}
+                            <div
+                              onClick={() => setSelectedNeighborhoodModal(nh)}
+                              className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group"
+                            >
+                              <Image
+                                src={nh.image}
+                                alt={nh.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+
+                              {nh.badge && (
+                                <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-md bg-[#059669] text-white font-bold text-[10px] uppercase tracking-wider shadow-xs">
+                                  {nh.badge}
+                                </div>
+                              )}
+
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleFavorite(nh.id);
+                                }}
+                                className={`absolute top-2.5 right-2.5 p-1.5 rounded-full backdrop-blur-md transition-colors cursor-pointer ${isSavedNh
+                                  ? "bg-red-500 text-white"
+                                  : "bg-black/40 text-white hover:bg-black/60"
+                                  }`}
+                              >
+                                <Heart className={`w-3.5 h-3.5 ${isSavedNh ? "fill-white" : ""}`} />
+                              </button>
+
+                              <div className="absolute bottom-2.5 left-3 text-white">
+                                <h4 className="text-sm font-bold text-white drop-shadow-xs">
+                                  {nh.name}
+                                </h4>
+                                <p className="text-[10px] text-slate-300">
+                                  {nh.sub}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 space-y-2 text-xs">
+                              <div className="flex items-center justify-between text-[11px] pb-1 border-b border-slate-100 dark:border-slate-800">
+                                <span className="text-slate-500 font-medium flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-400" />
+                                  <span>{nh.commute}</span>
+                                </span>
+                                <span className="font-bold text-slate-900 dark:text-white">
+                                  {nh.price}
+                                </span>
+                              </div>
+
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-1">
+                                {nh.description}
+                              </p>
+
+                              <div className="flex items-center gap-1.5 pt-1">
+                                <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
+                                  Safety: {nh.safety}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium">
+                                  {nh.walk}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Footer with 2 Buttons matching Screenshot: Detail Page & View Flats */}
+                          <div className="p-3.5 pt-0 grid grid-cols-2 gap-2">
+                            <button
+                              onClick={() => {
+                                setSelectedDashboardNeighborhood(nh.id);
+                                setNeighborhoodViewMode("detail");
+                              }}
+                              className="py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <Compass className="w-3.5 h-3.5 text-slate-500" />
+                              <span>Detail Page</span>
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                setActiveTab("housing");
+                              }}
+                              className="py-1.5 px-2.5 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50/50 dark:bg-red-950/20 hover:bg-red-50 dark:hover:bg-red-950/40 text-[#DC2626] dark:text-red-400 text-[11px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                            >
+                              <Building2 className="w-3.5 h-3.5 text-[#DC2626]" />
+                              <span>View Flats (3) →</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* ========================================================= */}
             {/* VIEW 3: HOUSING OPTIONS TAB */}
@@ -872,187 +1354,218 @@ function DashboardContent() {
             {activeTab === "housing" && (
               <div className="space-y-6">
                 {/* ------------------------------------------------------- */}
-                {/* SUB-VIEW 1: HOUSING LIST VIEW (SCREENSHOT 1) */}
+                {/* SUB-VIEW 1: HOUSING LIST VIEW */}
                 {/* ------------------------------------------------------- */}
                 {housingSubView === "list" && (
-                  <div className="space-y-5">
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-5 animate-in fade-in duration-200">
+                    {/* Top Action Navigation Bar */}
+                    <div className="flex items-center justify-between pb-1">
+                      <button
+                        onClick={() => setActiveTab("overview")}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
+                      >
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                        <span>Back to Overview</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setSelectedDashboardNeighborhood("santa-croce");
+                          setActiveTab("neighborhoods");
+                          setNeighborhoodViewMode("detail");
+                        }}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
+                      >
+                        <span>View Neighborhood Details</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Title & View on Map Row */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
                       <div>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                          Housing Options
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                          Housing Options in Santa Croce
                         </h1>
-                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                          Options from trusted sources, organized for your group.
+                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
+                          These are potential options based on your group&apos;s preferences. We will contact the providers to check current availability and details.
                         </p>
                       </div>
 
-                      {/* Filtered by: Santa Croce Clear Tag */}
-                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-[11px] text-slate-700 w-fit">
-                        <span className="text-slate-500">Filtered by:</span>
-                        <span className="font-bold text-slate-900">Santa Croce</span>
-                        <button
-                          onClick={() => { }}
-                          className="text-[#DC2626] font-bold hover:underline flex items-center gap-0.5 ml-1"
-                        >
-                          ✕ Clear
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => setHousingMapModalOpen(true)}
+                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600 shadow-2xs hover:shadow-xs transition-all cursor-pointer shrink-0 self-start sm:self-auto"
+                      >
+                        <Map className="w-3.5 h-3.5 text-[#DC2626]" />
+                        <span>View on Map</span>
+                      </button>
                     </div>
 
-                    {/* Filter Pills & Sort Row */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {[
-                          { id: "all", label: "All (28)" },
-                          { id: "available", label: "Available (8)" },
-                          { id: "contacted", label: "Contacted (0)" },
-                          { id: "saved", label: "Saved (1)" },
-                        ].map((tab) => (
+                    {/* Filter Pills */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      {[
+                        { id: "all", label: "All Types" },
+                        { id: "apartments", label: "Apartments" },
+                        { id: "shared", label: "Shared Homes" },
+                        { id: "residences", label: "Student Residences" },
+                      ].map((pill) => {
+                        const isSelected =
+                          housingTypeFilter === pill.label ||
+                          (pill.id === "apartments" && housingTypeFilter === "Apartments");
+                        return (
                           <button
-                            key={tab.id}
-                            onClick={() => setHousingFilterTab(tab.id as any)}
-                            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${housingFilterTab === tab.id
-                              ? "bg-[#DC2626] text-white shadow-xs"
-                              : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                              }`}
+                            key={pill.id}
+                            onClick={() => setHousingTypeFilter(pill.label)}
+                            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                              isSelected
+                                ? "bg-[#DC2626] text-white shadow-xs"
+                                : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                            }`}
                           >
-                            {tab.label}
+                            {pill.label}
                           </button>
-                        ))}
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span>Sort by:</span>
-                        <select className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:border-[#DC2626]">
-                          <option>Best Match</option>
-                          <option>Price: Low to High</option>
-                          <option>Commute Time</option>
-                        </select>
-                      </div>
+                        );
+                      })}
                     </div>
 
-                    {/* Apartment Cards */}
+                    {/* 3 Apartment Cards in exact screenshot horizontal layout */}
                     <div className="space-y-4 pt-1">
                       {APARTMENTS_DATA.map((apt) => {
                         const isSaved = savedFavorites[apt.id];
                         return (
                           <div
                             key={apt.id}
-                            className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs hover:shadow-md transition-all p-3.5 sm:p-4 flex flex-col md:flex-row gap-4 sm:gap-6 items-stretch"
+                            className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-2xs hover:shadow-md transition-all p-3.5 sm:p-4.5 flex flex-col md:flex-row gap-5 items-stretch text-left group"
                           >
-                            {/* Left / Top Image */}
-                            <div className="relative w-full md:w-[320px] aspect-[16/10] md:aspect-auto md:h-48 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+                            {/* Left Side: Apartment Image */}
+                            <div
+                              onClick={() => {
+                                setSelectedApartmentId(apt.id);
+                                setSelectedPhotoIndex(0);
+                                setHousingSubView("detail");
+                              }}
+                              className="relative w-full md:w-[320px] lg:w-[360px] aspect-[16/10] md:aspect-auto md:h-auto min-h-[190px] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 cursor-pointer"
+                            >
                               <Image
                                 src={apt.images[0]}
                                 alt={apt.name}
                                 fill
-                                className="object-cover"
+                                className="object-cover group-hover:scale-102 transition-transform duration-300"
                               />
 
-                              {/* Top Status Badge */}
-                              <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                                {apt.status === "Available" ? (
-                                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-600/95 text-white font-bold text-[10.5px] flex items-center gap-1 shadow-xs">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-200 animate-pulse" />
-                                    <span>Available</span>
-                                  </span>
-                                ) : (
-                                  <span className="px-2.5 py-0.5 rounded-md bg-amber-500/95 text-white font-bold text-[10.5px] flex items-center gap-1 shadow-xs">
-                                    <Clock className="w-3 h-3 text-amber-200" />
-                                    <span>Waiting for response</span>
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Bottom Source Badge */}
-                              <div className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[10px] font-medium shadow-xs">
-                                Source: {apt.source}
-                              </div>
+                              {/* Heart Save Button on Image */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleFavorite(apt.id);
+                                }}
+                                className="absolute top-2.5 right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 dark:bg-slate-900/90 hover:bg-white shadow-xs flex items-center justify-center transition-all cursor-pointer backdrop-blur-xs"
+                                aria-label="Save"
+                              >
+                                <Heart
+                                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
+                                    isSaved ? "fill-[#DC2626] text-[#DC2626]" : "text-slate-400"
+                                  }`}
+                                />
+                              </button>
                             </div>
 
-                            {/* Right Content */}
-                            <div className="flex-1 flex flex-col justify-between space-y-3">
+                            {/* Right Side: Information Column */}
+                            <div className="flex-1 flex flex-col justify-between py-1">
+                              {/* Top Block: Title, Badge, Location, Specs */}
                               <div>
-                                <div className="flex items-start justify-between gap-2">
-                                  <div>
-                                    <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-                                      {apt.name}
-                                    </h3>
-                                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                                      <span>{apt.neighborhood}</span>
-                                      <span>•</span>
-                                      <span className="text-[#DC2626] font-semibold flex items-center gap-1">
-                                        <Clock className="w-3 h-3" />
-                                        <span>{apt.commute}</span>
-                                      </span>
-                                    </div>
-                                  </div>
+                                {/* Row 1: Title & Badge */}
+                                <div className="flex items-start justify-between gap-3">
+                                  <h3
+                                    onClick={() => {
+                                      setSelectedApartmentId(apt.id);
+                                      setSelectedPhotoIndex(0);
+                                      setHousingSubView("detail");
+                                    }}
+                                    className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug cursor-pointer hover:text-[#DC2626] transition-colors"
+                                  >
+                                    {apt.name}
+                                  </h3>
 
-                                  {/* Heart + Price */}
-                                  <div className="flex flex-col items-end shrink-0">
-                                    <button
-                                      onClick={() => toggleFavorite(apt.id)}
-                                      className={`p-1.5 rounded-full mb-1 transition-colors ${isSaved
-                                        ? "bg-rose-50 text-[#DC2626]"
-                                        : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-                                        }`}
-                                      aria-label="Save"
-                                    >
-                                      <Heart className={`w-4 h-4 ${isSaved ? "fill-[#DC2626]" : ""}`} />
-                                    </button>
-                                    <div className="text-right">
-                                      <span className="text-lg sm:text-xl font-extrabold text-slate-900">
-                                        €{apt.price.toLocaleString()}
-                                      </span>
-                                      <span className="text-xs text-slate-500"> / month</span>
-                                      <div className="text-[10.5px] text-slate-400">
-                                        (€{apt.pricePerStudent} / student)
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Specs Row */}
-                                <div className="text-xs text-slate-600 font-medium flex items-center gap-2 pt-1.5">
-                                  <span>{apt.beds} beds</span>
-                                  <span>•</span>
-                                  <span>{apt.baths} baths</span>
-                                  <span>•</span>
-                                  <span>{apt.sqft}</span>
-                                </div>
-
-                                {/* Tag Chips */}
-                                <div className="flex flex-wrap items-center gap-1.5 pt-2">
-                                  {apt.tags.map((tag, idx) => (
+                                  {apt.badge && (
                                     <span
-                                      key={idx}
-                                      className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10.5px] font-medium"
+                                      className={`px-3 py-1 rounded-full text-[11px] font-bold shrink-0 border ${
+                                        apt.badgeType === "emerald"
+                                          ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-200/80 dark:border-emerald-900/50"
+                                          : "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border-rose-200/80 dark:border-rose-900/50"
+                                      }`}
                                     >
-                                      {tag}
+                                      {apt.badge}
                                     </span>
-                                  ))}
+                                  )}
+                                </div>
+
+                                {/* Row 2: Location Subtitle */}
+                                <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                  <span>{apt.neighborhood}</span>
+                                </div>
+
+                                {/* Row 3: Specs with Bed, Bath, Feature */}
+                                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-300 font-medium mt-3">
+                                  <span className="flex items-center gap-1.5">
+                                    <BedDouble className="w-3.5 h-3.5 text-slate-400" />
+                                    <span>{apt.beds} bedrooms</span>
+                                  </span>
+                                  <span className="flex items-center gap-1.5">
+                                    <Bath className="w-3.5 h-3.5 text-slate-400" />
+                                    <span>{apt.baths} bathrooms</span>
+                                  </span>
+                                  {apt.feature && (
+                                    <span className="flex items-center gap-1.5">
+                                      <span>{apt.feature}</span>
+                                    </span>
+                                  )}
                                 </div>
                               </div>
 
-                              {/* Footer Action */}
-                              <div className="flex items-center justify-end pt-2">
+                              {/* Bottom Block: Price and Request Availability CTA */}
+                              <div className="flex items-end justify-between pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
+                                <div>
+                                  <div className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white leading-none">
+                                    ~€{apt.pricePerStudent.toLocaleString()}
+                                  </div>
+                                  <div className="text-[11px] text-slate-400 mt-1">
+                                    per student / month (estimated)
+                                  </div>
+                                </div>
+
                                 <button
-                                  onClick={() => {
-                                    setSelectedApartmentId(apt.id);
-                                    setSelectedPhotoIndex(0);
-                                    setHousingSubView("detail");
-                                  }}
-                                  className="px-5 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs hover:shadow-sm transition-all"
+                                  onClick={() => setAvailabilityRequestedModal(apt)}
+                                  className="py-2.5 px-5 sm:px-6 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/20 transition-all cursor-pointer"
                                 >
-                                  <span>View Details</span>
-                                  <ArrowRight className="w-3.5 h-3.5" />
+                                  Request Availability
                                 </button>
                               </div>
                             </div>
                           </div>
                         );
                       })}
+                    </div>
+
+                    {/* Bottom Comparison Banner */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-900/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-left">
+                      <div>
+                        <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                          Ready to compare these 3 Santa Croce apartments?
+                        </h4>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                          Side-by-side comparison of rent, bedrooms, bathrooms, and walk distance to university.
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => setActiveTab("compare")}
+                        className="py-2.5 px-5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-red-600/20 transition-all cursor-pointer shrink-0"
+                      >
+                        <GitCompare className="w-4 h-4" />
+                        <span>Compare Selected Options →</span>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1543,158 +2056,397 @@ function DashboardContent() {
             )}
 
             {/* ========================================================= */}
-            {/* VIEW 4: COMPARE TAB (SCREENSHOT 1) */}
+            {/* VIEW 4: COMPARE TAB */}
             {/* ========================================================= */}
             {activeTab === "compare" && (
-              <div className="space-y-6">
+              <div className="space-y-6 animate-in fade-in duration-200 text-left">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                    Compare Saved Apartments
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    Compare Selected Options
                   </h1>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Side-by-side evaluation of price, commute, bedrooms, and deposit terms.
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    Keep track of options you like and compare key details.
                   </p>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-2xs">
+                <div className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-x-auto shadow-2xs">
                   <table className="w-full text-left border-collapse min-w-[720px]">
                     <thead>
-                      <tr className="border-b border-slate-200 bg-slate-50/60">
-                        <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider w-[18%]">
-                          FEATURES
+                      <tr className="border-b border-slate-100 dark:border-slate-800">
+                        <th className="p-4 sm:p-5 align-top text-[10.5px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider w-[22%]">
+                          PROPERTY
                         </th>
-                        <th className="p-4 w-[27%]">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="font-bold text-slate-900 text-xs sm:text-sm">Via dei Neri Apartment</span>
-                            <span className="px-2 py-0.5 rounded-full bg-rose-50 text-[#DC2626] text-[9.5px] font-bold border border-rose-200">Alpha Verified</span>
-                          </div>
-                        </th>
-                        <th className="p-4 w-[27%]">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="font-bold text-slate-900 text-xs sm:text-sm">Santa Croce Apartment</span>
-                            <span className="px-2 py-0.5 rounded-full bg-rose-50 text-[#DC2626] text-[9.5px] font-bold border border-rose-200">Alpha Verified</span>
-                          </div>
-                        </th>
-                        <th className="p-4 w-[28%]">
-                          <span className="font-bold text-slate-900 text-xs sm:text-sm">Santo Spirito Apartment</span>
-                        </th>
+                        {APARTMENTS_DATA.map((apt) => {
+                          const isSaved = savedFavorites[apt.id];
+                          return (
+                            <th key={apt.id} className="p-4 sm:p-5 align-top w-[26%] font-normal">
+                              {/* Apartment Thumbnail Card */}
+                              <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-2xs mb-2.5">
+                                <Image
+                                  src={apt.images[0]}
+                                  alt={apt.name}
+                                  fill
+                                  className="object-cover"
+                                />
+                                <button
+                                  onClick={() => toggleFavorite(apt.id)}
+                                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-xs flex items-center justify-center transition-all cursor-pointer backdrop-blur-xs"
+                                  aria-label="Save"
+                                >
+                                  <Heart
+                                    className={`w-3.5 h-3.5 ${
+                                      isSaved ? "fill-[#DC2626] text-[#DC2626]" : "text-slate-400"
+                                    }`}
+                                  />
+                                </button>
+                              </div>
+                              <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm leading-snug">
+                                {apt.name}
+                              </h4>
+                              <div className="flex items-center gap-1 text-[11px] text-slate-400 mt-0.5">
+                                <MapPin className="w-3 h-3 text-slate-400" />
+                                <span>{apt.neighborhood}</span>
+                              </div>
+                            </th>
+                          );
+                        })}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 text-xs">
-                      {/* Preview Row */}
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                      {/* Row 1: Est. Monthly Rent (per student) */}
                       <tr>
-                        <td className="p-4 font-semibold text-slate-500">Preview</td>
-                        <td className="p-4">
-                          <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
-                            <Image src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80" alt="Via dei Neri" fill className="object-cover" />
-                          </div>
+                        <td className="p-4 sm:p-5 text-slate-500 dark:text-slate-400 font-medium">
+                          <div className="text-slate-700 dark:text-slate-300 font-bold text-xs">Est. Monthly Rent</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">(per student)</div>
                         </td>
-                        <td className="p-4">
-                          <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
-                            <Image src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80" alt="Santa Croce" fill className="object-cover" />
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
-                            <Image src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" alt="Santo Spirito" fill className="object-cover" />
-                          </div>
-                        </td>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5">
+                            <span className="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base">
+                              €{apt.pricePerStudent.toLocaleString()}
+                            </span>
+                          </td>
+                        ))}
                       </tr>
 
-                      {/* Monthly Rent */}
+                      {/* Row 2: Bedrooms */}
                       <tr>
-                        <td className="p-4 font-semibold text-slate-500">Monthly Rent</td>
-                        <td className="p-4">
-                          <div className="font-extrabold text-slate-900 text-sm sm:text-base">€4,800</div>
-                          <div className="text-[11px] text-slate-400">€1200 / student</div>
+                        <td className="p-4 sm:p-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          Bedrooms
                         </td>
-                        <td className="p-4">
-                          <div className="font-extrabold text-slate-900 text-sm sm:text-base">€4,500</div>
-                          <div className="text-[11px] text-slate-400">€1125 / student</div>
-                        </td>
-                        <td className="p-4">
-                          <div className="font-extrabold text-slate-900 text-sm sm:text-base">€3,900</div>
-                          <div className="text-[11px] text-slate-400">€975 / student</div>
-                        </td>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5 text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm">
+                            {apt.beds}
+                          </td>
+                        ))}
                       </tr>
 
-                      {/* Commute to Program */}
+                      {/* Row 3: Bathrooms */}
                       <tr>
-                        <td className="p-4 font-semibold text-slate-500">Commute to Program</td>
-                        <td className="p-4 font-bold text-[#DC2626]">12 min walk (Santa Croce)</td>
-                        <td className="p-4 font-bold text-[#DC2626]">15 min walk (Santa Croce)</td>
-                        <td className="p-4 font-bold text-[#DC2626]">18 min walk (Santo Spirito)</td>
-                      </tr>
-
-                      {/* Beds / Baths */}
-                      <tr>
-                        <td className="p-4 font-semibold text-slate-500">Beds / Baths</td>
-                        <td className="p-4 text-slate-700">4 bedrooms • 2 bathrooms (120 m²)</td>
-                        <td className="p-4 text-slate-700">4 bedrooms • 2 bathrooms (110 m²)</td>
-                        <td className="p-4 text-slate-700">3 bedrooms • 1 bathrooms (100 m²)</td>
-                      </tr>
-
-                      {/* Total Move-In Estimate */}
-                      <tr>
-                        <td className="p-4 font-semibold text-slate-500">Total Move-In Estimate</td>
-                        <td className="p-4 font-extrabold text-slate-900">€10,250</td>
-                        <td className="p-4 font-extrabold text-slate-900">€9,800</td>
-                        <td className="p-4 font-extrabold text-slate-900">€8,400</td>
-                      </tr>
-
-                      {/* Utilities */}
-                      <tr>
-                        <td className="p-4 font-semibold text-slate-500">Utilities</td>
-                        <td className="p-4 text-slate-600">Not included (est. ~€240/mo)</td>
-                        <td className="p-4 text-slate-600">Included in rent</td>
-                        <td className="p-4 text-slate-600">€180/mo estimated</td>
-                      </tr>
-
-                      {/* Action */}
-                      <tr>
-                        <td className="p-4 font-semibold text-slate-500">Action</td>
-                        <td className="p-4">
-                          <button
-                            onClick={() => {
-                              setSelectedApartmentId("via-dei-neri");
-                              setActiveTab("housing");
-                              setHousingSubView("detail");
-                            }}
-                            className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-2xs transition-all"
-                          >
-                            <span>View Details</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
+                        <td className="p-4 sm:p-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          Bathrooms
                         </td>
-                        <td className="p-4">
-                          <button
-                            onClick={() => {
-                              setSelectedApartmentId("santa-croce-apt");
-                              setActiveTab("housing");
-                              setHousingSubView("detail");
-                            }}
-                            className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-2xs transition-all"
-                          >
-                            <span>View Details</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5 text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm">
+                            {apt.baths}
+                          </td>
+                        ))}
+                      </tr>
+
+                      {/* Row 4: Furnished */}
+                      <tr>
+                        <td className="p-4 sm:p-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          Furnished
                         </td>
-                        <td className="p-4">
-                          <button
-                            onClick={() => {
-                              setSelectedApartmentId("via-dei-neri");
-                              setActiveTab("housing");
-                              setHousingSubView("detail");
-                            }}
-                            className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-2xs transition-all"
-                          >
-                            <span>View Details</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5">
+                            <Check className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
+                          </td>
+                        ))}
+                      </tr>
+
+                      {/* Row 5: Balcony */}
+                      <tr>
+                        <td className="p-4 sm:p-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          Balcony
                         </td>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5">
+                            {apt.hasBalcony ? (
+                              <Check className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
+                            ) : (
+                              <span className="text-slate-400 font-bold text-sm">—</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+
+                      {/* Row 6: Distance to University */}
+                      <tr>
+                        <td className="p-4 sm:p-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          Distance to University
+                        </td>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5 text-slate-800 dark:text-slate-200 font-medium text-xs sm:text-sm">
+                            {apt.distanceToUni || "15 min walk"}
+                          </td>
+                        ))}
+                      </tr>
+
+                      {/* Row 7: Best For */}
+                      <tr>
+                        <td className="p-4 sm:p-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          Best For
+                        </td>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5 text-slate-600 dark:text-slate-400 text-xs">
+                            {apt.bestFor || "Groups, central location"}
+                          </td>
+                        ))}
+                      </tr>
+
+                      {/* Row 8: Actions */}
+                      <tr>
+                        <td className="p-4 sm:p-5 text-slate-700 dark:text-slate-300 font-medium text-xs">
+                          Actions
+                        </td>
+                        {APARTMENTS_DATA.map((apt) => (
+                          <td key={apt.id} className="p-4 sm:p-5">
+                            <button
+                              onClick={() => {
+                                setActiveTab("communication");
+                              }}
+                              className="w-full py-2.5 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <span>Contact Provider</span>
+                            </button>
+                          </td>
+                        ))}
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                {/* Bottom Center Proceed Button */}
+                <div className="flex justify-center pt-2 pb-2">
+                  <button
+                    onClick={() => setActiveTab("communication")}
+                    className="py-3 px-8 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/25 flex items-center gap-2 transition-all cursor-pointer"
+                  >
+                    <span>Proceed to Provider Communication</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================= */}
+            {/* VIEW 4B: PROVIDER COMMUNICATION TAB (SCREENSHOT) */}
+            {/* ========================================================= */}
+            {activeTab === "communication" && (
+              <div className="space-y-6 animate-in fade-in duration-200 text-left">
+                {/* Top Action Row: Back to Compare */}
+                <div>
+                  <button
+                    onClick={() => setActiveTab("compare")}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Back to Compare</span>
+                  </button>
+                </div>
+
+                {/* Step Pill */}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/50 text-[11px] font-bold text-[#DC2626]">
+                  <span className="w-2 h-2 rounded-full bg-[#DC2626]" />
+                  <span>Step 7 of 8: Provider Communication</span>
+                </div>
+
+                {/* Heading & Subtitle */}
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    We Handle the Communication
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
+                    Our team will contact the property managers, request availability, and keep you updated. You can see all communication here.
+                  </p>
+                </div>
+
+                {/* 3 Inquiry Tracker Cards */}
+                <div className="space-y-4">
+                  {[
+                    {
+                      id: "spacious-4bed",
+                      name: "Spacious 4-Bedroom Apartment",
+                      neighborhood: "Santa Croce",
+                      image: APARTMENTS_DATA[0].images[0],
+                      status: "Response Received",
+                      statusType: "emerald",
+                      statusDate: "Oct 24, 2026",
+                      timeline: [
+                        { label: "Inquiry sent to property manager", date: "Oct 21, 2026", status: "done" },
+                        { label: "Received response with availability and details", date: "Oct 24, 2026", status: "done" },
+                        { label: "Our team reviewing information", date: "In progress", status: "in-progress" },
+                        { label: "Next: Send full details to your group", date: "—", status: "pending" },
+                      ],
+                    },
+                    {
+                      id: "modern-balcony",
+                      name: "Modern Apartment with Balcony",
+                      neighborhood: "Santa Croce",
+                      image: APARTMENTS_DATA[1].images[0],
+                      status: "Awaiting Reply",
+                      statusType: "amber",
+                      statusDate: "Oct 23, 2026",
+                      timeline: [
+                        { label: "Inquiry sent to property manager", date: "Oct 22, 2026", status: "done" },
+                        { label: "Follow-up sent", date: "Oct 24, 2026", status: "done" },
+                        { label: "Waiting for response", date: "—", status: "in-progress" },
+                        { label: "Next: Our team will follow up again", date: "—", status: "pending" },
+                      ],
+                    },
+                    {
+                      id: "charming-historic",
+                      name: "Charming Historic Apartment",
+                      neighborhood: "Santa Croce",
+                      image: APARTMENTS_DATA[2].images[0],
+                      status: "No Response Yet",
+                      statusType: "slate",
+                      statusDate: "Oct 20, 2026",
+                      timeline: [
+                        { label: "Inquiry sent to property manager", date: "Oct 20, 2026", status: "done" },
+                        { label: "Follow-up sent", date: "Oct 23, 2026", status: "done" },
+                        { label: "No response yet", date: "—", status: "in-progress" },
+                        { label: "Next: Final follow-up this week", date: "—", status: "pending" },
+                      ],
+                    },
+                  ].map((inquiry) => (
+                    <div
+                      key={inquiry.id}
+                      className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs p-4 sm:p-5 space-y-4"
+                    >
+                      {/* Card Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        {/* Left: Thumbnail & Name */}
+                        <div className="flex items-center gap-3.5">
+                          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
+                            <Image
+                              src={inquiry.image}
+                              alt={inquiry.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
+                              {inquiry.name}
+                            </h3>
+                            <div className="flex items-center gap-1 text-[11px] text-slate-400 mt-0.5">
+                              <MapPin className="w-3 h-3 text-slate-400" />
+                              <span>{inquiry.neighborhood}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Status Badge & View Messages Button */}
+                        <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
+                          <div className="text-right">
+                            <div className="inline-flex">
+                              {inquiry.statusType === "emerald" && (
+                                <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-900/50 text-xs font-bold flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                  <span>{inquiry.status}</span>
+                                </span>
+                              )}
+                              {inquiry.statusType === "amber" && (
+                                <span className="px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-900/50 text-xs font-bold flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                                  <span>{inquiry.status}</span>
+                                </span>
+                              )}
+                              {inquiry.statusType === "slate" && (
+                                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                  <span>{inquiry.status}</span>
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-slate-400 mt-0.5">
+                              {inquiry.statusDate}
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => setActiveTab("messages")}
+                            className="px-3.5 py-1.5 rounded-full border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 text-[#DC2626] dark:text-red-400 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                            <span>View Messages</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Timeline Steps */}
+                      <div className="border-t border-slate-100 dark:border-slate-800/80 pt-3 space-y-2 text-xs">
+                        {inquiry.timeline.map((step, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between py-0.5 text-xs"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              {step.status === "done" && (
+                                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+                              )}
+                              {step.status === "in-progress" && (
+                                <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+                              )}
+                              {step.status === "pending" && (
+                                <span className="w-2.5 h-2.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shrink-0" />
+                              )}
+                              <span
+                                className={`${
+                                  step.status === "pending"
+                                    ? "text-slate-400 dark:text-slate-500"
+                                    : "text-slate-700 dark:text-slate-300 font-medium"
+                                }`}
+                              >
+                                {step.label}
+                              </span>
+                            </div>
+
+                            <span
+                              className={`text-[11px] shrink-0 ${
+                                step.date === "In progress"
+                                  ? "text-amber-600 dark:text-amber-400 font-semibold"
+                                  : "text-slate-400 dark:text-slate-500"
+                              }`}
+                            >
+                              {step.date}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bottom Parent Portal Banner */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-left">
+                  <div>
+                    <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
+                      Keep your parents in the loop effortlessly
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      Parents can track inquiry statuses, review verified apartment details, and sign off safely.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab("parent")}
+                    className="py-2.5 px-5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/20 transition-all cursor-pointer shrink-0"
+                  >
+                    <span>Go to Parent Dashboard (Housing Progress) →</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -2433,7 +3185,7 @@ function DashboardContent() {
               {/* Close Button Top Right */}
               <button
                 onClick={() => setSelectedNeighborhoodModal(null)}
-                className="absolute top-3 right-3 sm:top-3.5 sm:right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-900/60 backdrop-blur-md flex items-center justify-center text-white/90 hover:bg-slate-900/80 transition-colors"
+                className="absolute top-3 right-3 sm:top-3.5 sm:right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-900/60 backdrop-blur-md flex items-center justify-center text-white/90 hover:bg-slate-900/80 transition-colors cursor-pointer"
                 aria-label="Close"
               >
                 <X className="w-3.5 h-3.5" />
@@ -2475,7 +3227,7 @@ function DashboardContent() {
                   <div className="flex items-center gap-1 mt-0.5">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span className="font-bold text-slate-900 text-[11px] sm:text-xs">
-                      Good (9.6/10)
+                      Good (8.8/10)
                     </span>
                   </div>
                 </div>
@@ -2572,14 +3324,17 @@ function DashboardContent() {
               >
                 Close Guide
               </button>
-              <Link
-                href="/housing"
-                className="py-2 px-4 sm:px-5 rounded-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
+              <button
+                onClick={() => {
+                  setSelectedNeighborhoodModal(null);
+                  setActiveTab("housing");
+                }}
+                className="py-2.5 px-5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-red-600/25 transition-all cursor-pointer"
               >
                 <Building2 className="w-3.5 h-3.5" />
                 <span>View Verified Flats in {selectedNeighborhoodModal.name} (2 Listings)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -2703,6 +3458,152 @@ function DashboardContent() {
               </div>
             )}
           </div>
+        </div>
+      )}
+      {/* ------------------------------------------------------------- */}
+      {/* REQUEST AVAILABILITY MODAL */}
+      {/* ------------------------------------------------------------- */}
+      {availabilityRequestedModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#111827] rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 text-left">
+            <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                  Request Availability
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {availabilityRequestedModal.name}
+                </p>
+              </div>
+              <button
+                onClick={() => setAvailabilityRequestedModal(null)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 space-y-3.5 text-xs">
+              {/* Apartment Preview Row */}
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-200">
+                  <Image
+                    src={availabilityRequestedModal.images[0]}
+                    alt={availabilityRequestedModal.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-bold text-slate-900 dark:text-white truncate">
+                    {availabilityRequestedModal.name}
+                  </h4>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    <span>{availabilityRequestedModal.neighborhood}</span>
+                  </div>
+                  <div className="font-bold text-[#DC2626] text-xs mt-0.5">
+                    ~€{availabilityRequestedModal.pricePerStudent}/month per student
+                  </div>
+                </div>
+              </div>
+
+              {/* Group Summary Box */}
+              <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 space-y-1.5 text-slate-700 dark:text-slate-300">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Requesting Group:</span>
+                  <span className="font-bold">Emma&apos;s Florence Group (4 Students)</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Program Semester:</span>
+                  <span className="font-bold">Spring 2027</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Target Bedrooms:</span>
+                  <span className="font-bold">4 bedrooms • 2 baths</span>
+                </div>
+              </div>
+
+              {/* Alpha Safety Guarantee Notice */}
+              <div className="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 flex items-start gap-2 text-emerald-800 dark:text-emerald-300 text-[11px]">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span>
+                  Our local Florence team contacts the verified landlord directly to confirm move-in dates and lock rates. You will receive live status updates in Provider Communication.
+                </span>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
+              <button
+                onClick={() => setAvailabilityRequestedModal(null)}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const aptName = availabilityRequestedModal.name;
+                  setAvailabilityRequestedModal(null);
+                  setAvailabilitySuccessToast(`Availability request sent for ${aptName}! Check Provider Communication for updates.`);
+                  setTimeout(() => setAvailabilitySuccessToast(null), 5000);
+                }}
+                className="px-5 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-xs font-bold shadow-md shadow-red-600/20 transition-all cursor-pointer"
+              >
+                Confirm Availability Request
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* HOUSING MAP MODAL */}
+      {/* ------------------------------------------------------------- */}
+      {housingMapModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#111827] rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col text-left">
+            <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
+                  Santa Croce Apartments on Map
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Showing 3 verified options near campus and grocery corridors
+                </p>
+              </div>
+              <button
+                onClick={() => setHousingMapModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="h-[400px] w-full relative">
+              <FlorenceSafetyMap
+                selectedId="santa-croce"
+                onSelectNeighborhood={() => {}}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------- */}
+      {/* AVAILABILITY SUCCESS TOAST */}
+      {/* ------------------------------------------------------------- */}
+      {availabilitySuccessToast && (
+        <div className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl bg-slate-900 text-white p-4 shadow-2xl border border-slate-800 flex items-start gap-3 animate-in slide-in-from-bottom-5 duration-200">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="flex-1 text-xs">
+            <p className="font-bold">Request Sent</p>
+            <p className="text-slate-300 mt-0.5 leading-snug">{availabilitySuccessToast}</p>
+          </div>
+          <button
+            onClick={() => setAvailabilitySuccessToast(null)}
+            className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
     </div>
