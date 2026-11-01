@@ -44,6 +44,8 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
     return pathname.startsWith(href);
   };
 
+  console.log('in')
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100/90 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
@@ -118,8 +120,8 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                 key={link.label}
                 href={link.href}
                 className={`text-sm transition-all duration-150 ${active
-                    ? "bg-[#FFF4F4] text-red-600 font-semibold px-4 py-1.5 rounded-xl border border-red-200/90 shadow-2xs"
-                    : "text-slate-700 hover:text-slate-950 font-medium px-1 py-1"
+                  ? "bg-[#FFF4F4] text-red-600 font-semibold px-4 py-1.5 rounded-xl border border-red-200/90 shadow-2xs"
+                  : "text-slate-700 hover:text-slate-950 font-medium px-1 py-1"
                   }`}
               >
                 {link.label}
@@ -306,8 +308,8 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${active
-                      ? "bg-[#FFF4F4] text-red-600 font-semibold border border-red-200"
-                      : "text-slate-700 hover:bg-slate-50"
+                    ? "bg-[#FFF4F4] text-red-600 font-semibold border border-red-200"
+                    : "text-slate-700 hover:bg-slate-50"
                     }`}
                 >
                   {link.label}
