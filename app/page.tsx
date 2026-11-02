@@ -1,61 +1,77 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
   Sparkles, 
   MapPin, 
-  Calendar, 
   Users, 
   ArrowRight, 
   ShieldCheck, 
   Building2, 
   BrainCircuit, 
   Eye, 
-  FileCheck, 
   ChevronRight, 
-  Check, 
-  CheckCircle2,
-  Clock,
   HelpCircle,
-  PhoneCall,
   Search,
-  ChevronDown
+  MessageSquare,
+  FileCheck2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { 
   CITIES_DATA, 
-  HOW_IT_WORKS_STEPS_HOME, 
-  PRICING_PLANS, 
   FAQS_DATA 
 } from "./data/housingData";
 import FaqAccordion from "./components/FaqAccordion";
 import { usePlanModal } from "./components/PlanModalContext";
 
+// 4 Steps for Home Page strictly matching screenshot
+const HOME_FOUR_STEPS = [
+  {
+    number: "01",
+    title: "Group & Pocket Budget",
+    description: "Add 2-5 roommates. Each person sets their private monthly budget without awkward money conversations.",
+    stepText: "Step 1 of 4 →",
+    iconBg: "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400",
+    icon: Users,
+  },
+  {
+    number: "02",
+    title: "Campus & Commute",
+    description: "Pin your study center (FSU Florence, NYU, Syracuse). Set your walking or tram limit so you are never late.",
+    stepText: "Step 2 of 4 →",
+    iconBg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400",
+    icon: MapPin,
+  },
+  {
+    number: "03",
+    title: "Verified 3-5 Bed Flats",
+    description: "Explore vetted apartments in top student neighborhoods like Santa Croce and Santo Spirito with zero scams.",
+    stepText: "Step 3 of 4 →",
+    iconBg: "bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400",
+    icon: Building2,
+  },
+  {
+    number: "04",
+    title: "Alpha Check™ AI Audit",
+    description: "Instant Italian lease compliance audit, transparent student reviews, and one-click Parent Portal sign-off.",
+    stepText: "Step 4 of 4 →",
+    iconBg: "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400",
+    icon: FileCheck2,
+  },
+];
+
 export default function HomePage() {
   const router = useRouter();
   const { openPlanModal } = usePlanModal();
 
-  // Search state
-  const [selectedCity, setSelectedCity] = useState("Florence, Italy");
-  const [selectedSemester, setSelectedSemester] = useState("Spring 2027");
-  const [selectedStudents, setSelectedStudents] = useState(4);
-
-  // Pricing toggle state
-  const [pricingMode, setPricingMode] = useState<"student" | "group">("student");
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push("/create-plan");
-  };
-
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full bg-white dark:bg-[#0B0F17]">
       {/* ------------------------------------------------------------- */}
       {/* HERO SECTION */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-visible bg-slate-900 pb-12 sm:pb-16">
+      <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-visible bg-slate-900 pb-16 sm:pb-20">
         {/* Leaning Tower of Pisa Background Photo */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
@@ -65,24 +81,24 @@ export default function HomePage() {
             priority
             className="object-cover object-center md:object-[center_35%] scale-100 transition-transform duration-700"
           />
-          {/* Subtle natural gradient vignette for text legibility while preserving vibrant teal sky and architecture */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/25 to-black/35" />
-          <div className="absolute inset-0 bg-radial from-transparent via-black/15 to-black/40" />
+          {/* Subtle natural gradient vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-black/40" />
+          <div className="absolute inset-0 bg-radial from-transparent via-black/20 to-black/50" />
         </div>
 
         {/* Hero Content */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-0 text-left flex flex-col items-start">
           {/* Registration Announcement Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-xs font-semibold tracking-wide uppercase shadow-sm mb-6 animate-in fade-in slide-in-from-top-3 duration-500">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-xs font-semibold tracking-wide uppercase shadow-sm mb-5 animate-in fade-in slide-in-from-top-3 duration-500">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>SPRING &amp; FALL 2027 HOUSING REGISTRATIONS OPEN</span>
           </div>
 
-          {/* Hero Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.15] mb-4">
-            Find the right place to live abroad —{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5A5F] via-[#FF7A70] to-[#FBBF24]">
-              together.
+          {/* Hero Title - Exact match to screenshot */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl leading-[1.12] mb-3">
+            <span className="text-white block">Housing abroad is stressful.</span>
+            <span className="text-[#E52535] block mt-1">
+              You don&apos;t have to handle it alone.
             </span>
           </h1>
 
@@ -91,137 +107,126 @@ export default function HomePage() {
             AI-powered housing guidance, group planning, and real support for students and parents.
           </p>
 
-          {/* Search Card */}
-          <div className="w-full bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-5 border border-slate-100/90 text-left">
-            <form
-              onSubmit={handleSearchSubmit}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-end"
-            >
-              {/* Destination Dropdown (4 cols) */}
-              <div className="lg:col-span-4">
-                <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                  Where are you studying?
-                </label>
-                <div className="relative flex items-center justify-between border border-slate-200 rounded-xl px-3.5 py-2.5 bg-white hover:border-slate-300 transition-colors">
-                  <select
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
-                    className="w-full font-medium text-slate-700 text-sm focus:outline-none bg-transparent cursor-pointer appearance-none pr-6"
-                  >
-                    <option value="Florence, Italy">Florence, Italy</option>
-                    <option value="Barcelona, Spain">Barcelona, Spain</option>
-                    <option value="Paris, France">Paris, France</option>
-                    <option value="Rome, Italy">Rome, Italy</option>
-                    <option value="Madrid, Spain">Madrid, Spain</option>
-                    <option value="Lisbon, Portugal">Lisbon, Portugal</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 pointer-events-none" />
+          {/* Two Action Cards Grid - Replaces old search form */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {/* Card 1: We haven't found housing yet */}
+            <div className="bg-white dark:bg-[#111827] rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col justify-between group hover:shadow-3xl transition-all">
+              <div>
+                {/* Photo container */}
+                <div className="relative aspect-[16/7] w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+                  <Image
+                    src="/images/cinque_terre_banner.jpg"
+                    alt="Italian Coastline - Explore student housing"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {/* Search Icon overlay */}
+                  <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-md">
+                    <Search className="w-4 h-4" />
+                  </div>
                 </div>
+
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-4 mb-1">
+                  We haven&apos;t found housing yet
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-5 leading-relaxed">
+                  Explore options with our guidance and support.
+                </p>
               </div>
 
-              {/* Semester Dropdown (3 cols) */}
-              <div className="lg:col-span-3">
-                <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                  Semester
-                </label>
-                <div className="relative flex items-center justify-between border border-slate-200 rounded-xl px-3.5 py-2.5 bg-white hover:border-slate-300 transition-colors">
-                  <select
-                    value={selectedSemester}
-                    onChange={(e) => setSelectedSemester(e.target.value)}
-                    className="w-full font-medium text-slate-700 text-sm focus:outline-none bg-transparent cursor-pointer appearance-none pr-6"
-                  >
-                    <option value="Spring 2027">Spring 2027</option>
-                    <option value="Fall 2027">Fall 2027</option>
-                    <option value="Full Year 2027/28">Full Year 2027/28</option>
-                    <option value="Summer 2027">Summer 2027</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 pointer-events-none" />
+              <button
+                onClick={() => router.push("/find-housing")}
+                className="w-full py-2.5 px-4 rounded-xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/40 dark:bg-blue-950/20 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <span>Find Housing</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Card 2: We've found housing, but need help */}
+            <div className="bg-white dark:bg-[#111827] rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col justify-between group hover:shadow-3xl transition-all">
+              <div>
+                {/* Photo container */}
+                <div className="relative aspect-[16/7] w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+                  <Image
+                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
+                    alt="Students studying together"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {/* Message / Support Icon overlay */}
+                  <div className="absolute top-3 left-3 w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md">
+                    <MessageSquare className="w-4 h-4" />
+                  </div>
                 </div>
+
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-4 mb-1">
+                  We&apos;ve found housing, but need help
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-5 leading-relaxed">
+                  Let our team handle the communication and next steps.
+                </p>
               </div>
 
-              {/* Students Dropdown (2 cols) */}
-              <div className="lg:col-span-2">
-                <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                  Students
-                </label>
-                <div className="relative flex items-center justify-between border border-slate-200 rounded-xl px-3.5 py-2.5 bg-white hover:border-slate-300 transition-colors">
-                  <select
-                    value={selectedStudents}
-                    onChange={(e) => setSelectedStudents(Number(e.target.value))}
-                    className="w-full font-medium text-slate-700 text-sm focus:outline-none bg-transparent cursor-pointer appearance-none pr-6"
-                  >
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                    <option value={5}>5</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Submit Button (3 cols) */}
-              <div className="lg:col-span-3">
-                <button
-                  type="submit"
-                  className="w-full py-3 px-4 rounded-xl bg-[#C8102E] hover:bg-[#A60D25] text-white font-semibold text-xs sm:text-sm shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01] cursor-pointer"
-                >
-                  <span>Create Your Housing Plan</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </form>
+              <button
+                onClick={() => router.push("/get-help")}
+                className="w-full py-2.5 px-4 rounded-xl bg-[#C8102E] hover:bg-[#A60D25] text-white font-semibold text-xs shadow-md shadow-red-600/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              >
+                <span>Get Help Now</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
-          {/* 5 Value Props Bar */}
-          <div className="w-full -mb-10 sm:-mb-12 relative z-20 mt-6 pt-3.5 pb-3 px-4 sm:px-6 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-left">
+          {/* 5 Value Props Bar Floating Below Cards */}
+          <div className="w-full -mb-10 sm:-mb-12 relative z-20 mt-6 pt-3.5 pb-3 px-4 sm:px-6 rounded-2xl bg-white dark:bg-[#111827] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-left">
             <div className="flex items-center gap-2 p-1">
-              <div className="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">City intelligence</p>
-                <p className="text-[10px] text-slate-500">rich neighbourhood insights</p>
+                <p className="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">City intelligence</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">rich neighbourhood insights</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 p-1">
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                 <Users className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">Group planning</p>
-                <p className="text-[10px] text-slate-500">and budget pools</p>
+                <p className="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">Group planning</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">and budget pools</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 p-1">
-              <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <Building2 className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">Real booking options</p>
-                <p className="text-[10px] text-slate-500">from trusted partners</p>
+                <p className="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">Real housing options</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">from trusted sources</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 p-1">
-              <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
                 <BrainCircuit className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">AI advisor</p>
-                <p className="text-[10px] text-slate-500">with human assistance</p>
+                <p className="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">AI advisor</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">with human assistance</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 p-1 col-span-2 sm:col-span-1">
-              <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
                 <Eye className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-900 leading-tight">Parent visibility</p>
-                <p className="text-[10px] text-slate-500">and peace of mind</p>
+                <p className="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">Parent visibility</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">and peace of mind</p>
               </div>
             </div>
           </div>
@@ -231,19 +236,19 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 1: POPULAR STUDY ABROAD CITIES */}
       {/* ------------------------------------------------------------- */}
-      <section className="pt-20 sm:pt-24 pb-16 sm:pb-20 bg-white">
+      <section className="pt-20 sm:pt-24 pb-16 sm:pb-20 bg-white dark:bg-[#0B0F17]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-red-600 mb-1">
                 EXPLORE DESTINATIONS
               </p>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                 Popular Study Abroad Cities
               </h2>
-              <p className="text-sm text-slate-500 mt-1 max-w-2xl">
-                Curated neighborhoods, safety ratings, university proximity, and verified housing options.
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
+                Curated neighborhood safety ratings, university commute times, and group housing databases.
               </p>
             </div>
             <Link
@@ -257,55 +262,63 @@ export default function HomePage() {
 
           {/* City Grid (6 cards) */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
-            {CITIES_DATA.map((city) => (
-              <div
-                key={city.id}
-                className="group relative bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col"
-              >
-                {/* Photo container */}
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
-                  <Image
-                    src={city.image}
-                    alt={city.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                  
-                  {city.badge && (
-                    <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-red-600 text-white font-bold text-[10px] tracking-wide uppercase shadow-sm">
-                      {city.badge}
-                    </span>
-                  )}
+            {CITIES_DATA.map((city) => {
+              const isSelected = city.id === "florence";
+              return (
+                <div
+                  key={city.id}
+                  className={`group relative bg-white dark:bg-[#111827] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col ${
+                    isSelected
+                      ? "border-2 border-red-500 ring-2 ring-red-500/10 shadow-md"
+                      : "border border-slate-200/90 dark:border-slate-800"
+                  }`}
+                >
+                  {/* Photo container */}
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <Image
+                      src={city.image}
+                      alt={city.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                    
+                    {/* Selected badge for Florence */}
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-red-600 text-white font-bold text-[10px] tracking-wide uppercase shadow-sm">
+                        Selected
+                      </span>
+                    )}
 
-                  <div className="absolute bottom-2.5 left-2.5 text-white">
-                    <p className="font-bold text-sm tracking-tight leading-none drop-shadow-sm">{city.name}</p>
-                    <p className="text-[11px] text-white/80">{city.country}</p>
+                    <div className="absolute bottom-2.5 left-2.5 text-white">
+                      <p className="font-bold text-sm tracking-tight leading-none drop-shadow-sm">{city.name}</p>
+                      <p className="text-[11px] text-white/80">{city.country}</p>
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <div className="p-3 flex flex-col flex-1 justify-between bg-white dark:bg-[#111827]">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-[10px] font-medium text-slate-400">Rent avg.</span>
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-100">{city.avgRent}</p>
+                    </div>
+                    <Link
+                      href={city.id === "florence" ? "/safety" : "#"}
+                      onClick={(e) => {
+                        if (city.id !== "florence") {
+                          e.preventDefault();
+                          openPlanModal({ city: `${city.name}, ${city.country}` });
+                        }
+                      }}
+                      className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-semibold text-red-600 hover:text-red-700"
+                    >
+                      <span>Plan in {city.name}</span>
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
                   </div>
                 </div>
-
-                {/* Details */}
-                <div className="p-3 flex flex-col flex-1 justify-between bg-white">
-                  <div>
-                    <span className="text-[10px] uppercase font-semibold text-slate-400 block">Avg. rent</span>
-                    <p className="text-xs font-bold text-slate-800">{city.avgRent}</p>
-                  </div>
-                  <Link
-                    href={city.id === "florence" ? "/safety" : "#"}
-                    onClick={(e) => {
-                      if (city.id !== "florence") {
-                        e.preventDefault();
-                        openPlanModal({ city: `${city.name}, ${city.country}` });
-                      }
-                    }}
-                    className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-red-600 group-hover:text-red-700"
-                  >
-                    <span>Explore {city.name}</span>
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -313,55 +326,48 @@ export default function HomePage() {
       {/* ------------------------------------------------------------- */}
       {/* SECTION 2: HOW IT WORKS (4 Simple Steps) */}
       {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-20 bg-slate-50/70 dark:bg-[#0B0F17] border-y border-slate-200/80 dark:border-slate-800">
+      <section className="py-16 sm:py-20 bg-white dark:bg-[#0B0F17] border-t border-slate-100 dark:border-slate-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 text-red-700 text-xs font-bold uppercase tracking-wider mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 dark:bg-red-950/40 text-red-700 dark:text-red-400 text-xs font-bold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5 text-red-600" />
             <span>HOW IT WORKS</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             4 Simple Steps to Your Overseas Home
           </h2>
-          <p className="text-sm text-slate-500 mt-2 max-w-xl mx-auto">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xl mx-auto">
             Effortlessly coordinate roommates, match budgets, and secure verified student apartments abroad.
           </p>
 
-          {/* 4 Cards Grid */}
+          {/* 4 Cards Grid - Matching screenshot exactly */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 text-left">
-            {HOW_IT_WORKS_STEPS_HOME.map((step, idx) => {
-              const iconColors = [
-                { bg: "bg-red-50 text-red-600", icon: Users },
-                { bg: "bg-emerald-50 text-emerald-600", icon: MapPin },
-                { bg: "bg-purple-50 text-purple-600", icon: Building2 },
-                { bg: "bg-rose-50 text-rose-600", icon: ShieldCheck },
-              ];
-              const StepIcon = iconColors[idx % iconColors.length].icon;
-              const stepIconClass = iconColors[idx % iconColors.length].bg;
-
+            {HOME_FOUR_STEPS.map((step) => {
+              const StepIcon = step.icon;
               return (
                 <div
                   key={step.number}
                   className="bg-white dark:bg-[#111827] rounded-2xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md transition-shadow relative flex flex-col justify-between"
                 >
                   <div>
+                    {/* Header with step number & icon */}
                     <div className="flex items-center justify-between mb-4">
-                      <span className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
+                      <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">
                         {step.number}
                       </span>
-                      <span className={`w-7 h-7 rounded-full ${stepIconClass} flex items-center justify-center text-xs`}>
+                      <span className={`w-7 h-7 rounded-full ${step.iconBg} flex items-center justify-center text-xs`}>
                         <StepIcon className="w-3.5 h-3.5" />
                       </span>
                     </div>
-                    <h3 className="text-base font-bold text-slate-900 mb-2">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">
                       {step.title}
                     </h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                       {step.description}
                     </p>
                   </div>
 
                   <div
-                    className="mt-6 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-red-600 hover:text-red-700 cursor-pointer"
+                    className="mt-6 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-red-600 hover:text-red-700 cursor-pointer"
                     onClick={() => openPlanModal()}
                   >
                     <span>{step.stepText}</span>
@@ -383,7 +389,7 @@ export default function HomePage() {
             </button>
             <Link
               href="/how-it-works"
-              className="py-3 px-6 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all flex items-center gap-2"
+              className="py-3 px-6 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm transition-all flex items-center gap-2"
             >
               <span>View Full Guide</span>
               <ChevronRight className="w-4 h-4" />
@@ -393,183 +399,37 @@ export default function HomePage() {
       </section>
 
       {/* ------------------------------------------------------------- */}
+      {/* SECTION 3: FREQUENTLY ASKED QUESTIONS */}
       {/* ------------------------------------------------------------- */}
-      {/* SECTION 3: TRANSPARENT PRICING */}
-      {/* ------------------------------------------------------------- */}
-      <section id="pricing" className="py-16 sm:py-20 bg-white dark:bg-[#0B0F17]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 text-red-700 text-xs font-bold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-red-600" />
-            <span>TRANSPARENT PRICING</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Simple, Student-Friendly Plans
-          </h2>
-          <p className="text-sm text-slate-500 mt-2 max-w-xl mx-auto">
-            No hidden broker markups or surprise agency fees. One transparent price for total peace of mind.
-          </p>
-
-          {/* Pricing Toggle */}
-          <div className="mt-8 inline-flex items-center p-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-            <button
-              onClick={() => setPricingMode("student")}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                pricingMode === "student"
-                  ? "bg-red-600 text-white shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Per Month
-            </button>
-            <button
-              onClick={() => setPricingMode("group")}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                pricingMode === "group"
-                  ? "bg-red-600 text-white shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Per Group Flat Semesters
-            </button>
-          </div>
-
-          {/* Pricing Cards (3 tiers) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 text-left max-w-6xl mx-auto items-stretch">
-            {PRICING_PLANS.map((plan) => {
-              const isPopular = plan.badgeStyle === "popular";
-              const price = pricingMode === "student" ? plan.priceStudent : plan.priceGroup;
-              const period = pricingMode === "student" ? (plan.priceStudent === 0 ? "semester" : "student • one-time") : "group flat • semester";
-
-              return (
-                <div
-                  key={plan.id}
-                  className={`relative rounded-3xl p-7 flex flex-col justify-between transition-all duration-300 ${
-                    isPopular
-                      ? "bg-white dark:bg-[#111827] border-2 border-red-500 shadow-xl ring-4 ring-red-500/10 scale-105 z-10"
-                      : "bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md"
-                  }`}
-                >
-                  {isPopular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                      <span className="px-3.5 py-1 rounded-full bg-red-600 text-white font-extrabold text-[11px] uppercase tracking-wider shadow-md">
-                        ★ MOST POPULAR
-                      </span>
-                    </div>
-                  )}
-
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
-                      {plan.badge && !isPopular && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider">
-                          {plan.id === "free" ? "FREE" : "FULL SUPPORT"}
-                        </span>
-                      )}
-                      {isPopular && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-wider border border-red-200">
-                          RECOMMENDED
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Price */}
-                    <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-4xl font-black text-slate-900">
-                        ${price}
-                      </span>
-                      <span className="text-xs text-slate-500 font-medium">
-                        /{period}
-                      </span>
-                    </div>
-
-                    <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                      {plan.description}
-                    </p>
-
-                    {/* Features list */}
-                    <div className="mt-6 pt-6 border-t border-slate-100 space-y-3">
-                      {plan.features.map((feat, idx) => (
-                        <div key={idx} className="flex items-start gap-2.5 text-xs">
-                          <CheckCircle2
-                            className={`w-4 h-4 shrink-0 mt-0.5 ${
-                              feat.highlight ? "text-red-600" : "text-emerald-600"
-                            }`}
-                          />
-                          <span
-                            className={
-                              feat.highlight
-                                ? "font-bold text-slate-900"
-                                : "text-slate-600"
-                            }
-                          >
-                            {feat.text}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* CTA Button */}
-                  <div className="mt-8 pt-4">
-                    <button
-                      onClick={() => openPlanModal()}
-                      className={`w-full py-3 px-4 rounded-xl font-bold text-xs transition-all cursor-pointer ${
-                        plan.ctaStyle === "primary"
-                          ? "bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-500/30"
-                          : plan.ctaStyle === "dark"
-                          ? "bg-slate-900 hover:bg-black text-white"
-                          : "bg-slate-100 hover:bg-slate-200 text-slate-800"
-                      }`}
-                    >
-                      {plan.ctaText}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Guarantee banner */}
-          <div className="mt-12 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-medium">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>
-              <strong>100% Risk-Free Guarantee:</strong> Full refund if we cannot find living arrangements aligned with your approved parameters.
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------- */}
-      {/* SECTION 4: FAQS */}
-      {/* ------------------------------------------------------------- */}
-      <section className="py-16 sm:py-20 bg-slate-50/70 dark:bg-[#0B0F17] border-t border-slate-200/80 dark:border-slate-800">
+      <section className="py-16 sm:py-20 bg-white dark:bg-[#0B0F17] border-t border-slate-100 dark:border-slate-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 text-red-700 text-xs font-bold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100/70 dark:bg-red-950/40 text-red-700 dark:text-red-400 text-xs font-bold uppercase tracking-wider mb-3">
               <HelpCircle className="w-3.5 h-3.5 text-red-600" />
               <span>COMMON QUESTIONS</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="text-sm text-slate-500 mt-2 max-w-xl mx-auto">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xl mx-auto">
               Everything students and parents need to know about housing safety in Italy.
             </p>
           </div>
 
-          <FaqAccordion items={FAQS_DATA} />
+          {/* FAQ Accordion */}
+          <FaqAccordion items={FAQS_DATA} defaultOpenIndex={0} />
 
-          {/* Personalized guidance callout */}
-          <div className="mt-12 max-w-4xl mx-auto bg-slate-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+          {/* Personalized guidance callout - Dark Box matching screenshot */}
+          <div className="mt-12 max-w-4xl mx-auto bg-[#0A0F1D] dark:bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
             <div className="space-y-1.5 text-center md:text-left">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-red-400">
-                READY TO SECURE HOUSING?
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-950/70 border border-red-800/60 text-red-400 text-[10px] font-bold uppercase tracking-wider">
+                ✨ Need Personalized Guidance?
               </span>
               <h3 className="text-lg sm:text-xl font-bold text-white">
                 Have questions about your specific program or dates?
               </h3>
               <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-                Chat with our team or schedule a 15-minute call to review your university semester timeline and get a tailored plan.
+                Our bilingual Italian student housing advisors can review your university dates and recommend safe neighborhoods.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2.5 shrink-0 w-full sm:w-auto">
@@ -581,7 +441,7 @@ export default function HomePage() {
               </button>
               <Link
                 href="/safety"
-                className="py-2.5 px-5 rounded-xl bg-transparent border border-white/20 hover:bg-white/10 text-white text-xs font-semibold transition-all text-center"
+                className="py-2.5 px-5 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 text-white text-xs font-semibold transition-all text-center"
               >
                 Safety Guide
               </Link>

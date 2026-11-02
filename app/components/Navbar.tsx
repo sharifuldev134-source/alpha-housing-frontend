@@ -39,12 +39,12 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
   ];
 
   const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
+    if (href === "/") return pathname === "/" || pathname === "/get-help" || pathname === "/assistance" || pathname === "/find-housing";
     if (href.startsWith("/#")) return false;
     return pathname.startsWith(href);
   };
 
-  console.log('in')
+
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100/90 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] transition-all">
