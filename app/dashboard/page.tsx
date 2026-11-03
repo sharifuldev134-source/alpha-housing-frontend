@@ -49,7 +49,9 @@ import {
   Search,
   Plus,
   Utensils,
-  Bus
+  Bus,
+  HelpCircle,
+  Link2
 } from "lucide-react";
 
 const FlorenceSafetyMap = dynamic(
@@ -508,6 +510,122 @@ function DashboardContent() {
     if (!textToSend) setChatInput("");
   };
 
+  // Housing Assistance Requests State (Matching Screenshot)
+  const [housingRequestsList, setHousingRequestsList] = useState<Array<{
+    id: string;
+    title: string;
+    status: "Received" | "Reviewing" | "Contacted Provider" | "Resolved";
+    linksCount: string;
+    address: string;
+    contactPerson: string;
+    contactEmail: string;
+    date: string;
+    timelineStep: number;
+    advisor: {
+      name: string;
+      role: string;
+      avatar: string;
+    };
+    logs: Array<{
+      icon: "check" | "clock";
+      text: string;
+    }>;
+  }>>([
+    {
+      id: "AH-2024-4869",
+      title: "gjkgjgi",
+      status: "Received",
+      linksCount: "1 apartment link",
+      address: "mohamkhali, dhaka bangladesh",
+      contactPerson: "MD Ahad",
+      contactEmail: "mdahad.dev@gmail.com",
+      date: "Today",
+      timelineStep: 2,
+      advisor: {
+        name: "Marco Rossi (Florence Concierge Coordinator)",
+        role: "Assigned local Florentine coordinator managing this inquiry",
+        avatar: "MR",
+      },
+      logs: [],
+    },
+    {
+      id: "AH-2024-0115",
+      title: "Landlord not responding to inquiries regarding Spring 2027 lease and deposit safety.",
+      status: "Reviewing",
+      linksCount: "1 apartment link",
+      address: "https://www.housinganywhere.com/room/12345/florence-via-dei-n...",
+      contactPerson: "Sarah Jenkins (Parent)",
+      contactEmail: "parent@email.com",
+      date: "Oct 28, 2026",
+      timelineStep: 2,
+      advisor: {
+        name: "Marco Rossi (Florence Concierge Coordinator)",
+        role: "Assigned local Florentine coordinator managing this inquiry",
+        avatar: "MR",
+      },
+      logs: [
+        { icon: "check", text: "Advisor Marco reached out to Italian Agency via WhatsApp & direct phone." },
+        { icon: "clock", text: "Awaiting confirmation of utility inclusion caps for 4 students." },
+      ],
+    },
+    {
+      id: "AH-2024-0098",
+      title: "Need lease translation and confirmation if contract qualifies for Italian student visa (Contratto",
+      status: "Contacted Provider",
+      linksCount: "2 apartment links",
+      address: "Via dei Neri 42, 50122 Firenze FI, Italy",
+      contactPerson: "Elena Vance (Student)",
+      contactEmail: "elena.v@university.edu",
+      date: "Oct 24, 2026",
+      timelineStep: 3,
+      advisor: {
+        name: "Marco Rossi (Florence Concierge Coordinator)",
+        role: "Assigned local Florentine coordinator managing this inquiry",
+        avatar: "MR",
+      },
+      logs: [
+        { icon: "check", text: "Official Contratto Transitorio draft received from landlord." },
+        { icon: "check", text: "Legal review completed: clause 8 complies with Italian rent control." },
+      ],
+    },
+  ]);
+
+  const [selectedRequestId, setSelectedRequestId] = useState<string>("AH-2024-4869");
+  const [requestFilter, setRequestFilter] = useState<"All" | "Reviewing" | "Contacted Provider" | "Resolved">("All");
+  const [requestSearchQuery, setRequestSearchQuery] = useState<string>("");
+  const [requestNoteInput, setRequestNoteInput] = useState<string>("");
+
+  const handleAddRequestNote = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requestNoteInput.trim()) return;
+    setHousingRequestsList((prev) =>
+      prev.map((req) => {
+        if (req.id === selectedRequestId) {
+          return {
+            ...req,
+            logs: [...req.logs, { icon: "check", text: requestNoteInput.trim() }],
+          };
+        }
+        return req;
+      })
+    );
+    setRequestNoteInput("");
+  };
+
+  const filteredRequests = housingRequestsList.filter((req) => {
+    const matchesFilter = requestFilter === "All" ? true : req.status === requestFilter;
+    const matchesSearch =
+      requestSearchQuery.trim() === ""
+        ? true
+        : req.id.toLowerCase().includes(requestSearchQuery.toLowerCase()) ||
+          req.title.toLowerCase().includes(requestSearchQuery.toLowerCase()) ||
+          req.address.toLowerCase().includes(requestSearchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  const currentSelectedRequest =
+    housingRequestsList.find((r) => r.id === selectedRequestId) || housingRequestsList[0];
+
   const isHousingDetail = activeTab === "housing" && housingSubView === "detail";
   const currentApartment = APARTMENTS_DATA.find((a) => a.id === selectedApartmentId) || APARTMENTS_DATA[0];
 
@@ -615,23 +733,6 @@ function DashboardContent() {
                   <span>Compare</span>
                 </button>
 
-                {/* Provider Communication */}
-                <button
-                  onClick={() => setActiveTab("communication")}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "communication"
-                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                    }`}
-                >
-                  <span className="flex items-center gap-3">
-                    <Send className="w-4 h-4" />
-                    <span>Provider Communication</span>
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded-md bg-red-100 text-[#DC2626] text-[10px] font-bold">
-                    2
-                  </span>
-                </button>
-
                 {/* Group Progress */}
                 <button
                   onClick={() => setActiveTab("progress")}
@@ -679,30 +780,46 @@ function DashboardContent() {
                   <span>Documents</span>
                 </button>
 
+                {/* Housing Requests */}
+                <button
+                  onClick={() => setActiveTab("requests")}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "requests" || activeTab === "communication"
+                    ? "bg-[#FFF4F4] dark:bg-red-950/40 text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                    }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <HelpCircle className={`w-4 h-4 ${activeTab === "requests" || activeTab === "communication" ? "text-[#DC2626]" : "text-slate-500"}`} />
+                    <span>Housing Requests</span>
+                  </span>
+                  <span className="w-4.5 h-4.5 rounded-full bg-[#DC2626] text-white text-[10px] font-bold flex items-center justify-center">
+                    3
+                  </span>
+                </button>
+
                 {/* Safety & Hotline */}
-                {/* <button
+                <button
                   onClick={() => setActiveTab("safety")}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "safety"
-                      ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                 >
                   <ShieldCheck className={`w-4 h-4 ${activeTab === "safety" ? "text-[#DC2626]" : "text-emerald-600"}`} />
                   <span>Safety &amp; Hotline</span>
-                </button> */}
+                </button>
 
                 {/* Daily Life Guide */}
-                {/* <button
-                onClick={() => setActiveTab("daily-life")}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${
-                  activeTab === "daily-life"
+                <button
+                  onClick={() => setActiveTab("daily-life")}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${activeTab === "daily-life"
                     ? "bg-[#FFF4F4] text-[#DC2626] font-bold"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <Coffee className={`w-4 h-4 ${activeTab === "daily-life" ? "text-[#DC2626]" : "text-red-500"}`} />
-                <span>Daily Life Guide</span>
-              </button> */}
+                    }`}
+                >
+                  <Coffee className={`w-4 h-4 ${activeTab === "daily-life" ? "text-[#DC2626]" : "text-red-500"}`} />
+                  <span>Daily Life Guide</span>
+                </button>
 
                 {/* Parent View */}
                 <button
@@ -2241,212 +2358,360 @@ function DashboardContent() {
             )}
 
             {/* ========================================================= */}
-            {/* VIEW 4B: PROVIDER COMMUNICATION TAB (SCREENSHOT) */}
+            {/* VIEW 4B: HOUSING ASSISTANCE REQUESTS TAB (SCREENSHOT)     */}
             {/* ========================================================= */}
-            {activeTab === "communication" && (
+            {(activeTab === "requests" || activeTab === "communication") && (
               <div className="space-y-6 animate-in fade-in duration-200 text-left">
-                {/* Top Action Row: Back to Compare */}
-                <div>
-                  <button
-                    onClick={() => setActiveTab("compare")}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors cursor-pointer"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Back to Compare</span>
-                  </button>
-                </div>
-
-                {/* Step Pill */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/50 text-[11px] font-bold text-[#DC2626]">
-                  <span className="w-2 h-2 rounded-full bg-[#DC2626]" />
-                  <span>Step 7 of 8: Provider Communication</span>
-                </div>
-
-                {/* Heading & Subtitle */}
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                    We Handle the Communication
-                  </h1>
-                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
-                    Our team will contact the property managers, request availability, and keep you updated. You can see all communication here.
-                  </p>
-                </div>
-
-                {/* 3 Inquiry Tracker Cards */}
-                <div className="space-y-4">
-                  {[
-                    {
-                      id: "spacious-4bed",
-                      name: "Spacious 4-Bedroom Apartment",
-                      neighborhood: "Santa Croce",
-                      image: APARTMENTS_DATA[0].images[0],
-                      status: "Response Received",
-                      statusType: "emerald",
-                      statusDate: "Oct 24, 2026",
-                      timeline: [
-                        { label: "Inquiry sent to property manager", date: "Oct 21, 2026", status: "done" },
-                        { label: "Received response with availability and details", date: "Oct 24, 2026", status: "done" },
-                        { label: "Our team reviewing information", date: "In progress", status: "in-progress" },
-                        { label: "Next: Send full details to your group", date: "—", status: "pending" },
-                      ],
-                    },
-                    {
-                      id: "modern-balcony",
-                      name: "Modern Apartment with Balcony",
-                      neighborhood: "Santa Croce",
-                      image: APARTMENTS_DATA[1].images[0],
-                      status: "Awaiting Reply",
-                      statusType: "amber",
-                      statusDate: "Oct 23, 2026",
-                      timeline: [
-                        { label: "Inquiry sent to property manager", date: "Oct 22, 2026", status: "done" },
-                        { label: "Follow-up sent", date: "Oct 24, 2026", status: "done" },
-                        { label: "Waiting for response", date: "—", status: "in-progress" },
-                        { label: "Next: Our team will follow up again", date: "—", status: "pending" },
-                      ],
-                    },
-                    {
-                      id: "charming-historic",
-                      name: "Charming Historic Apartment",
-                      neighborhood: "Santa Croce",
-                      image: APARTMENTS_DATA[2].images[0],
-                      status: "No Response Yet",
-                      statusType: "slate",
-                      statusDate: "Oct 20, 2026",
-                      timeline: [
-                        { label: "Inquiry sent to property manager", date: "Oct 20, 2026", status: "done" },
-                        { label: "Follow-up sent", date: "Oct 23, 2026", status: "done" },
-                        { label: "No response yet", date: "—", status: "in-progress" },
-                        { label: "Next: Final follow-up this week", date: "—", status: "pending" },
-                      ],
-                    },
-                  ].map((inquiry) => (
-                    <div
-                      key={inquiry.id}
-                      className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs p-4 sm:p-5 space-y-4"
-                    >
-                      {/* Card Header */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        {/* Left: Thumbnail & Name */}
-                        <div className="flex items-center gap-3.5">
-                          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
-                            <Image
-                              src={inquiry.image}
-                              alt={inquiry.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
-                              {inquiry.name}
-                            </h3>
-                            <div className="flex items-center gap-1 text-[11px] text-slate-400 mt-0.5">
-                              <MapPin className="w-3 h-3 text-slate-400" />
-                              <span>{inquiry.neighborhood}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Right: Status Badge & View Messages Button */}
-                        <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
-                          <div className="text-right">
-                            <div className="inline-flex">
-                              {inquiry.statusType === "emerald" && (
-                                <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-900/50 text-xs font-bold flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                  <span>{inquiry.status}</span>
-                                </span>
-                              )}
-                              {inquiry.statusType === "amber" && (
-                                <span className="px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/80 dark:border-amber-900/50 text-xs font-bold flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                  <span>{inquiry.status}</span>
-                                </span>
-                              )}
-                              {inquiry.statusType === "slate" && (
-                                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                                  <span>{inquiry.status}</span>
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">
-                              {inquiry.statusDate}
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={() => setActiveTab("messages")}
-                            className="px-3.5 py-1.5 rounded-full border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 text-[#DC2626] dark:text-red-400 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
-                          >
-                            <MessageSquare className="w-3.5 h-3.5" />
-                            <span>View Messages</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Timeline Steps */}
-                      <div className="border-t border-slate-100 dark:border-slate-800/80 pt-3 space-y-2 text-xs">
-                        {inquiry.timeline.map((step, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between py-0.5 text-xs"
-                          >
-                            <div className="flex items-center gap-2.5">
-                              {step.status === "done" && (
-                                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-                              )}
-                              {step.status === "in-progress" && (
-                                <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
-                              )}
-                              {step.status === "pending" && (
-                                <span className="w-2.5 h-2.5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 shrink-0" />
-                              )}
-                              <span
-                                className={`${
-                                  step.status === "pending"
-                                    ? "text-slate-400 dark:text-slate-500"
-                                    : "text-slate-700 dark:text-slate-300 font-medium"
-                                }`}
-                              >
-                                {step.label}
-                              </span>
-                            </div>
-
-                            <span
-                              className={`text-[11px] shrink-0 ${
-                                step.date === "In progress"
-                                  ? "text-amber-600 dark:text-amber-400 font-semibold"
-                                  : "text-slate-400 dark:text-slate-500"
-                              }`}
-                            >
-                              {step.date}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Bottom Parent Portal Banner */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-left">
+                {/* Header Row */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
-                      Keep your parents in the loop effortlessly
-                    </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      Parents can track inquiry statuses, review verified apartment details, and sign off safely.
+                    <div className="flex items-center gap-2.5">
+                      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                        Housing Assistance Requests
+                      </h1>
+                      <span className="px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-[#DC2626] dark:text-red-400 text-xs font-bold">
+                        3 Active
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
+                      Track communication with Italian property managers, advisor lease audits, and landlord response progress.
                     </p>
                   </div>
 
                   <button
-                    onClick={() => setActiveTab("parent")}
-                    className="py-2.5 px-5 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white font-bold text-xs sm:text-sm shadow-md shadow-red-600/20 transition-all cursor-pointer shrink-0"
+                    onClick={() => router.push("/get-help")}
+                    className="py-2.5 px-4 rounded-xl bg-[#C8102E] hover:bg-[#A60D25] text-white font-bold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
                   >
-                    <span>Go to Parent Dashboard (Housing Progress) →</span>
+                    <span>+ Submit New Apartment Request</span>
                   </button>
+                </div>
+
+                {/* 4 Metric Summary Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                  {/* Total Requests */}
+                  <div className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-2xs">
+                    <span className="block text-2xl sm:text-3xl font-black text-slate-900 dark:text-white leading-none">
+                      3
+                    </span>
+                    <span className="block text-xs font-medium text-slate-500 dark:text-slate-400 mt-1.5">
+                      Total Requests
+                    </span>
+                  </div>
+
+                  {/* Under Advisor Review */}
+                  <div className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-2xs">
+                    <span className="block text-2xl sm:text-3xl font-black text-amber-500 leading-none">
+                      1
+                    </span>
+                    <span className="block text-xs font-medium text-slate-500 dark:text-slate-400 mt-1.5">
+                      Under Advisor Review
+                    </span>
+                  </div>
+
+                  {/* Provider Contacted */}
+                  <div className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-2xs">
+                    <span className="block text-2xl sm:text-3xl font-black text-blue-600 leading-none">
+                      1
+                    </span>
+                    <span className="block text-xs font-medium text-slate-500 dark:text-slate-400 mt-1.5">
+                      Provider Contacted
+                    </span>
+                  </div>
+
+                  {/* Resolved & Verified */}
+                  <div className="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-2xs">
+                    <span className="block text-2xl sm:text-3xl font-black text-emerald-600 leading-none">
+                      0
+                    </span>
+                    <span className="block text-xs font-medium text-slate-500 dark:text-slate-400 mt-1.5">
+                      Resolved &amp; Verified
+                    </span>
+                  </div>
+                </div>
+
+                {/* Filter Row: Tabs & Search Input */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  {/* Left Filter Tabs */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                    {(["All", "Reviewing", "Contacted Provider", "Resolved"] as const).map((filterName) => (
+                      <button
+                        key={filterName}
+                        onClick={() => setRequestFilter(filterName)}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+                          requestFilter === filterName
+                            ? "bg-[#C8102E] text-white shadow-2xs"
+                            : "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                        }`}
+                      >
+                        {filterName}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Right Search Input */}
+                  <div className="relative w-full sm:w-64">
+                    <input
+                      type="text"
+                      value={requestSearchQuery}
+                      onChange={(e) => setRequestSearchQuery(e.target.value)}
+                      placeholder="Search reference # or details..."
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Master-Detail Two Column Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                  {/* Left Column: Request Cards (5 cols) */}
+                  <div className="lg:col-span-5 space-y-3">
+                    {filteredRequests.map((req) => {
+                      const isSelected = req.id === currentSelectedRequest.id;
+                      return (
+                        <div
+                          key={req.id}
+                          onClick={() => setSelectedRequestId(req.id)}
+                          className={`rounded-2xl p-4 cursor-pointer transition-all ${
+                            isSelected
+                              ? "border-2 border-[#DC2626] bg-white dark:bg-[#111827] shadow-sm"
+                              : "border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#111827] hover:border-slate-300 dark:hover:border-slate-700"
+                          }`}
+                        >
+                          {/* Top Row: Ref ID + Status */}
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/50 text-[#DC2626] dark:text-rose-400 text-[11px] font-bold">
+                              {req.id}
+                            </span>
+
+                            {req.status === "Received" && (
+                              <span className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10.5px] font-medium flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                <span>Received</span>
+                              </span>
+                            )}
+                            {req.status === "Reviewing" && (
+                              <span className="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/50 text-amber-700 dark:text-amber-400 text-[10.5px] font-medium flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                                <span>Reviewing</span>
+                              </span>
+                            )}
+                            {req.status === "Contacted Provider" && (
+                              <span className="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/50 text-blue-700 dark:text-blue-400 text-[10.5px] font-medium flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                <span>Contacted Provider</span>
+                              </span>
+                            )}
+                            {req.status === "Resolved" && (
+                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-[10.5px] font-medium flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                <span>Resolved</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Title / Description */}
+                          <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white line-clamp-2 my-2.5 leading-snug">
+                            {req.title}
+                          </h4>
+
+                          {/* Bottom Row: Link Count + Date */}
+                          <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                            <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                              <Link2 className="w-3 h-3" />
+                              <span>{req.linksCount}</span>
+                            </span>
+                            <span>{req.date}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Right Column: Request Detail Card (7 cols) */}
+                  <div className="lg:col-span-7 bg-white dark:bg-[#111827] rounded-3xl p-5 sm:p-6 shadow-xs border border-slate-200/90 dark:border-slate-800 space-y-5">
+                    {/* Detail Header */}
+                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                      <div>
+                        <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                          REQUEST REFERENCE
+                        </span>
+                        <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
+                          {currentSelectedRequest.id}
+                        </h2>
+                      </div>
+
+                      <div>
+                        {currentSelectedRequest.status === "Received" && (
+                          <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                            <span>Status: Received</span>
+                          </span>
+                        )}
+                        {currentSelectedRequest.status === "Reviewing" && (
+                          <span className="px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/50 text-amber-700 dark:text-amber-400 text-xs font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                            <span>Status: Reviewing</span>
+                          </span>
+                        )}
+                        {currentSelectedRequest.status === "Contacted Provider" && (
+                          <span className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/50 text-blue-700 dark:text-blue-400 text-xs font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <span>Status: Contacted Provider</span>
+                          </span>
+                        )}
+                        {currentSelectedRequest.status === "Resolved" && (
+                          <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            <span>Status: Resolved</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Assigned Advisor Box */}
+                    <div className="p-3.5 rounded-2xl bg-[#F0F6FF] dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#1D4ED8] text-white font-bold text-xs flex items-center justify-center shrink-0">
+                          {currentSelectedRequest.advisor.avatar}
+                        </div>
+                        <div>
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                            {currentSelectedRequest.advisor.name}
+                          </h4>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                            {currentSelectedRequest.advisor.role}
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setActiveTab("messages")}
+                        className="py-1.5 px-3 rounded-xl border border-blue-200 dark:border-blue-700 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-blue-950/50 text-[#1D4ED8] dark:text-blue-400 text-xs font-bold transition-colors cursor-pointer shrink-0 shadow-2xs"
+                      >
+                        Chat with Advisor
+                      </button>
+                    </div>
+
+                    {/* Coordination Status Timeline */}
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                        COORDINATION STATUS TIMELINE
+                      </span>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div className="py-2 px-2.5 rounded-xl bg-[#ECFDF5] dark:bg-emerald-950/40 border border-[#A7F3D0] dark:border-emerald-900/50 text-[#065F46] dark:text-emerald-400 text-xs font-bold text-center flex items-center justify-center gap-1">
+                          <span>✓ 1. Received</span>
+                        </div>
+                        <div className="py-2 px-2.5 rounded-xl bg-[#ECFDF5] dark:bg-emerald-950/40 border border-[#A7F3D0] dark:border-emerald-900/50 text-[#065F46] dark:text-emerald-400 text-xs font-bold text-center flex items-center justify-center gap-1">
+                          <span>✓ 2. Audited</span>
+                        </div>
+                        <div className={`py-2 px-2.5 rounded-xl text-xs font-medium text-center flex items-center justify-center gap-1 ${
+                          currentSelectedRequest.timelineStep >= 3
+                            ? "bg-[#ECFDF5] dark:bg-emerald-950/40 border border-[#A7F3D0] dark:border-emerald-900/50 text-[#065F46] dark:text-emerald-400 font-bold"
+                            : "bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-slate-400"
+                        }`}>
+                          <span>{currentSelectedRequest.timelineStep >= 3 ? "✓ " : ""}3. Contacted</span>
+                        </div>
+                        <div className={`py-2 px-2.5 rounded-xl text-xs font-medium text-center flex items-center justify-center gap-1 ${
+                          currentSelectedRequest.timelineStep >= 4
+                            ? "bg-[#ECFDF5] dark:bg-emerald-950/40 border border-[#A7F3D0] dark:border-emerald-900/50 text-[#065F46] dark:text-emerald-400 font-bold"
+                            : "bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 text-slate-400"
+                        }`}>
+                          <span>4. Confirmed</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Assistance Requested */}
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                        ASSISTANCE REQUESTED
+                      </span>
+                      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 text-xs font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
+                        {currentSelectedRequest.title}
+                      </div>
+                    </div>
+
+                    {/* Submitted Apartment Links / Addresses */}
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                        SUBMITTED APARTMENT LINKS / ADDRESSES (1)
+                      </span>
+                      <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                        <div className="flex items-center gap-2 truncate">
+                          <Link2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="font-medium text-slate-700 dark:text-slate-300 truncate">
+                            {currentSelectedRequest.address}
+                          </span>
+                        </div>
+                        <a
+                          href={currentSelectedRequest.address.startsWith("http") ? currentSelectedRequest.address : `https://maps.google.com/?q=${encodeURIComponent(currentSelectedRequest.address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#1D4ED8] dark:text-blue-400 font-bold text-xs flex items-center gap-1 shrink-0 hover:underline"
+                        >
+                          <span>Open</span>
+                          <ArrowRight className="w-3 h-3 -rotate-45" />
+                        </a>
+                      </div>
+
+                      {/* Contact Person & Email */}
+                      <div className="grid grid-cols-2 gap-4 pt-1 text-left">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block">Contact Person</span>
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                            {currentSelectedRequest.contactPerson}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block">Email Address</span>
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                            {currentSelectedRequest.contactEmail}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Updates & Activity Log */}
+                    <div className="space-y-2.5 border-t border-slate-100 dark:border-slate-800 pt-4">
+                      <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                        UPDATES &amp; ACTIVITY LOG
+                      </span>
+
+                      {currentSelectedRequest.logs.length > 0 && (
+                        <div className="space-y-2">
+                          {currentSelectedRequest.logs.map((log, idx) => (
+                            <div
+                              key={idx}
+                              className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300"
+                            >
+                              {log.icon === "check" ? (
+                                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                              ) : (
+                                <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                              )}
+                              <span>{log.text}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Note Input Form */}
+                      <form onSubmit={handleAddRequestNote} className="flex items-center gap-2 pt-1">
+                        <input
+                          type="text"
+                          value={requestNoteInput}
+                          onChange={(e) => setRequestNoteInput(e.target.value)}
+                          placeholder="Add an update or note for the advisor..."
+                          className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors"
+                        />
+                        <button
+                          type="submit"
+                          className="py-2 px-4 rounded-xl bg-[#C8102E] hover:bg-[#A60D25] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer shrink-0"
+                        >
+                          Post Note
+                        </button>
+                      </form>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

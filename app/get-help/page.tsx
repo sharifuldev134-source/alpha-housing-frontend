@@ -143,16 +143,16 @@ function GetHelpContent() {
   }
 
   // -------------------------------------------------------------
-  // FORM STATE (Matching Screenshot 1 - Florence Panorama, Woman & Form)
+  // FORM STATE (Matching Screenshot - Florence Panorama, Woman & Form)
   // -------------------------------------------------------------
   return (
     <div className="flex flex-col w-full bg-white dark:bg-[#0B0F17]">
       {/* Hero Banner Section */}
-      <section className="relative w-full overflow-hidden min-h-[420px] sm:min-h-[440px] lg:h-[440px] flex items-center bg-white dark:bg-[#0B0F17]">
-        {/* Full-width pristine composite background image */}
+      <section className="relative w-full overflow-hidden flex flex-col justify-between min-h-[640px] lg:min-h-0 lg:h-[480px] xl:h-[500px] bg-white dark:bg-[#0B0F17]">
+        {/* Full-width composite background image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/how_it_works_student.jpg"
+            src="/images/banner.png"
             alt="AlphaHousing Assistance Banner"
             fill
             priority
@@ -160,11 +160,11 @@ function GetHelpContent() {
           />
         </div>
 
-        {/* Content Container (max-w-5xl matches 1024px screenshot proportions) */}
-        <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            {/* Left Content (6 cols): Badge, Titles, Subtitle & 3 Feature Cards */}
-            <div className="lg:col-span-6 text-left space-y-3">
+        {/* Top Row: Left Content & Right Form Card */}
+        <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-6 sm:pt-7 lg:pt-8">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6 lg:gap-8">
+            {/* Left Content: Badge, Titles, Subtitle & 3 Feature Cards */}
+            <div className="text-left space-y-2.5 max-w-sm sm:max-w-md lg:max-w-[400px] shrink-0">
               {/* Red Tag / Badge */}
               <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#E52535] uppercase tracking-wider">
                 <span className="w-3.5 h-3.5 rounded-xs bg-[#E52535] text-white flex items-center justify-center">
@@ -174,7 +174,7 @@ function GetHelpContent() {
               </div>
 
               {/* Main Heading */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[38px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.12]">
+              <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.14]">
                 Found an Apartment?
                 <span className="block text-[#E52535] mt-0.5">Let Us Help.</span>
               </h1>
@@ -184,110 +184,120 @@ function GetHelpContent() {
                 You&apos;ve done the searching. Now let our housing assistance team help with the communication, follow-ups, and next steps.
               </p>
 
-              {/* 3 Mini Feature Cards */}
-              <div className="flex items-start gap-4 sm:gap-6 pt-2">
+              {/* 3 Mini Feature Cards with + Dividers */}
+              <div className="flex items-center gap-2 sm:gap-2.5 pt-2">
                 {/* Feature 1 */}
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50/90 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
-                    <Mail className="w-4.5 h-4.5" />
+                <div className="flex flex-col items-center text-center w-[74px]">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
+                    <Mail className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </div>
-                  <span className="text-[10.5px] font-semibold text-slate-700 dark:text-slate-300 mt-1.5 leading-tight max-w-[75px]">
-                    Contact providers for you
+                  <span className="text-[10px] sm:text-[10.5px] font-semibold text-slate-700 dark:text-slate-300 mt-1.5 leading-tight">
+                    Contact<br />providers for you
                   </span>
                 </div>
+
+                {/* Plus divider */}
+                <span className="text-slate-300 dark:text-slate-600 font-light text-sm sm:text-base mb-5 select-none">
+                  +
+                </span>
 
                 {/* Feature 2 */}
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50/90 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
-                    <FileCheck className="w-4.5 h-4.5" />
+                <div className="flex flex-col items-center text-center w-[74px]">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
+                    <FileCheck className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </div>
-                  <span className="text-[10.5px] font-semibold text-slate-700 dark:text-slate-300 mt-1.5 leading-tight max-w-[75px]">
-                    Follow up for answers
+                  <span className="text-[10px] sm:text-[10.5px] font-semibold text-slate-700 dark:text-slate-300 mt-1.5 leading-tight">
+                    Follow up<br />for answers
                   </span>
                 </div>
 
+                {/* Plus divider */}
+                <span className="text-slate-300 dark:text-slate-600 font-light text-sm sm:text-base mb-5 select-none">
+                  +
+                </span>
+
                 {/* Feature 3 */}
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50/90 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
-                    <Calendar className="w-4.5 h-4.5" />
+                <div className="flex flex-col items-center text-center w-[74px]">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
+                    <Calendar className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </div>
-                  <span className="text-[10.5px] font-semibold text-slate-700 dark:text-slate-300 mt-1.5 leading-tight max-w-[75px]">
-                    Keep you updated
+                  <span className="text-[10px] sm:text-[10.5px] font-semibold text-slate-700 dark:text-slate-300 mt-1.5 leading-tight">
+                    Keep you<br />updated
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Right Content (6 cols): "Let's Get in Touch" Floating White Card */}
-            <div className="lg:col-span-6 flex justify-end">
-              <div className="w-full max-w-[340px] bg-white dark:bg-[#111827] rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-100 dark:border-slate-800 text-left">
+            {/* Right Content: "Let's Get in Touch" Floating White Card */}
+            <div className="w-full lg:w-auto flex justify-center lg:justify-end shrink-0">
+              <div className="w-full max-w-[315px] sm:max-w-[325px] bg-white dark:bg-[#111827] rounded-2xl p-4 sm:p-4.5 shadow-xl border border-slate-100 dark:border-slate-800 text-left">
                 {/* Card Header */}
-                <div className="flex items-start gap-3 mb-4">
-                  <div className="w-9 h-9 rounded-xl bg-[#E52535] text-white flex items-center justify-center shrink-0 shadow-sm">
+                <div className="flex items-start gap-2.5 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#E52535] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                     <Users className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+                    <h3 className="text-sm sm:text-[15px] font-bold text-slate-900 dark:text-white leading-tight">
                       Let&apos;s Get in Touch
                     </h3>
-                    <p className="text-[10.5px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
                       Share your contact information and a member of our AlphaHousing team will reach out soon.
                     </p>
                   </div>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-3">
+                <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-2.5">
                   {/* Name */}
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <User className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name *"
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-3.5 py-2 pl-10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-3 py-1.5 pl-8.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                     />
                   </div>
 
                   {/* Email */}
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Email address *"
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-3.5 py-2 pl-10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-3 py-1.5 pl-8.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                     />
                   </div>
 
                   {/* Phone */}
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="Phone number *"
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-3.5 py-2 pl-10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-3 py-1.5 pl-8.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                     />
                   </div>
 
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    className="w-full py-2.5 px-4 rounded-xl bg-[#E52535] hover:bg-[#C8102E] text-white text-xs font-bold shadow-md shadow-red-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01] cursor-pointer"
+                    className="w-full py-2 px-3.5 rounded-lg bg-[#E52535] hover:bg-[#C8102E] text-white text-xs font-bold shadow-md shadow-red-500/20 flex items-center justify-center gap-1.5 transition-all cursor-pointer mt-1"
                   >
                     <span>Have AlphaHousing Contact Me</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
 
                   {/* Security Note */}
-                  <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 pt-0.5">
-                    <Lock className="w-3 h-3 text-slate-400" />
+                  <div className="flex items-center justify-center gap-1 text-[9.5px] text-slate-400 dark:text-slate-500 pt-0.5">
+                    <Lock className="w-2.5 h-2.5 text-slate-400" />
                     <span>Your information is kept private and secure.</span>
                   </div>
                 </form>
@@ -295,49 +305,49 @@ function GetHelpContent() {
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Floating Bottom Bar: What Happens Next? (Centered & Overlapping Banner) */}
-      <div className="relative z-20 max-w-4xl mx-auto w-full px-4 -mt-6 sm:-mt-7 mb-14 sm:mb-20">
-        <div className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-full py-3 px-6 sm:px-8 shadow-xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white pr-4 sm:border-r border-slate-200 dark:border-slate-700 shrink-0">
-            <span>What Happens Next?</span>
-          </div>
+        {/* Floating Bottom Bar: What Happens Next? (Positioned inside Banner at Bottom) */}
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-5 sm:pb-6 lg:pb-7">
+          <div className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-full py-2 sm:py-2.5 px-5 sm:px-7 shadow-lg border border-slate-100/90 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 text-xs">
+            <div className="flex items-center font-bold text-slate-900 dark:text-white shrink-0">
+              <span>What Happens Next?</span>
+            </div>
 
-          {/* Step 1 */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="w-4.5 h-4.5 rounded-full bg-[#E52535] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
-              1
-            </span>
-            <span className="text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-300">
-              We&apos;ll contact you to learn more.
-            </span>
-          </div>
+            {/* Step 1 */}
+            <div className="flex items-center gap-2">
+              <span className="w-4.5 h-4.5 rounded-full bg-[#E52535] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                1
+              </span>
+              <span className="text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-300">
+                We&apos;ll contact you to learn more.
+              </span>
+            </div>
 
-          {/* Step 2 */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="w-4.5 h-4.5 rounded-full bg-[#E52535] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
-              2
-            </span>
-            <span className="text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-300">
-              We&apos;ll discuss your needs and how we can help.
-            </span>
-          </div>
+            {/* Step 2 */}
+            <div className="flex items-center gap-2">
+              <span className="w-4.5 h-4.5 rounded-full bg-[#E52535] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                2
+              </span>
+              <span className="text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-300">
+                We&apos;ll discuss your needs and how we can help.
+              </span>
+            </div>
 
-          {/* Step 3 */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="w-4.5 h-4.5 rounded-full bg-[#E52535] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
-              3
-            </span>
-            <span className="text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-300">
-              We&apos;ll handle the agreed follow-ups and next steps.
-            </span>
+            {/* Step 3 */}
+            <div className="flex items-center gap-2">
+              <span className="w-4.5 h-4.5 rounded-full bg-[#E52535] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                3
+              </span>
+              <span className="text-[11px] sm:text-xs font-medium text-slate-700 dark:text-slate-300">
+                We&apos;ll handle the agreed follow-ups and next steps.
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Clean White Breathing Space above Footer */}
-      <div className="min-h-[80px] sm:min-h-[120px] bg-white dark:bg-[#0B0F17]" />
+      <div className="min-h-[100px] sm:min-h-[140px] bg-white dark:bg-[#0B0F17]" />
     </div>
   );
 }

@@ -3,25 +3,25 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  Sparkles, 
-  MapPin, 
-  Users, 
-  ArrowRight, 
-  ShieldCheck, 
-  Building2, 
-  BrainCircuit, 
-  Eye, 
-  ChevronRight, 
+import {
+  Sparkles,
+  MapPin,
+  Users,
+  ArrowRight,
+  ShieldCheck,
+  Building2,
+  BrainCircuit,
+  Eye,
+  ChevronRight,
   HelpCircle,
   Search,
   MessageSquare,
   FileCheck2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { 
-  CITIES_DATA, 
-  FAQS_DATA 
+import {
+  CITIES_DATA,
+  FAQS_DATA
 } from "./data/housingData";
 import FaqAccordion from "./components/FaqAccordion";
 import { usePlanModal } from "./components/PlanModalContext";
@@ -95,10 +95,10 @@ export default function HomePage() {
           </div>
 
           {/* Hero Title - Exact match to screenshot */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl leading-[1.12] mb-3">
-            <span className="text-white block">Housing abroad is stressful.</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-extrabold tracking-tight max-w-4xl leading-[1.12] mb-3">
+            <span className="text-white block">Finding housing abroad is one thing.</span>
             <span className="text-[#E52535] block mt-1">
-              You don&apos;t have to handle it alone.
+              Figuring it all out is another.
             </span>
           </h1>
 
@@ -267,11 +267,10 @@ export default function HomePage() {
               return (
                 <div
                   key={city.id}
-                  className={`group relative bg-white dark:bg-[#111827] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col ${
-                    isSelected
-                      ? "border-2 border-red-500 ring-2 ring-red-500/10 shadow-md"
-                      : "border border-slate-200/90 dark:border-slate-800"
-                  }`}
+                  className={`group relative bg-white dark:bg-[#111827] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col ${isSelected
+                    ? "border-2 border-red-500 ring-2 ring-red-500/10 shadow-md"
+                    : "border border-slate-200/90 dark:border-slate-800"
+                    }`}
                 >
                   {/* Photo container */}
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -282,7 +281,7 @@ export default function HomePage() {
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                    
+
                     {/* Selected badge for Florence */}
                     {isSelected && (
                       <span className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-red-600 text-white font-bold text-[10px] tracking-wide uppercase shadow-sm">
