@@ -48,14 +48,14 @@ const NEIGHBORHOOD_ROWS: NeighborhoodSafetyRow[] = [
     id: "santa-croce",
     name: "Santa Croce",
     subtitle: "Historic, lively, popular with students",
-    score: "9.5 / 10",
+    score: "8.8 / 10",
     image: "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=400&q=80",
   },
   {
     id: "san-lorenzo",
     name: "San Lorenzo",
     subtitle: "Central, convenient, great transport",
-    score: "9.3 / 10",
+    score: "8.9 / 10",
     image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",
   },
   {
@@ -98,36 +98,36 @@ export default function SafetyPage() {
   const ACTION_CARDS: ActionCardItem[] = [
     {
       id: "medical",
-      title: "Medical Help",
-      subtitle: "Hospitals, clinics and doctors",
+      title: "Medical Resources",
+      subtitle: "Find local healthcare options and what to know before you go.",
       icon: <HeartPulse className="w-5 h-5 text-rose-500" />,
       iconBg: "bg-rose-50 border border-rose-100",
     },
     {
       id: "passport",
       title: "Lost Passport",
-      subtitle: "Step-by-step guidance",
+      subtitle: "Steps to take and where to get assistance in Italy.",
       icon: <FileText className="w-5 h-5 text-blue-500" />,
       iconBg: "bg-blue-50 border border-blue-100",
     },
     {
       id: "phone",
       title: "Lost or Stolen Phone",
-      subtitle: "What to do and how we can help",
+      subtitle: "Practical steps to protect your information and get support.",
       icon: <Smartphone className="w-5 h-5 text-purple-500" />,
       iconBg: "bg-purple-50 border border-purple-100",
     },
     {
       id: "area",
-      title: "Safety by Area",
-      subtitle: "Neighborhood info and local tips",
+      title: "Neighborhood Information",
+      subtitle: "Helpful insights about areas popular with study abroad students.",
       icon: <ShieldCheck className="w-5 h-5 text-emerald-500" />,
       iconBg: "bg-emerald-50 border border-emerald-100",
     },
     {
       id: "contact",
       title: "Contact Our Team",
-      subtitle: "Get personalized assistance",
+      subtitle: "Have a question? Our team is here to provide guidance and support.",
       icon: <HelpCircle className="w-5 h-5 text-cyan-500" />,
       iconBg: "bg-cyan-50 border border-cyan-100",
     },
@@ -171,18 +171,18 @@ export default function SafetyPage() {
               {/* Tag Capsule matching screenshot */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-600/30 border border-emerald-400/40 text-emerald-200 text-[11px] font-semibold tracking-wider uppercase shadow-xs backdrop-blur-md">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                <span>VERIFIED FLORENCE STUDENT SAFETY &amp; PROTECTION GUIDE</span>
+                <span>VERIFIED FLORENCE SAFETY &amp; FAMILY PROTECTION GUIDE</span>
               </div>
 
               {/* Headline matching screenshot */}
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
                 Safety &amp; Support <br />
-                in Florence
+                <span className="text-[#E52535]">in Florence</span>
               </h1>
 
               {/* Subtitle matching screenshot */}
               <p className="text-xs sm:text-sm md:text-base text-slate-100 leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)]">
-                Study abroad is an unforgettable adventure. We provide real neighborhood safety ratings, well-lit pedestrian corridors, emergency medical access, and scam-proof housing policies so students thrive and parents rest easy.
+                Plan your time abroad with practical safety information, local resources, and guidance for common situations. Our goal help students feel prepared and confident, and give parents added peace of mind.
               </p>
 
               {/* Two CTA Buttons */}
@@ -216,24 +216,24 @@ export default function SafetyPage() {
                     className="object-cover"
                   />
                   <div className="absolute bottom-2.5 left-2.5 px-3 py-1 rounded-full bg-emerald-600/95 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                    Florence Overall Safety: 9.1 / 10
+                    FLORENCE: LOCAL SAFETY INFORMATION
                   </div>
                 </div>
 
                 {/* Stat pills matching screenshot */}
                 <div className="space-y-2.5 text-xs">
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 border border-white/15">
-                    <span className="text-slate-200">Violent Crime Index</span>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 font-bold border border-emerald-400/40 text-[11px]">
-                      Extremely Low
+                    <span className="text-slate-200">General Safety Overview</span>
+                    <span className="font-bold text-emerald-400">
+                      Extremely Safe
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 border border-white/15">
-                    <span className="text-slate-200">Pedestrian Walkability</span>
+                    <span className="text-slate-200">Getting Around Safety</span>
                     <span className="font-bold text-white">98% Historic Core</span>
                   </div>
                   <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/10 border border-white/15">
-                    <span className="text-slate-200">English Medical Care</span>
+                    <span className="text-slate-200">Emergency Information</span>
                     <span className="font-bold text-white">24/7 Available</span>
                   </div>
                 </div>
@@ -254,10 +254,10 @@ export default function SafetyPage() {
             </div>
             <div className="text-left">
               <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">
-                Need immediate help?
+                Need Immediate Help?
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                For emergencies, contact local emergency services first.
+                In an emergency, contact local emergency services (112 in Italy).
               </p>
             </div>
           </div>
@@ -338,11 +338,10 @@ export default function SafetyPage() {
                   <div
                     key={item.id}
                     onClick={() => setSelectedNeighborhoodId(item.id)}
-                    className={`p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                      isSelected
+                    className={`p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${isSelected
                         ? "border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-sm ring-1 ring-emerald-500/30"
                         : "border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900/50"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-slate-100">

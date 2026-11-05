@@ -598,7 +598,7 @@ export default function HousingPage() {
           {/* Big Titles matching screenshot */}
           <div className="space-y-1">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-              Verified Student Housing
+              Explore Student Housing Options
             </h1>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-[#DC2626]">
               in Florence, Italy
@@ -759,10 +759,10 @@ export default function HousingPage() {
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
-                100% In-Person Inspected
+                Housing Guidance
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Every flat visited &amp; certified
+                Explore options with helpful information.
               </div>
             </div>
           </div>
@@ -774,10 +774,10 @@ export default function HousingPage() {
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
-                Legal Italian Leases
+                Rental Information
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Registered with official registration laws
+                Understand rental terms and questions to ask.
               </div>
             </div>
           </div>
@@ -789,10 +789,10 @@ export default function HousingPage() {
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
-                Equal Price Splits
+                Shared Housing Planning.
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Calculated fair group room distribution
+                Explore costs when sharing with roommates.
               </div>
             </div>
           </div>
@@ -804,10 +804,10 @@ export default function HousingPage() {
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
-                Parent Real-time Access
+                Information for Parents
               </div>
               <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Full visibility for families
+                Helpful guidance for families
               </div>
             </div>
           </div>

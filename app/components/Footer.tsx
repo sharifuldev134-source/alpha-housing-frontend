@@ -165,8 +165,8 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/pricing" className="hover:text-red-600 transition-colors">
-                    Pricing Plans
+                  <Link href="/our-support" className="hover:text-red-600 transition-colors">
+                    Our Support
                   </Link>
                 </li>
                 <li>

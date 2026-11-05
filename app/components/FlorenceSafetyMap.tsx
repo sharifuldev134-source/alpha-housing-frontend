@@ -17,14 +17,14 @@ const NEIGHBORHOOD_PINS: NeighborhoodMarker[] = [
     name: "San Lorenzo",
     lat: 43.7749,
     lng: 11.2533,
-    score: "9.3 / 10",
+    score: "8.9 / 10",
   },
   {
     id: "santa-croce",
     name: "Santa Croce",
     lat: 43.7687,
     lng: 11.2625,
-    score: "9.5 / 10",
+    score: "8.8 / 10",
     featured: true,
   },
   {
@@ -128,7 +128,7 @@ export default function FlorenceSafetyMap({
                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                    <span class="font-extrabold text-[12px] text-slate-900 leading-tight">${pin.name}</span>
                  </div>
-                 <span class="text-[10px] font-bold text-emerald-600 pl-3.5 leading-tight">Safety Score ${pin.score}</span>
+                 <span class="text-[10px] font-bold text-emerald-600 pl-3.5 leading-tight">Safety Score: ${pin.score}</span>
                </div>`
             : `<div class="px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md flex items-center gap-1.5 whitespace-nowrap cursor-pointer hover:border-emerald-500 hover:scale-105 transition-all">
                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>

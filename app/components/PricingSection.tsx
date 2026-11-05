@@ -34,10 +34,8 @@ export default function PricingSection({
     }
     if (planId === "free") {
       router.push("/housing");
-    } else if (planId === "targeted-support") {
-      router.push("/assistance");
     } else {
-      openPlanModal();
+      router.push("/get-help");
     }
   };
 
@@ -46,9 +44,9 @@ export default function PricingSection({
       {/* ------------------------------------------------------------- */}
       {/* 1. HERO BANNER SECTION */}
       {/* ------------------------------------------------------------- */}
-      <section className="relative w-full bg-slate-900 text-white overflow-hidden text-center">
+      <section className="relative w-full bg-slate-900 text-white overflow-hidden">
         {/* Leaning Tower of Pisa Background */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <Image
             src="/images/pisa_banner.jpg"
             alt="Housing Guidance in Florence"
@@ -60,8 +58,8 @@ export default function PricingSection({
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/45 via-slate-950/25 to-slate-950/35 z-1" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-20 text-center">
+        {/* Hero Content — LEFT-ALIGNED to match screenshot */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 lg:pt-16 pb-12 sm:pb-16 text-left">
           {/* Badge */}
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-[11px] font-semibold tracking-wider uppercase mb-5 shadow-xs">
             <Heart className="w-3.5 h-3.5 text-white/90" />
@@ -75,13 +73,11 @@ export default function PricingSection({
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xs sm:text-sm text-slate-100/95 leading-relaxed max-w-2xl mx-auto font-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)]">
+          <p className="text-xs sm:text-sm text-slate-100/95 leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)] mb-8 sm:mb-10">
             Whether you&apos;re just starting your search, already have a housing option, or need help with communication and next steps, our team is here to provide guidance, coordination, and peace of mind.
           </p>
-        </div>
 
-        {/* Floating 4-Feature Pill Bar (Overlapping Banner Bottom) */}
-        <div className="relative z-20 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 -mb-7 sm:-mb-8">
+          {/* 4-Feature Pill Bar (Inside Banner) */}
           <div className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-full py-3.5 px-6 sm:px-8 shadow-xl border border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-left">
             {/* Feature 1 */}
             <div className="flex items-center gap-2.5">
@@ -149,7 +145,7 @@ export default function PricingSection({
       {/* ------------------------------------------------------------- */}
       {/* 2. MAIN SECTION: HOW WE CAN HELP (Exact Match to Screenshot) */}
       {/* ------------------------------------------------------------- */}
-      <section className="pt-16 sm:pt-20 pb-16 sm:pb-24 bg-white dark:bg-[#0B0F17]">
+      <section className="pt-14 sm:pt-16 pb-16 sm:pb-24 bg-white dark:bg-[#0B0F17]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Section Header */}
           <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -164,47 +160,80 @@ export default function PricingSection({
             {/* ======================================================== */}
             {/* CARD 1: Explore & Learn (Self-Guided) */}
             {/* ======================================================== */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-[#F8FAFD] dark:bg-[#111827] border border-[#DCE7F6] dark:border-blue-900/40 p-6 sm:p-7 flex flex-col shadow-xs hover:shadow-md transition-all min-h-[500px] sm:min-h-[520px]">
-              {/* Header row: icon left, badge right */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#E1EDFB] dark:bg-blue-950/60 text-[#1D4ED8] dark:text-blue-400 flex items-center justify-center shrink-0">
-                  <Laptop className="w-5 h-5" strokeWidth={2} />
+            <div className="rounded-[28px] sm:rounded-[32px] bg-[#F8FAFD] dark:bg-[#111827] border border-[#DCE7F6] dark:border-blue-900/40 p-6 sm:p-7 flex flex-col justify-between shadow-xs hover:shadow-md transition-all h-full min-h-[500px] sm:min-h-[520px]">
+              <div>
+                {/* Header: Icon on left, Title + Badge on right */}
+                <div className="flex items-start gap-3 sm:gap-3.5 mb-2">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#E1EDFB] dark:bg-blue-950/60 text-[#1D4ED8] dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Laptop className="w-5 h-5 sm:w-5.5 sm:h-5.5" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-1.5">
+                      <h3 className="text-base sm:text-[17px] font-bold text-slate-900 dark:text-white leading-tight">
+                        Explore &amp; Learn
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-md bg-[#EFF6FF] dark:bg-blue-950/70 text-[#1D4ED8] dark:text-blue-400 text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider shrink-0 mt-0.5 whitespace-nowrap">
+                        SELF-GUIDED
+                      </span>
+                    </div>
+                    <p className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed font-normal">
+                      Get helpful information, tools, and resources to plan with confidence.
+                    </p>
+                  </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg bg-[#EFF6FF] dark:bg-blue-950/70 text-[#1D4ED8] dark:text-blue-400 text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider whitespace-nowrap">
-                  SELF-GUIDED
-                </span>
+
+                {/* Divider Line */}
+                <div className="w-full h-px bg-[#E2EDFA] dark:bg-blue-900/40 my-4 sm:my-5" />
               </div>
 
-              {/* Title */}
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight mb-1.5">
-                Explore &amp; Learn
-              </h3>
-
-              {/* Description */}
-              <p className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal mb-4">
-                Get helpful information, tools, and resources to plan with confidence.
-              </p>
-
-              {/* Divider Line */}
-              <div className="w-full h-px bg-[#E2EDFA] dark:bg-blue-900/40 mb-4 sm:mb-5" />
-
-              {/* Checklist & Price — grows to fill remaining space */}
-              <div className="flex items-end justify-between gap-2.5 flex-1 pb-5">
+              {/* Checklist & Price Section */}
+              <div className="flex items-end justify-between gap-2.5 pt-1 pb-5 flex-1">
+                {/* Features List */}
                 <div className="space-y-3 sm:space-y-3.5">
-                  {["Neighborhood and area guides", "Housing search tips and planning resources", "Student life and everyday living information"].map((item) => (
-                    <div key={item} className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
-                        <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="3 7.5 5.5 10 11 4.5" />
-                        </svg>
-                      </div>
-                      <span className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">{item}</span>
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
                     </div>
-                  ))}
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Neighborhood and area guides</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Housing search tips and planning</p>
+                      <p>resources</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Student life and everyday living</p>
+                      <p>information</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right shrink-0 self-end pb-1">
-                  <span className="text-3xl sm:text-[34px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">$0</span>
-                  <span className="text-[10.5px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium block mt-1 leading-snug">Free access</span>
+
+                {/* Price */}
+                <div className="text-center shrink-0 self-end pb-1 pl-1">
+                  <span className="text-3xl sm:text-[34px] lg:text-[38px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">
+                    $0
+                  </span>
+                  <span className="text-[10.5px] sm:text-[11.5px] text-slate-500 dark:text-slate-400 font-medium block mt-1 leading-snug">
+                    Free access
+                  </span>
                 </div>
               </div>
 
@@ -222,47 +251,95 @@ export default function PricingSection({
             {/* ======================================================== */}
             {/* CARD 2: Already Have Housing ? (Targeted Support) */}
             {/* ======================================================== */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-[#FFFDF8] dark:bg-[#111827] border border-[#FDE68A] dark:border-amber-900/40 p-6 sm:p-7 flex flex-col shadow-xs hover:shadow-md transition-all min-h-[500px] sm:min-h-[520px]">
-              {/* Header row: icon left, badge right */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FFF6D5] dark:bg-amber-950/60 text-[#D97706] dark:text-amber-400 flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-5 h-5" strokeWidth={2.2} />
+            <div className="rounded-[28px] sm:rounded-[32px] bg-[#FFFDF8] dark:bg-[#111827] border border-[#FDE68A] dark:border-amber-900/40 p-6 sm:p-7 flex flex-col justify-between shadow-xs hover:shadow-md transition-all h-full min-h-[500px] sm:min-h-[520px]">
+              <div>
+                {/* Header: Icon on left, Title + Badge on right */}
+                <div className="flex items-start gap-3 sm:gap-3.5 mb-2">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FFF6D5] dark:bg-amber-950/60 text-[#D97706] dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <MessageSquare className="w-5 h-5 sm:w-5.5 sm:h-5.5" strokeWidth={2.2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-1.5">
+                      <h3 className="text-base sm:text-[17px] font-bold text-slate-900 dark:text-white leading-tight">
+                        Already Have <br />
+                        Housing ?
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-md bg-[#FEF3C7] dark:bg-amber-950/70 text-[#92400E] dark:text-amber-300 text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider shrink-0 mt-0.5 whitespace-nowrap">
+                        TARGETED SUPPORT
+                      </span>
+                    </div>
+                    <p className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-normal">
+                      You&apos;ve found a housing option but need help moving forward? We can assist with communication, clarify details, and help resolve common issues.
+                    </p>
+                  </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg bg-[#FEF3C7] dark:bg-amber-950/70 text-[#92400E] dark:text-amber-300 text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider whitespace-nowrap">
-                  TARGETED SUPPORT
-                </span>
+
+                {/* Divider Line */}
+                <div className="w-full h-px bg-[#FFF4CC] dark:bg-amber-900/40 my-4 sm:my-5" />
               </div>
 
-              {/* Title */}
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight mb-1.5">
-                Already Have<br />Housing ?
-              </h3>
-
-              {/* Description */}
-              <p className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal mb-4">
-                You&apos;ve found a housing option but need help moving forward? We can assist with communication, clarify details, and help resolve common issues.
-              </p>
-
-              {/* Divider Line */}
-              <div className="w-full h-px bg-[#FFF4CC] dark:bg-amber-900/40 mb-4 sm:mb-5" />
-
-              {/* Checklist & Price — grows to fill remaining space */}
-              <div className="flex items-end justify-between gap-2.5 flex-1 pb-5">
+              {/* Checklist & Price Section */}
+              <div className="flex items-end justify-between gap-2.5 pt-1 pb-5 flex-1">
+                {/* Features List */}
                 <div className="space-y-3 sm:space-y-3.5">
-                  {["Communication with landlords or housing providers", "Confirm availability and booking details", "Help with questions, changes, or next steps", "Guidance on rental terms and what to expect"].map((item) => (
-                    <div key={item} className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
-                        <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="3 7.5 5.5 10 11 4.5" />
-                        </svg>
-                      </div>
-                      <span className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">{item}</span>
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
                     </div>
-                  ))}
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Communication with landlords or</p>
+                      <p>housing providers</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Confirm availability and booking</p>
+                      <p>details</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Help with questions, changes, or</p>
+                      <p>next steps</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Guidance on rental terms and what</p>
+                      <p>to expect</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right shrink-0 self-end pb-1">
-                  <span className="text-3xl sm:text-[34px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">$195</span>
-                  <span className="text-[10.5px] sm:text-[11px] text-slate-600 dark:text-slate-400 font-semibold block mt-1 leading-snug">Per family or<br />housing request</span>
+
+                {/* Price */}
+                <div className="text-center shrink-0 self-end pb-1 pl-1">
+                  <span className="text-3xl sm:text-[34px] lg:text-[38px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">
+                    $195
+                  </span>
+                  <span className="text-[10.5px] sm:text-[11.5px] text-slate-600 dark:text-slate-400 font-semibold block mt-1 leading-snug">
+                    Per family or <br />
+                    housing request
+                  </span>
                 </div>
               </div>
 
@@ -280,47 +357,105 @@ export default function PricingSection({
             {/* ======================================================== */}
             {/* CARD 3: Need Help Finding Housing ? (Fuller Assistance) */}
             {/* ======================================================== */}
-            <div className="rounded-[28px] sm:rounded-[32px] bg-[#FFF9F9] dark:bg-[#111827] border border-[#FCE7E7] dark:border-rose-900/40 p-6 sm:p-7 flex flex-col shadow-xs hover:shadow-md transition-all min-h-[500px] sm:min-h-[520px]">
-              {/* Header row: icon left, badge right */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FEE2E2] dark:bg-rose-950/60 text-[#DC2626] dark:text-rose-400 flex items-center justify-center shrink-0">
-                  <Home className="w-5 h-5" strokeWidth={2} />
+            <div className="rounded-[28px] sm:rounded-[32px] bg-[#FFF9F9] dark:bg-[#111827] border border-[#FCE7E7] dark:border-rose-900/40 p-6 sm:p-7 flex flex-col justify-between shadow-xs hover:shadow-md transition-all h-full min-h-[500px] sm:min-h-[520px]">
+              <div>
+                {/* Header: Icon on left, Title + Badge on right */}
+                <div className="flex items-start gap-3 sm:gap-3.5 mb-2">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FEE2E2] dark:bg-rose-950/60 text-[#DC2626] dark:text-rose-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Home className="w-5 h-5 sm:w-5.5 sm:h-5.5" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-1.5">
+                      <h3 className="text-base sm:text-[17px] font-bold text-slate-900 dark:text-white leading-tight">
+                        Need Help Finding <br />
+                        Housing ?
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-md bg-[#FEE2E2] dark:bg-rose-950/70 text-[#DC2626] dark:text-rose-400 text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider shrink-0 mt-0.5 whitespace-nowrap">
+                        FULLER ASSISTANCE
+                      </span>
+                    </div>
+                    <p className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-normal">
+                      Want more hands-on support? We&apos;ll work with you to understand your needs, explore suitable options, and provide personalized recommendations.
+                    </p>
+                  </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg bg-[#FEE2E2] dark:bg-rose-950/70 text-[#DC2626] dark:text-rose-400 text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider whitespace-nowrap">
-                  FULLER ASSISTANCE
-                </span>
+
+                {/* Divider Line */}
+                <div className="w-full h-px bg-[#FCE7E7] dark:bg-rose-900/40 my-4 sm:my-5" />
               </div>
 
-              {/* Title */}
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight mb-1.5">
-                Need Help Finding<br />Housing ?
-              </h3>
-
-              {/* Description */}
-              <p className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal mb-4">
-                Want more hands-on support? We&apos;ll work with you to understand your needs, explore suitable options, and provide personalized recommendations.
-              </p>
-
-              {/* Divider Line */}
-              <div className="w-full h-px bg-[#FCE7E7] dark:bg-rose-900/40 mb-4 sm:mb-5" />
-
-              {/* Checklist & Price — grows to fill remaining space */}
-              <div className="flex items-end justify-between gap-2.5 flex-1 pb-5">
+              {/* Checklist & Price Section */}
+              <div className="flex items-end justify-between gap-2.5 pt-1 pb-5 flex-1">
+                {/* Features List */}
                 <div className="space-y-3 sm:space-y-3.5">
-                  {["Group needs consultation (e.g., 3–5 students)", "Neighborhood guidance and option research", "Shortlist of suitable housing options", "Agreed provider outreach and follow-up", "Final recommendations and next steps"].map((item) => (
-                    <div key={item} className="flex items-start gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
-                        <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="3 7.5 5.5 10 11 4.5" />
-                        </svg>
-                      </div>
-                      <span className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">{item}</span>
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
                     </div>
-                  ))}
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Group needs consultation (e.g., 3-5</p>
+                      <p>students)</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Neighborhood guidance and option</p>
+                      <p>research</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Shortlist of suitable housing options</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Agreed provider outreach and</p>
+                      <p>follow-up</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12px] sm:text-[12.5px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Final recommendations and next</p>
+                      <p>steps</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right shrink-0 self-end pb-1">
-                  <span className="text-3xl sm:text-[34px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">$495</span>
-                  <span className="text-[10.5px] sm:text-[11px] text-slate-600 dark:text-slate-400 font-semibold block mt-1 leading-snug">Per group One-<br />time</span>
+
+                {/* Price */}
+                <div className="text-center shrink-0 self-end pb-1 pl-1">
+                  <span className="text-3xl sm:text-[34px] lg:text-[38px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">
+                    $495
+                  </span>
+                  <span className="text-[10.5px] sm:text-[11.5px] text-slate-600 dark:text-slate-400 font-semibold block mt-1 leading-snug">
+                    Per group One-<br />time
+                  </span>
                 </div>
               </div>
 
