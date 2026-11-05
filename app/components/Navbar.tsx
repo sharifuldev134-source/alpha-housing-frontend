@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   ChevronDown,
@@ -24,10 +24,20 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onOpenPlanModal }: NavbarProps) {
+  const router = useRouter();
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const handleCreatePlan = () => {
+    setProfileDropdownOpen(false);
+    if (onOpenPlanModal) {
+      onOpenPlanModal();
+    } else {
+      router.push("/create-plan");
+    }
+  };
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -231,6 +241,19 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
                     <FileCheck2 className="w-4 h-4 text-red-500" />
                     <span>Alpha Check™ Audit</span>
                   </Link>
+
+                  {/* Create Housing Plan Button Section */}
+                  <div className="px-3 py-2 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={handleCreatePlan}
+                      className="w-full py-2 px-3 rounded-xl bg-[#E52535] hover:bg-[#C8102E] text-white text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+                      <span>Create Housing Plan</span>
+                    </button>
+                  </div>
+
                   <div className="border-t border-slate-100 pt-1 mt-1">
                     {/* Theme switcher inside dropdown */}
                     <button

@@ -1,8 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import {
+  Heart,
+  Users,
+  ShieldCheck,
+  MessageSquare,
+  ArrowRight,
+  Laptop,
+  Home,
+  Info,
+} from "lucide-react";
 import { usePlanModal } from "./PlanModalContext";
 
 interface PricingSectionProps {
@@ -10,10 +20,12 @@ interface PricingSectionProps {
   onSelectPlan?: (planId: string) => void;
 }
 
-export default function PricingSection({ className = "", onSelectPlan }: PricingSectionProps) {
+export default function PricingSection({
+  className = "",
+  onSelectPlan,
+}: PricingSectionProps) {
   const router = useRouter();
   const { openPlanModal } = usePlanModal();
-  const [pricingMode, setPricingMode] = useState<"student" | "group">("student");
 
   const handlePlanClick = (planId: string) => {
     if (onSelectPlan) {
@@ -21,265 +33,470 @@ export default function PricingSection({ className = "", onSelectPlan }: Pricing
       return;
     }
     if (planId === "free") {
-      router.push("/signup?plan=free");
-    } else if (planId === "group-pass") {
-      router.push("/signup?plan=group-pass");
+      router.push("/housing");
+    } else if (planId === "targeted-support") {
+      router.push("/assistance");
     } else {
-      router.push("/signup?plan=white-glove");
+      openPlanModal();
     }
   };
 
   return (
-    <section className={`py-12 sm:py-16 bg-white ${className}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Title & Subtitle - matching screenshot exactly */}
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Simple, Student-Friendly Plans
-        </h2>
-        <p className="text-sm text-slate-500 mt-2.5 max-w-xl mx-auto leading-relaxed">
-          No hidden broker markups or surprise agency fees. One transparent price for total peace
-          of mind.
-        </p>
-
-        {/* Pricing Toggle */}
-        <div className="mt-8 inline-flex items-center p-1 rounded-full bg-slate-100 border border-slate-200 shadow-2xs">
-          <button
-            type="button"
-            onClick={() => setPricingMode("student")}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
-              pricingMode === "student"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-900"
-            }`}
-          >
-            Per Student
-          </button>
-          <button
-            type="button"
-            onClick={() => setPricingMode("group")}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
-              pricingMode === "group"
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-900"
-            }`}
-          >
-            Per Group Flat (Up to 5)
-          </button>
+    <div className={`flex flex-col w-full ${className}`}>
+      {/* ------------------------------------------------------------- */}
+      {/* 1. HERO BANNER SECTION */}
+      {/* ------------------------------------------------------------- */}
+      <section className="relative w-full bg-slate-900 text-white overflow-hidden text-center">
+        {/* Leaning Tower of Pisa Background */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <Image
+            src="/images/pisa_banner.jpg"
+            alt="Housing Guidance in Florence"
+            fill
+            priority
+            className="object-cover object-center scale-100"
+          />
+          {/* Subtle gradient overlay to enhance legibility while keeping the sky bright and sunlit */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/45 via-slate-950/25 to-slate-950/35 z-1" />
         </div>
 
-        {/* 3 Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mt-12 text-left max-w-6xl mx-auto items-stretch">
-          
-          {/* ======================================================== */}
-          {/* CARD 1: FREE STARTER */}
-          {/* ======================================================== */}
-          <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-300">
-            <div>
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-slate-900">Free Starter</h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider">
-                  BASIC
-                </span>
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-20 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-[11px] font-semibold tracking-wider uppercase mb-5 shadow-xs">
+            <Heart className="w-3.5 h-3.5 text-white/90" />
+            <span>HOUSING GUIDANCE &amp; PERSONAL ASSISTANCE</span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.15] mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
+            Personal Support for <br className="hidden sm:inline" />
+            <span className="text-[#E52535]">Your Housing Journey in Florence</span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-xs sm:text-sm text-slate-100/95 leading-relaxed max-w-2xl mx-auto font-normal drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)]">
+            Whether you&apos;re just starting your search, already have a housing option and need help with communication and next steps, our team is here to provide guidance, coordination, and peace of mind.
+          </p>
+        </div>
+
+        {/* Floating 4-Feature Pill Bar (Overlapping Banner Bottom) */}
+        <div className="relative z-20 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 -mb-7 sm:-mb-8">
+          <div className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-full py-3.5 px-6 sm:px-8 shadow-xl border border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-left">
+            {/* Feature 1 */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                <Users className="w-4 h-4" />
               </div>
-
-              {/* Price */}
-              <div className="mt-4 flex items-baseline">
-                <span className="text-4xl font-extrabold text-slate-900 tracking-tight">$0</span>
-                <span className="text-xs text-slate-400 font-medium ml-1">/Free forever</span>
-              </div>
-
-              {/* Description */}
-              <p className="text-xs text-slate-500 mt-2.5 leading-relaxed min-h-[36px]">
-                Ideal for roommates exploring study abroad destinations and setting budgets.
-              </p>
-
-              {/* Features List */}
-              <div className="mt-6 pt-6 border-t border-slate-100 space-y-3.5">
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Group budget pooling calculator</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>University commute &amp; transit maps</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Neighborhood safety &amp; student vibe guides</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Browse verified partner listings</span>
-                </div>
+              <div>
+                <p className="text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white leading-tight">
+                  Experienced Guidance
+                </p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                  Real support from a team who knows Florence
+                </p>
               </div>
             </div>
 
-            {/* CTA Button */}
-            <div className="mt-8 pt-2">
+            {/* Feature 2 */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-sky-50 dark:bg-sky-950/60 flex items-center justify-center text-sky-600 dark:text-sky-400 shrink-0">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white leading-tight">
+                  Local Insight
+                </p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                  Neighborhoods, transportation, and student life
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                <MessageSquare className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white leading-tight">
+                  Communication Support
+                </p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                  Help with landlords and housing providers
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-rose-50 dark:bg-rose-950/60 flex items-center justify-center text-rose-500 dark:text-rose-400 shrink-0">
+                <Heart className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white leading-tight">
+                  Parent-Focused
+                </p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                  Clear answers, timely updates, and peace of mind
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------- */}
+      {/* 2. MAIN SECTION: HOW WE CAN HELP (Exact Match to Screenshot) */}
+      {/* ------------------------------------------------------------- */}
+      <section className="pt-16 sm:pt-20 pb-16 sm:pb-24 bg-white dark:bg-[#0B0F17]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Section Header */}
+          <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-slate-900 dark:text-white tracking-tight">
+            How We Can Help
+          </h2>
+          <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-2.5 max-w-xl mx-auto leading-relaxed">
+            Choose the support that fits your needs. Not sure which is right for you? Contact our team — we&apos;re happy to help you decide.
+          </p>
+
+          {/* 3 Pricing / Support Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7 mt-10 sm:mt-12 text-left items-stretch">
+            {/* ======================================================== */}
+            {/* CARD 1: Explore & Learn (Self-Guided) */}
+            {/* ======================================================== */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-[#F8FAFD] dark:bg-[#111827] border border-[#DCE7F6] dark:border-blue-900/40 p-6 sm:p-7.5 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+              <div>
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#E1EDFB] dark:bg-blue-950/60 text-[#1D4ED8] dark:text-blue-400 flex items-center justify-center shrink-0">
+                    <Laptop className="w-6 h-6 sm:w-6.5 sm:h-6.5" strokeWidth={2} />
+                  </div>
+                  <span className="px-3 py-1 rounded-md sm:rounded-lg bg-[#EFF6FF] dark:bg-blue-950/70 text-[#1D4ED8] dark:text-blue-400 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase shrink-0 mt-1">
+                    SELF-GUIDED
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl sm:text-[23px] font-extrabold text-slate-900 dark:text-white leading-[1.2] tracking-tight">
+                  Explore &amp; Learn
+                </h3>
+
+                {/* Description */}
+                <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-2.5 leading-relaxed font-normal">
+                  Get helpful information, tools, and resources to plan with confidence.
+                </p>
+
+                {/* Divider Line */}
+                <div className="w-full h-px bg-[#E2EDFA] dark:bg-blue-900/40 my-5" />
+              </div>
+
+              {/* Checklist & Price Section */}
+              <div className="flex items-end justify-between gap-3 pt-1 pb-6 flex-1">
+                {/* Features List */}
+                <div className="space-y-3.5 sm:space-y-4">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Neighborhood and area guides</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Housing search tips and planning</p>
+                      <p>resources</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Student life and everyday living</p>
+                      <p>information</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <div className="text-center shrink-0 self-end pb-1 pl-1">
+                  <span className="text-[38px] sm:text-[44px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">
+                    $0
+                  </span>
+                  <span className="text-[11px] sm:text-[12px] text-slate-500 dark:text-slate-400 font-semibold block mt-1.5 leading-snug">
+                    Free access
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Button */}
               <button
                 type="button"
                 onClick={() => handlePlanClick("free")}
-                className="w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-[#F1F5F9] hover:bg-slate-200 text-slate-800 transition-all cursor-pointer text-center"
+                className="w-full py-3.5 sm:py-4 px-5 rounded-2xl font-bold text-sm sm:text-[15px] bg-[#EDF4FE] hover:bg-blue-100 text-[#1E40AF] border border-[#D5E3F9] dark:bg-blue-950/50 dark:border-blue-900/60 dark:text-blue-300 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                Start for Free
+                <span>Explore Housing Resources</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-          </div>
 
-          {/* ======================================================== */}
-          {/* CARD 2: ALPHA GROUP PASS (HIGHLIGHTED / MOST POPULAR) */}
-          {/* ======================================================== */}
-          <div className="relative rounded-[28px] bg-white border-2 border-red-500 p-7 sm:p-8 flex flex-col justify-between shadow-[0_12px_36px_rgba(239,68,68,0.12)] ring-4 ring-red-500/5 transition-all duration-300">
-            {/* Overlapping Top Badge */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="px-3.5 py-1 rounded-full bg-red-600 text-white font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow-sm flex items-center gap-1">
-                ★ MOST POPULAR
-              </span>
-            </div>
-
-            <div>
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-slate-900">Alpha Group Pass</h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200/80 text-[10px] font-bold uppercase tracking-wider">
-                  RECOMMENDED
-                </span>
-              </div>
-
-              {/* Price */}
-              <div className="mt-4 flex items-baseline">
-                <span className="text-4xl font-extrabold text-slate-900 tracking-tight">
-                  {pricingMode === "student" ? "$19" : "$49"}
-                </span>
-                <span className="text-xs text-slate-500 font-medium ml-1">
-                  {pricingMode === "student" ? "/student / one-time" : "/group flat / one-time"}
-                </span>
-              </div>
-
-              {/* Description */}
-              <p className="text-xs text-slate-500 mt-2.5 leading-relaxed min-h-[36px]">
-                Complete peace of mind for roommates and parents securing your overseas flat.
-              </p>
-
-              {/* Features List */}
-              <div className="mt-6 pt-6 border-t border-slate-100 space-y-3.5">
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Everything in Free Starter</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
-                  <span className="font-bold text-slate-900">
-                    Alpha Check™ AI Lease Audit (Contract &amp; Translations)
+            {/* ======================================================== */}
+            {/* CARD 2: Already Have Housing ? (Targeted Support) */}
+            {/* ======================================================== */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-[#FFFDF8] dark:bg-[#111827] border border-[#FDE68A] dark:border-amber-900/40 p-6 sm:p-7.5 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+              <div>
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF6D5] dark:bg-amber-950/60 text-[#D97706] dark:text-amber-400 flex items-center justify-center shrink-0">
+                    <MessageSquare className="w-6 h-6 sm:w-6.5 sm:h-6.5" strokeWidth={2.2} />
+                  </div>
+                  <span className="px-3 py-1 rounded-md sm:rounded-lg bg-[#FEF3C7] dark:bg-amber-950/70 text-[#92400E] dark:text-amber-300 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase shrink-0 mt-1">
+                    TARGETED SUPPORT
                   </span>
                 </div>
-                <div className="flex items-start gap-2.5 text-xs">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
-                  <span className="font-bold text-slate-900">
-                    Parent Portal read-only live safety &amp; booking review
+
+                {/* Title */}
+                <h3 className="text-xl sm:text-[23px] font-extrabold text-slate-900 dark:text-white leading-[1.2] tracking-tight">
+                  Already Have <br />
+                  Housing ?
+                </h3>
+
+                {/* Description */}
+                <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-2.5 leading-relaxed font-normal">
+                  You&apos;ve found a housing option but need help moving forward? We can assist with communication, clarify details, and help resolve common issues.
+                </p>
+
+                {/* Divider Line */}
+                <div className="w-full h-px bg-[#FFF4CC] dark:bg-amber-900/40 my-5" />
+              </div>
+
+              {/* Checklist & Price Section */}
+              <div className="flex items-end justify-between gap-3 pt-1 pb-6 flex-1">
+                {/* Features List */}
+                <div className="space-y-3.5 sm:space-y-4">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Communication with landlords or</p>
+                      <p>housing providers</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Confirm availability and booking</p>
+                      <p>details</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Help with questions, changes, or</p>
+                      <p>next steps</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Guidance on rental terms and what</p>
+                      <p>to expect</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <div className="text-center shrink-0 self-end pb-1 pl-1">
+                  <span className="text-[38px] sm:text-[44px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">
+                    $195
+                  </span>
+                  <span className="text-[11px] sm:text-[12px] text-slate-600 dark:text-slate-400 font-semibold block mt-1.5 leading-snug">
+                    Per family or <br />
+                    housing request
                   </span>
                 </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Anti-scam verification &amp; deposit escrow protection</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Dedicated priority student communication channel</span>
-                </div>
               </div>
-            </div>
 
-            {/* CTA Button */}
-            <div className="mt-8 pt-2">
+              {/* Action Button */}
               <button
                 type="button"
-                onClick={() => handlePlanClick("group-pass")}
-                className="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-md shadow-red-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                onClick={() => handlePlanClick("targeted-support")}
+                className="w-full py-3.5 sm:py-4 px-5 rounded-2xl font-bold text-sm sm:text-[15px] bg-[#FEF3C7] hover:bg-[#FDE68A] text-[#5D341A] border border-[#FDE68A] dark:bg-amber-950/60 dark:hover:bg-amber-900/70 dark:text-amber-200 dark:border-amber-800 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
               >
-                <span>Choose Group Pass</span>
+                <span>Get Housing Support</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* ======================================================== */}
+            {/* CARD 3: Need Help Finding Housing ? (Fuller Assistance) */}
+            {/* ======================================================== */}
+            <div className="rounded-[28px] sm:rounded-[32px] bg-[#FFF9F9] dark:bg-[#111827] border border-[#FCE7E7] dark:border-rose-900/40 p-6 sm:p-7.5 flex flex-col justify-between shadow-xs hover:shadow-md transition-all">
+              <div>
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FEE2E2] dark:bg-rose-950/60 text-[#DC2626] dark:text-rose-400 flex items-center justify-center shrink-0">
+                    <Home className="w-6 h-6 sm:w-6.5 sm:h-6.5" strokeWidth={2} />
+                  </div>
+                  <span className="px-3 py-1 rounded-md sm:rounded-lg bg-[#FEE2E2] dark:bg-rose-950/70 text-[#DC2626] dark:text-rose-400 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase shrink-0 mt-1">
+                    FULLER ASSISTANCE
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl sm:text-[23px] font-extrabold text-slate-900 dark:text-white leading-[1.2] tracking-tight">
+                  Need Help Finding <br />
+                  Housing ?
+                </h3>
+
+                {/* Description */}
+                <p className="text-xs sm:text-[13px] text-slate-500 dark:text-slate-400 mt-2.5 leading-relaxed font-normal">
+                  Want more hands-on support? We&apos;ll work with you to understand your needs, explore suitable options, and provide personalized recommendations.
+                </p>
+
+                {/* Divider Line */}
+                <div className="w-full h-px bg-[#FCE7E7] dark:bg-rose-900/40 my-5" />
+              </div>
+
+              {/* Checklist & Price Section */}
+              <div className="flex items-end justify-between gap-3 pt-1 pb-6 flex-1">
+                {/* Features List */}
+                <div className="space-y-3.5 sm:space-y-4">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Group needs consultation (e.g., 3-5</p>
+                      <p>students)</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Neighborhood guidance and option</p>
+                      <p>research</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Shortlist of suitable housing options</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Agreed provider outreach and</p>
+                      <p>follow-up</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-[#00BC7D] flex items-center justify-center shrink-0 mt-0.5">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 7.5 5.5 10 11 4.5" />
+                      </svg>
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] text-slate-700 dark:text-slate-300 leading-snug font-normal">
+                      <p>Final recommendations and next</p>
+                      <p>steps</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <div className="text-center shrink-0 self-end pb-1 pl-1">
+                  <span className="text-[38px] sm:text-[44px] font-extrabold text-[#0F172A] dark:text-white tracking-tight block leading-none">
+                    $495
+                  </span>
+                  <span className="text-[11px] sm:text-[12px] text-slate-600 dark:text-slate-400 font-semibold block mt-1.5 leading-snug">
+                    Per group One-<br />time
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                type="button"
+                onClick={() => handlePlanClick("full-assistance")}
+                className="w-full py-3.5 sm:py-4 px-5 rounded-2xl font-bold text-sm sm:text-[15px] bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-md shadow-red-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Request Full Assistance</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
           {/* ======================================================== */}
-          {/* CARD 3: WHITE-GLOVE */}
+          {/* IMPORTANT TO KNOW (DISCLAIMER BANNER - EXACT SS MATCH) */}
           {/* ======================================================== */}
-          <div className="rounded-[28px] bg-white border border-slate-200/90 p-7 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-300">
-            <div>
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-slate-900">White-Glove</h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider">
-                  FULL SERVICE
+          <div className="mt-10 sm:mt-12 text-left">
+            <div className="rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center gap-4 text-left shadow-2xs">
+              <div className="flex items-center gap-2 shrink-0 md:pr-4 md:border-r border-slate-200 dark:border-slate-800">
+                <div className="w-4.5 h-4.5 rounded-full border border-blue-500 flex items-center justify-center text-blue-500 shrink-0">
+                  <Info className="w-3 h-3" />
+                </div>
+                <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white whitespace-nowrap">
+                  Important to Know
                 </span>
               </div>
-
-              {/* Price */}
-              <div className="mt-4 flex items-baseline">
-                <span className="text-4xl font-extrabold text-slate-900 tracking-tight">
-                  {pricingMode === "student" ? "$99" : "$249"}
-                </span>
-                <span className="text-xs text-slate-500 font-medium ml-1">
-                  {pricingMode === "student" ? "/student / one-time" : "/group flat / one-time"}
-                </span>
-              </div>
-
-              {/* Description */}
-              <p className="text-xs text-slate-500 mt-2.5 leading-relaxed min-h-[36px]">
-                Dedicated in-person service in Italy for families wanting hands-on guidance.
+              <p className="text-[11.5px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+                AlphaHousing provides housing research, guidance, and coordination assistance. We do{" "}
+                <strong className="font-bold text-slate-900 dark:text-white">not</strong>{" "}
+                guarantee that a specific apartment will be found, that a property will be available, or that a booking will be completed. Families make their own housing decisions and arrange any agreements or payments directly with housing providers.
               </p>
-
-              {/* Features List */}
-              <div className="mt-6 pt-6 border-t border-slate-100 space-y-3.5">
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Everything in Alpha Group Pass</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Personal bilingual Italian housing concierge</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>In-person move-in walk-through &amp; key inspection</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>Codice Fiscale &amp; Italian utilities registration help</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-xs text-slate-600">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>24/7 on-street emergency support liaison</span>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            <div className="mt-8 pt-2">
-              <button
-                type="button"
-                onClick={() => handlePlanClick("white-glove")}
-                className="w-full py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-[#0F172A] hover:bg-black text-white transition-all cursor-pointer text-center shadow-xs"
-              >
-                Select White-Glove
-              </button>
             </div>
           </div>
-
         </div>
-
-        {/* Bottom 100% Risk-Free Guarantee Banner */}
-        <div className="mt-12 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-xs sm:text-[13px] text-[#065F46] font-medium shadow-2xs">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>
-            <strong className="font-bold text-[#065F46]">100% Risk-Free Guarantee:</strong>{" "}
-            Full refund if no verified matching apartment is found for your study abroad semester.
-          </span>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

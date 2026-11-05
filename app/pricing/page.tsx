@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <div className="flex-1 bg-white flex flex-col justify-center py-6 sm:py-12">
+    <div className="flex flex-col w-full bg-white dark:bg-[#0B0F17]">
       <PricingSection />
     </div>
   );
