@@ -822,7 +822,7 @@ export default function HousingPage() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Florentine Student Apartments
+                Explore Apartments in Florence
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-red-100 text-[#DC2626] font-extrabold text-[10px]">
                 78 AVAILABLE
