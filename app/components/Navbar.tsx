@@ -45,7 +45,7 @@ export default function Navbar({ onOpenPlanModal }: NavbarProps) {
     { label: "Safety", href: "/safety" },
     { label: "Daily Life", href: "/daily-life" },
     { label: "How It Works", href: "/how-it-works" },
-    { label: "Pricing", href: "/pricing" },
+    { label: "Support", href: "/pricing" },
   ];
 
   const isActive = (href: string) => {
