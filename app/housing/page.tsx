@@ -25,6 +25,8 @@ import {
   Share2,
   FileText,
   SlidersHorizontal,
+  Compass,
+  Home,
 } from "lucide-react";
 import { usePlanModal } from "../components/PlanModalContext";
 
@@ -591,8 +593,8 @@ export default function HousingPage() {
         <div className="relative z-10 max-w-7xl mx-auto space-y-4 text-center sm:text-left">
           {/* Top Pill matching screenshot */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-[11px] font-semibold tracking-wider uppercase shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>78 VERIFIED STUDENT HOUSING UNITS IN FLORENCE • SPRING &amp; FALL 2027</span>
+            <Compass className="w-3.5 h-3.5 text-amber-400" />
+            <span>EXPLORE STUDENT HOUSING OPTIONS IN FLORENCE</span>
           </div>
 
           {/* Big Titles matching screenshot */}
@@ -605,8 +607,8 @@ export default function HousingPage() {
             </h2>
           </div>
 
-          <p className="text-xs sm:text-sm md:text-base text-slate-200/90 max-w-2xl leading-relaxed">
-            Explore pre-vetted, safe student apartments near Florence study abroad campuses. Transparent per-person pricing, official Italian rental contracts, and boots-on-the-ground support.
+          <p className="text-xs sm:text-sm md:text-base text-slate-200/90 max-w-3xl leading-relaxed">
+            Explore housing options in Florence, compare neighborhoods, and find information to help you plan your stay abroad. Our team is here to offer guidance and assistance along the way.
           </p>
 
           {/* ========================================================= */}
@@ -626,7 +628,7 @@ export default function HousingPage() {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="e.g. Via dei Neri, Santa Croce, Lemon..."
+                    placeholder="e.g. Via dei Neri, Santa Croce, ..."
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] font-medium"
                   />
                 </div>
@@ -691,7 +693,7 @@ export default function HousingPage() {
                     onChange={(e) => setSelectedBedrooms(e.target.value)}
                     className="w-full px-3.5 pr-8 py-2.5 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#DC2626]/20 focus:border-[#DC2626] appearance-none font-medium cursor-pointer"
                   >
-                    <option value="all">Any (3–5)</option>
+                    <option value="all">Any (3-5)</option>
                     <option value="3">3 Bedrooms</option>
                     <option value="4">4 Bedrooms</option>
                     <option value="5">5 Bedrooms</option>
@@ -748,69 +750,88 @@ export default function HousingPage() {
       </section>
 
       {/* ========================================================= */}
-      {/* 2. FOUR TRUST & SAFETY GUARANTEE PILLS */}
+      {/* 2. FIVE GUIDANCE & ASSISTANCE PILLS */}
       {/* ========================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 relative z-20 w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          {/* Pill 1 */}
-          <div className="bg-[#E8F8F0] rounded-2xl border border-emerald-100/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-              <ShieldCheck className="w-5 h-5" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          {/* Pill 1: Housing Guidance */}
+          <div className="bg-[#E8F8F0] rounded-2xl border border-emerald-100/90 p-3 sm:p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#00BC7D] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Compass className="w-4.5 h-4.5" />
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
                 Housing Guidance
               </div>
-              <div className="text-[10.5px] text-slate-500 mt-0.5">
+              <div className="text-[10.5px] text-slate-500 mt-0.5 leading-tight">
                 Explore options with helpful information.
               </div>
             </div>
           </div>
 
-          {/* Pill 2 */}
-          <div className="bg-[#EBF3FE] rounded-2xl border border-blue-100/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-              <FileText className="w-5 h-5" />
+          {/* Pill 2: Rental Information */}
+          <div className="bg-[#EBF3FE] rounded-2xl border border-blue-100/90 p-3 sm:p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#2B7FFF] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <FileText className="w-4.5 h-4.5" />
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
                 Rental Information
               </div>
-              <div className="text-[10.5px] text-slate-500 mt-0.5">
+              <div className="text-[10.5px] text-slate-500 mt-0.5 leading-tight">
                 Understand rental terms and questions to ask.
               </div>
             </div>
           </div>
 
-          {/* Pill 3 */}
-          <div className="bg-[#F5EDFE] rounded-2xl border border-purple-100/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-              <Users className="w-5 h-5" />
+          {/* Pill 3: Shared Housing Planning */}
+          <div className="bg-[#F5EDFE] rounded-2xl border border-purple-100/90 p-3 sm:p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#8E44AD] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Users className="w-4.5 h-4.5" />
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
-                Shared Housing Planning.
+                Shared Housing Planning
               </div>
-              <div className="text-[10.5px] text-slate-500 mt-0.5">
+              <div className="text-[10.5px] text-slate-500 mt-0.5 leading-tight">
                 Explore costs when sharing with roommates.
               </div>
             </div>
           </div>
 
-          {/* Pill 4 */}
-          <div className="bg-[#FEF6E9] rounded-2xl border border-amber-100/90 p-3.5 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-              <Lock className="w-5 h-5" />
+          {/* Pill 4: Information for Parents */}
+          <div className="bg-[#FEF6E9] rounded-2xl border border-amber-100/90 p-3 sm:p-3.5 shadow-sm flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#E67E22] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Users className="w-4.5 h-4.5" />
             </div>
             <div>
               <div className="font-bold text-slate-900 leading-tight">
                 Information for Parents
               </div>
-              <div className="text-[10.5px] text-slate-500 mt-0.5">
-                Helpful guidance for families
+              <div className="text-[10.5px] text-slate-500 mt-0.5 leading-tight">
+                Helpful guidance for families.
               </div>
             </div>
           </div>
+
+          {/* Pill 5: Already Have Housing? */}
+          <Link
+            href="/get-help"
+            className="bg-[#DC2626] hover:bg-[#B91C1C] rounded-2xl p-3 sm:p-3.5 shadow-md flex items-center gap-3 text-white border-2 border-red-400/70 ring-2 ring-red-400/30 transition-all hover:scale-[1.02] cursor-pointer group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-white/20 border border-white/30 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Home className="w-4.5 h-4.5" />
+            </div>
+            <div>
+              <div className="font-bold text-white text-xs sm:text-sm leading-tight">
+                Already Have Housing?
+              </div>
+              <div className="text-[10px] sm:text-[10.5px] text-white/90 mt-0.5 leading-tight flex items-center gap-1 font-medium">
+                <span>Get assistance with your existing housing</span>
+                <span className="text-xs transition-transform group-hover:translate-x-0.5">→</span>
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 
